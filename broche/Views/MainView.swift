@@ -12,15 +12,15 @@ struct MainView: View {
 
     var body: some View {
         TabView(selection: $viewModel.tab) {
-            Text("Mood View")
+            MoodView()
                 .tabItem {
-                    Label("Mood", systemImage: "sun.horizon")
+                    Label("Mood", systemImage: MoodIcon)
                 }
                 .tag(Tab.Mood)
 
             Text("Draw View")
                 .tabItem {
-                    Label("Draw", systemImage: "pencil")
+                    Label("Draw", systemImage: "pencil.tip")
                 }
                 .tag(Tab.Draw)
         }

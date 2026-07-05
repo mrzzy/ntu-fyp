@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		493697E75107A6E383E841DE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E2C6B8D906F1C2960A160B /* MainViewModel.swift */; };
+		4F53CC194D8840A01AC56167 /* EditMoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A6979573682F082D87057 /* EditMoodView.swift */; };
+		5D70F4B0EBB6B4C0139ED190 /* MoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F769664EC61350B899A39 /* MoodView.swift */; };
+		AADFCC1387BE145385F58F76 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFD18E817606379AC06FFB0 /* UIConstants.swift */; };
+		CD5F4BA1841BE74AB22282BC /* Mood.swift in Resources */ = {isa = PBXBuildFile; fileRef = 76DF667A729738DAF1865347 /* Mood.swift */; };
 		D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507998449752ED5C1DF40DE /* Layer.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +38,10 @@
 		473062DF2FD17E5400086379 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062E92FD17E5400086379 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55E2C6B8D906F1C2960A160B /* MainViewModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		659F769664EC61350B899A39 /* MoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = MoodView.swift; path = MoodView.swift; sourceTree = "<group>"; };
+		76DF667A729738DAF1865347 /* Mood.swift */ = {isa = PBXFileReference; path = Mood.swift; sourceTree = "<group>"; };
+		8AFD18E817606379AC06FFB0 /* UIConstants.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = UIConstants.swift; path = UIConstants.swift; sourceTree = "<group>"; };
+		AB0A6979573682F082D87057 /* EditMoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = EditMoodView.swift; path = EditMoodView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -92,6 +100,8 @@
 			children = (
 				068B0B95911C69954A0E3682 /* ViewModels */,
 				CEA1DEA7E9EC68DC2C086AA4 /* Models */,
+				93F85BE109AC0E0993A2DC2E /* Views */,
+				8AFD18E817606379AC06FFB0 /* UIConstants.swift */,
 			);
 			path = broche;
 			sourceTree = "<group>";
@@ -117,10 +127,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		93F85BE109AC0E0993A2DC2E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				659F769664EC61350B899A39 /* MoodView.swift */,
+				AB0A6979573682F082D87057 /* EditMoodView.swift */,
+			);
+			name = Views;
+			path = Views;
+			sourceTree = "<group>";
+		};
 		CEA1DEA7E9EC68DC2C086AA4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				D03DA20501727C78D3708504 /* Layers */,
+				76DF667A729738DAF1865347 /* Mood.swift */,
 			);
 			name = Models;
 			path = Models;
@@ -255,6 +276,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD5F4BA1841BE74AB22282BC /* Mood.swift in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +303,9 @@
 			files = (
 				493697E75107A6E383E841DE /* MainViewModel.swift in Sources */,
 				D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */,
+				5D70F4B0EBB6B4C0139ED190 /* MoodView.swift in Sources */,
+				AADFCC1387BE145385F58F76 /* UIConstants.swift in Sources */,
+				4F53CC194D8840A01AC56167 /* EditMoodView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

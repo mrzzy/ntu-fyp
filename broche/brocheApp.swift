@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct brocheApp: App {
@@ -13,5 +14,8 @@ struct brocheApp: App {
         WindowGroup {
             MainView()
         }
+        .modelContainer(for: [
+            Mood.self
+        ])
     }
 }
