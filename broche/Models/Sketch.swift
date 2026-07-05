@@ -11,26 +11,10 @@ import UIKit
 
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch: Codable, Equatable {
+class Sketch {
     var layers: [Layer] = []
-    enum CodingKeys: String, CodingKey {
-        case layers
-    }
 
     init() {}
-
-    required init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let typedLayers = try container.decode([TypedLayer].self, forKey: .layers)
-        layers = try typedLayers.compactMap { try $0.decode() }
-    }
-
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        let layersData = try layers.map { try TypedLayer(layer: $0) }
-        try container.encode(layersData, forKey: .layers)
-    }
-
     /// Renders the sketch into a single flattened image by compositing all
     /// layers in order.
     ///
@@ -40,7 +24,7 @@ class Sketch: Codable, Equatable {
     ///
     /// - Returns: A `UIImage` representing the flattened sketch, or `nil` if
     ///   the sketch has no layers.
-    var renderedImage: UIImage? {
+    var image: UIImage? {
         guard
             let firstLayer = layers.first,
             let firstData = try? firstLayer.render(),
@@ -68,7 +52,4 @@ class Sketch: Codable, Equatable {
         }
     }
 
-    static func == (lhs: Sketch, rhs: Sketch) -> Bool {
-        lhs.layers.count == rhs.layers.count
-    }
 }

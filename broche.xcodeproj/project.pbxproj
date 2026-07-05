@@ -10,9 +10,7 @@
 		493697E75107A6E383E841DE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E2C6B8D906F1C2960A160B /* MainViewModel.swift */; };
 		4F53CC194D8840A01AC56167 /* EditMoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A6979573682F082D87057 /* EditMoodView.swift */; };
 		5D70F4B0EBB6B4C0139ED190 /* MoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F769664EC61350B899A39 /* MoodView.swift */; };
-		61AE2E958DDBC6D6E91488BE /* DrawingLayer.swift in Resources */ = {isa = PBXBuildFile; fileRef = 2702C995057B7E47F6866A78 /* DrawingLayer.swift */; };
 		749800791E0C2C6061219D39 /* Sketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDAD61262411EE85F33EFB9 /* Sketch.swift */; };
-		8F21784BC37D5E46352D815D /* ImageLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3BF86B255F9034D20A44028 /* ImageLayer.swift */; };
 		AADFCC1387BE145385F58F76 /* UIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFD18E817606379AC06FFB0 /* UIConstants.swift */; };
 		CD5F4BA1841BE74AB22282BC /* Mood.swift in Resources */ = {isa = PBXBuildFile; fileRef = 76DF667A729738DAF1865347 /* Mood.swift */; };
 		D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507998449752ED5C1DF40DE /* Layer.swift */; };
@@ -38,7 +36,6 @@
 /* Begin PBXFileReference section */
 		1507998449752ED5C1DF40DE /* Layer.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = Layer.swift; path = Layer.swift; sourceTree = "<group>"; };
 		1CDAD61262411EE85F33EFB9 /* Sketch.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = Sketch.swift; path = Sketch.swift; sourceTree = "<group>"; };
-		2702C995057B7E47F6866A78 /* DrawingLayer.swift */ = {isa = PBXFileReference; path = DrawingLayer.swift; sourceTree = "<group>"; };
 		473062D22FD17E5200086379 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062DF2FD17E5400086379 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062E92FD17E5400086379 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,7 +44,6 @@
 		76DF667A729738DAF1865347 /* Mood.swift */ = {isa = PBXFileReference; path = Mood.swift; sourceTree = "<group>"; };
 		8AFD18E817606379AC06FFB0 /* UIConstants.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = UIConstants.swift; path = UIConstants.swift; sourceTree = "<group>"; };
 		AB0A6979573682F082D87057 /* EditMoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = EditMoodView.swift; path = EditMoodView.swift; sourceTree = "<group>"; };
-		F3BF86B255F9034D20A44028 /* ImageLayer.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = ImageLayer.swift; path = ImageLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -146,23 +142,12 @@
 		CEA1DEA7E9EC68DC2C086AA4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				D03DA20501727C78D3708504 /* Layers */,
 				76DF667A729738DAF1865347 /* Mood.swift */,
 				1CDAD61262411EE85F33EFB9 /* Sketch.swift */,
+				1507998449752ED5C1DF40DE /* Layer.swift */,
 			);
 			name = Models;
 			path = Models;
-			sourceTree = "<group>";
-		};
-		D03DA20501727C78D3708504 /* Layers */ = {
-			isa = PBXGroup;
-			children = (
-				1507998449752ED5C1DF40DE /* Layer.swift */,
-				F3BF86B255F9034D20A44028 /* ImageLayer.swift */,
-				2702C995057B7E47F6866A78 /* DrawingLayer.swift */,
-			);
-			name = Layers;
-			path = Layers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -286,7 +271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD5F4BA1841BE74AB22282BC /* Mood.swift in Resources */,
-				61AE2E958DDBC6D6E91488BE /* DrawingLayer.swift in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,7 +301,6 @@
 				AADFCC1387BE145385F58F76 /* UIConstants.swift in Sources */,
 				4F53CC194D8840A01AC56167 /* EditMoodView.swift in Sources */,
 				749800791E0C2C6061219D39 /* Sketch.swift in Sources */,
-				8F21784BC37D5E46352D815D /* ImageLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
