@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		493697E75107A6E383E841DE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E2C6B8D906F1C2960A160B /* MainViewModel.swift */; };
+		D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507998449752ED5C1DF40DE /* Layer.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		473062E02FD17E5400086379 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,9 +29,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1507998449752ED5C1DF40DE /* Layer.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = Layer.swift; path = Layer.swift; sourceTree = "<group>"; };
 		473062D22FD17E5200086379 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062DF2FD17E5400086379 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062E92FD17E5400086379 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		55E2C6B8D906F1C2960A160B /* MainViewModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -72,6 +79,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		068B0B95911C69954A0E3682 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				55E2C6B8D906F1C2960A160B /* MainViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3C5FEC2691BD670AC2FAF52E /* broche */ = {
+			isa = PBXGroup;
+			children = (
+				068B0B95911C69954A0E3682 /* ViewModels */,
+				CEA1DEA7E9EC68DC2C086AA4 /* Models */,
+			);
+			path = broche;
+			sourceTree = "<group>";
+		};
 		473062C92FD17E5200086379 = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +103,7 @@
 				473062E22FD17E5400086379 /* brocheTests */,
 				473062EC2FD17E5400086379 /* brocheUITests */,
 				473062D32FD17E5200086379 /* Products */,
+				3C5FEC2691BD670AC2FAF52E /* broche */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +115,24 @@
 				473062E92FD17E5400086379 /* brocheUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CEA1DEA7E9EC68DC2C086AA4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D03DA20501727C78D3708504 /* Layers */,
+			);
+			name = Models;
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D03DA20501727C78D3708504 /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				1507998449752ED5C1DF40DE /* Layer.swift */,
+			);
+			name = Layers;
+			path = Layers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -236,6 +279,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				493697E75107A6E383E841DE /* MainViewModel.swift in Sources */,
+				D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
