@@ -52,3 +52,4 @@ buildServer.json
 
 # Neovim
 .nvim/
+Session.vim
