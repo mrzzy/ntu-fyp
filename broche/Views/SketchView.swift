@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct SketchView: View {
+    @Environment(\.modelContext) var modelContext
     @Query private var sketches: [Sketch]
     @State private var selectedId: UUID?
 
@@ -31,15 +32,41 @@ struct SketchView: View {
                     Spacer()
                 }
                 .contentShape(Rectangle())
-                .listRowBackground(sketch.id == selectedId ? Color.accentColor.opacity(0.1) : Color.clear)
+                .listRowBackground(
+                    sketch.id == selectedId ? Color.accentColor.opacity(0.1) : Color.clear
+                )
                 .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                // swipe to delete sketch
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        modelContext.delete(sketch)
+                        if selectedId == sketch.id {
+                            selectedId = nil
+                        }
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
             .navigationTitle("Sketches")
+            // '+' button to add new sketch
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        let newSketch = Sketch(title: "Untitled")
+                        modelContext.insert(newSketch)
+
+                        selectedId = newSketch.id
+                    } label: {
+                        Label("Add Sketch", systemImage: "plus")
+                    }
+                }
+            }
         } detail: {
             if let id = selectedId {
                 Text("Sketch: \(id)")
             } else {
-                ContentUnavailableView("Create or Select a Sketch", systemImage: "sidebar.leading")
+                ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }
         }
     }

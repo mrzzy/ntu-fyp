@@ -5,8 +5,8 @@
 //  Created by Zhu Zhanyan on 4/6/26.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct brocheApp: App {
@@ -15,7 +15,8 @@ struct brocheApp: App {
             MainView()
         }
         .modelContainer(for: [
-            Mood.self
+            Mood.self,
+            Sketch.self,
         ])
     }
 }
