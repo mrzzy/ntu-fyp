@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		493697E75107A6E383E841DE /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E2C6B8D906F1C2960A160B /* MainViewModel.swift */; };
 		4F53CC194D8840A01AC56167 /* EditMoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A6979573682F082D87057 /* EditMoodView.swift */; };
 		5D70F4B0EBB6B4C0139ED190 /* MoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F769664EC61350B899A39 /* MoodView.swift */; };
 		749800791E0C2C6061219D39 /* Sketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDAD61262411EE85F33EFB9 /* Sketch.swift */; };
@@ -34,16 +33,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1507998449752ED5C1DF40DE /* Layer.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = Layer.swift; path = Layer.swift; sourceTree = "<group>"; };
-		1CDAD61262411EE85F33EFB9 /* Sketch.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = Sketch.swift; path = Sketch.swift; sourceTree = "<group>"; };
+		1507998449752ED5C1DF40DE /* Layer.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
+		1CDAD61262411EE85F33EFB9 /* Sketch.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Sketch.swift; sourceTree = "<group>"; };
 		473062D22FD17E5200086379 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062DF2FD17E5400086379 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		473062E92FD17E5400086379 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		55E2C6B8D906F1C2960A160B /* MainViewModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
-		659F769664EC61350B899A39 /* MoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = MoodView.swift; path = MoodView.swift; sourceTree = "<group>"; };
-		76DF667A729738DAF1865347 /* Mood.swift */ = {isa = PBXFileReference; path = Mood.swift; sourceTree = "<group>"; };
-		8AFD18E817606379AC06FFB0 /* UIConstants.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = UIConstants.swift; path = UIConstants.swift; sourceTree = "<group>"; };
-		AB0A6979573682F082D87057 /* EditMoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = EditMoodView.swift; path = EditMoodView.swift; sourceTree = "<group>"; };
+		659F769664EC61350B899A39 /* MoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MoodView.swift; sourceTree = "<group>"; };
+		76DF667A729738DAF1865347 /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
+		8AFD18E817606379AC06FFB0 /* UIConstants.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = UIConstants.swift; sourceTree = "<group>"; };
+		AB0A6979573682F082D87057 /* EditMoodView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = EditMoodView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -89,18 +87,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		068B0B95911C69954A0E3682 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				55E2C6B8D906F1C2960A160B /* MainViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		3C5FEC2691BD670AC2FAF52E /* broche */ = {
 			isa = PBXGroup;
 			children = (
-				068B0B95911C69954A0E3682 /* ViewModels */,
 				CEA1DEA7E9EC68DC2C086AA4 /* Models */,
 				93F85BE109AC0E0993A2DC2E /* Views */,
 				8AFD18E817606379AC06FFB0 /* UIConstants.swift */,
@@ -135,7 +124,6 @@
 				659F769664EC61350B899A39 /* MoodView.swift */,
 				AB0A6979573682F082D87057 /* EditMoodView.swift */,
 			);
-			name = Views;
 			path = Views;
 			sourceTree = "<group>";
 		};
@@ -146,7 +134,6 @@
 				1CDAD61262411EE85F33EFB9 /* Sketch.swift */,
 				1507998449752ED5C1DF40DE /* Layer.swift */,
 			);
-			name = Models;
 			path = Models;
 			sourceTree = "<group>";
 		};
@@ -295,7 +282,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				493697E75107A6E383E841DE /* MainViewModel.swift in Sources */,
 				D5836EE22890EA3713FFF6A5 /* Layer.swift in Sources */,
 				5D70F4B0EBB6B4C0139ED190 /* MoodView.swift in Sources */,
 				AADFCC1387BE145385F58F76 /* UIConstants.swift in Sources */,

@@ -7,11 +7,18 @@
 
 import SwiftUI
 
+/// Available tabs in the main view
+enum Tab {
+    case Mood
+    case Draw
+}
+
 struct MainView: View {
-    @State private var viewModel = MainViewModel()
+    /// Currently selected tab
+    @State var tab: Tab = .Draw
 
     var body: some View {
-        TabView(selection: $viewModel.tab) {
+        TabView(selection: $tab) {
             MoodView()
                 .tabItem {
                     Label("Mood", systemImage: MoodIcon)
