@@ -11,10 +11,18 @@ import UIKit
 
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch {
-    var layers: [Layer] = []
+class Sketch: Identifiable, Hashable {
+    @Attribute(.unique)
+    var id: UUID
+    var title: String
+    var layers: [Layer]
 
-    init() {}
+    init(title: String, layers: [Layer] = [], id: UUID = UUID()) {
+        self.title = title
+        self.layers = layers
+        self.id = id
+    }
+
     /// Renders the sketch into a single flattened image by compositing all
     /// layers in order.
     ///
@@ -26,6 +34,7 @@ class Sketch {
     ///   the sketch has no layers.
     var image: UIImage? {
         guard
+            !layers.isEmpty,
             let firstLayer = layers.first,
             let firstData = try? firstLayer.render(),
             let firstImage = UIImage(data: firstData)
@@ -46,10 +55,8 @@ class Sketch {
                 else {
                     continue
                 }
-
                 image.draw(in: CGRect(origin: .zero, size: size))
             }
         }
     }
-
 }

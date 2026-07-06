@@ -25,7 +25,7 @@ struct MainView: View {
                 }
                 .tag(Tab.Mood)
 
-            Text("Draw View")
+            SketchView()
                 .tabItem {
                     Label("Draw", systemImage: "pencil.tip")
                 }
