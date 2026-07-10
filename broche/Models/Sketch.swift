@@ -33,13 +33,29 @@ class Sketch: Identifiable, Hashable {
     /// - Returns: A `UIImage` representing the flattened sketch, or `nil` if
     ///   the sketch has no layers.
     var image: UIImage? {
+        // image renders all layers
+        return renderLayers(indices: 0 ..< layers.count)
+    }
+
+    /// Renders only the selected layers
+    /// indices: Range<Int> - the range of layer indices to render
+    ///
+    /// Layers are drawn sequentially, with each subsequent layer composited on
+    /// top of the previous ones. If the sketch contains no layers, this
+    /// property returns `nil`.
+    ///
+    /// - Returns: A `UIImage` representing the flattened sketch, or `nil` if
+    ///   the sketch has no layers.
+    func renderLayers(indices: Range<Int>) -> UIImage? {
+        let selectedLayers = layers[indices]
+
         guard
-            !layers.isEmpty,
-            let firstLayer = layers.first,
+            !selectedLayers.isEmpty,
+            let firstLayer = selectedLayers.first,
             let firstData = try? firstLayer.render(),
             let firstImage = UIImage(data: firstData)
         else {
-            return nil
+            return UIImage()
         }
 
         let size = firstImage.size
@@ -48,7 +64,7 @@ class Sketch: Identifiable, Hashable {
         return renderer.image { _ in
             firstImage.draw(in: CGRect(origin: .zero, size: size))
 
-            for layer in layers.dropFirst() {
+            for layer in selectedLayers.dropFirst() {
                 guard
                     let data = try? layer.render(),
                     let image = UIImage(data: data)
