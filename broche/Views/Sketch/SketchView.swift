@@ -59,10 +59,13 @@ struct SketchView: View {
                 }
             }
             .navigationTitle("Sketches")
-            .alert("Edit Title", isPresented: Binding(
-                get: { editingSketch != nil },
-                set: { if !$0 { resetEditTitle() } }
-            )) {
+            .alert(
+                "Edit Title",
+                isPresented: Binding(
+                    get: { editingSketch != nil },
+                    set: { if !$0 { resetEditTitle() } }
+                )
+            ) {
                 TextField("Title", text: $editedTitle)
                 Button("Cancel", role: .cancel) {
                     resetEditTitle()
@@ -90,7 +93,7 @@ struct SketchView: View {
             }
         } detail: {
             if let id = selectedId {
-                SketchDrawView(id: id)
+                SketchDetailView(id: id)
             } else {
                 ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }
