@@ -13,7 +13,7 @@ import SwiftUI
 struct DrawingCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
     @Binding var showToolPicker: Bool
-    // drawing change event callaback
+    /// drawing change event callaback
     let onDrawingChanged: (PKDrawing) -> Void
 
     func makeUIView(context: Context) -> PKCanvasView {
@@ -51,7 +51,7 @@ struct DrawingCanvasView: UIViewRepresentable {
         Coordinator(self)
     }
 
-    // captures view events and forwards them upstream to SwiftUI
+    /// captures view events and forwards them upstream to SwiftUI
     class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: DrawingCanvasView
         let toolPicker = PKToolPicker()
@@ -79,28 +79,33 @@ struct SketchDetailView: View {
         )
         let sketch = try? modelContext.fetch(descriptor).first
 
-        ZStack {
-            // white drawing background
-            Color.white
+        GeometryReader { proxy in
+            ZStack {
+                // white drawing background
+                Color.white
 
-            if let sketch = sketch {
-                if sketch.layers.count > 1 {
-                    let backgroundImage = sketch.renderLayers(indices: 0..<sketch.layers.count - 1) ?? UIImage()
+                if let sketch = sketch {
+                    if sketch.layers.count > 1 {
+                        let backgroundImage =
+                            sketch.renderLayers(indices: 0..<sketch.layers.count - 1) ?? UIImage()
 
-                    ZStack {
-                        Image(uiImage: backgroundImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        ZStack {
+                            Image(uiImage: backgroundImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                        renderLayer(sketch.layers[sketch.layers.count - 1])
+                            renderLayer(sketch.layers[sketch.layers.count - 1])
+                        }
+                    } else {
+                        renderLayer(sketch.layers[0])
                     }
                 } else {
-                    renderLayer(sketch.layers[0])
+                    Text("Sketch not found")
                 }
-            } else {
-                Text("Sketch not found")
             }
+            // redraw view on screen resize
+            .id(proxy.size)
         }
     }
 
@@ -112,13 +117,14 @@ struct SketchDetailView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             case .drawing(let drawing):
-                DrawingCanvasView(drawing: .constant(drawing), showToolPicker: $showToolPicker, onDrawingChanged: { _ in })
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                DrawingCanvasView(
+                    drawing: .constant(drawing), showToolPicker: $showToolPicker,
+                    onDrawingChanged: { _ in })
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
