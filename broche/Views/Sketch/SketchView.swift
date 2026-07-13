@@ -64,11 +64,11 @@ struct SketchView: View {
             }
         } detail: {
             if let id = selectedId {
-                Text("Sketch: \(id.storeIdentifier ?? "")")
+                SketchDrawView(id: id)
             } else {
                 ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }
-        }
+        }   
     }
 }
 
