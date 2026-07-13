@@ -11,7 +11,7 @@ import SwiftUI
 struct SketchView: View {
     @Environment(\.modelContext) var modelContext
     @Query private var sketches: [Sketch]
-    @State private var selectedId: UUID?
+    @State private var selectedId: Sketch.ID?
 
     var body: some View {
         NavigationSplitView {
@@ -64,7 +64,7 @@ struct SketchView: View {
             }
         } detail: {
             if let id = selectedId {
-                Text("Sketch: \(id)")
+                Text("Sketch: \(id.storeIdentifier ?? "")")
             } else {
                 ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }

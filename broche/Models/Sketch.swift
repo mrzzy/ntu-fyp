@@ -11,16 +11,13 @@ import UIKit
 
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch: Identifiable, Hashable {
-    @Attribute(.unique)
-    var id: UUID
+class Sketch {
     var title: String
     var layers: [Layer]
 
     init(title: String, layers: [Layer] = [], id: UUID = UUID()) {
         self.title = title
         self.layers = layers
-        self.id = id
     }
 
     /// Renders the sketch into a single flattened image by compositing all
