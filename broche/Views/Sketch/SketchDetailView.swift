@@ -72,38 +72,41 @@ struct SketchDetailView: View {
     @State private var showToolPicker: Bool = true
 
     var body: some View {
-        let descriptor = FetchDescriptor<Sketch>(
-            predicate: #Predicate { $0.id == id }
-        )
-        let sketch = try? modelContext.fetch(descriptor).first
+        // fetch sketch by id to render
+        let sketch = try? modelContext.fetch(
+            FetchDescriptor<Sketch>(
+                predicate: #Predicate { $0.id == id }
+            )
+        ).first
 
-        GeometryReader { proxy in
-            ZStack {
-                // white drawing background
-                Color.white
+        if let sketch = sketch {
+            let nLayers = sketch.layers.count
+            // composite all layers except last layer in 1 image
+            let backgroundLayers =
+                if nLayers > 1 {
+                    sketch.renderLayers(indices: 0..<sketch.layers.count - 1)
+                        ?? UIImage()
+                } else { UIImage() }
 
-                if let sketch = sketch {
-                    if sketch.layers.count > 1 {
-                        let backgroundImage =
-                            sketch.renderLayers(indices: 0..<sketch.layers.count - 1) ?? UIImage()
+            GeometryReader { proxy in
+                ZStack {
+                    // white drawing background
+                    Color.white
 
-                        ZStack {
-                            Image(uiImage: backgroundImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // render all layers except final layer as an image
+                    Image(uiImage: backgroundLayers)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                            renderLayer(sketch, layer: sketch.layers.count - 1)
-                        }
-                    } else {
-                        renderLayer(sketch, layer: 0)
-                    }
-                } else {
-                    Text("Sketch not found")
+                    // render final layer
+                    renderLayer(sketch, layer: sketch.layers.count - 1)
                 }
+                // redraw view on screen resize
+                .id(proxy.size)
             }
-            // redraw view on screen resize
-            .id(proxy.size)
+        } else {
+            Text("Sketch not found")
         }
     }
 
