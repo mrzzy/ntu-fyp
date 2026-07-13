@@ -12,6 +12,8 @@ struct SketchView: View {
     @Environment(\.modelContext) var modelContext
     @Query private var sketches: [Sketch]
     @State private var selectedId: Sketch.ID?
+    @State private var editingSketch: Sketch?
+    @State private var editedTitle: String = ""
 
     var body: some View {
         NavigationSplitView {
@@ -36,8 +38,8 @@ struct SketchView: View {
                     sketch.id == selectedId ? Color.accentColor.opacity(0.1) : Color.clear
                 )
                 .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                // swipe to delete sketch
                 .swipeActions(edge: .trailing) {
+                    // delete (presented last)
                     Button(role: .destructive) {
                         modelContext.delete(sketch)
                         if selectedId == sketch.id {
@@ -46,9 +48,32 @@ struct SketchView: View {
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
+                    // rename title
+                    Button {
+                        editingSketch = sketch
+                        editedTitle = sketch.title
+                    } label: {
+                        Label("Rename", systemImage: "pencil")
+                    }
+                    .tint(.blue)
                 }
             }
             .navigationTitle("Sketches")
+            .alert("Edit Title", isPresented: Binding(
+                get: { editingSketch != nil },
+                set: { if !$0 { resetEditTitle() } }
+            )) {
+                TextField("Title", text: $editedTitle)
+                Button("Cancel", role: .cancel) {
+                    resetEditTitle()
+                }
+                Button("Save") {
+                    if let sketch = editingSketch {
+                        sketch.title = editedTitle
+                    }
+                    resetEditTitle()
+                }
+            }
             // '+' button to add new sketch
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -68,7 +93,12 @@ struct SketchView: View {
             } else {
                 ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }
-        }   
+        }
+    }
+
+    func resetEditTitle() {
+        editedTitle = ""
+        editingSketch = nil
     }
 }
 
