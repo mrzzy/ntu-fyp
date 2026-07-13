@@ -11,10 +11,8 @@ import SwiftUI
 
 /// PencilKit canvas view for drawing layers
 struct DrawingCanvasView: UIViewRepresentable {
-    @Binding var drawing: PKDrawing
+    @State var drawing: PKDrawing
     @Binding var showToolPicker: Bool
-    /// drawing change event callaback
-    let onDrawingChanged: (PKDrawing) -> Void
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
@@ -61,8 +59,8 @@ struct DrawingCanvasView: UIViewRepresentable {
             super.init()
         }
 
-        func canvasViewDidEndDrawing(_ canvasView: PKCanvasView) {
-            parent.onDrawingChanged(canvasView.drawing)
+        func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+            parent.drawing = canvasView.drawing
         }
     }
 }
@@ -95,10 +93,10 @@ struct SketchDetailView: View {
                                 .scaledToFit()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                            renderLayer(sketch.layers[sketch.layers.count - 1])
+                            renderLayer(sketch, layer: sketch.layers.count - 1)
                         }
                     } else {
-                        renderLayer(sketch.layers[0])
+                        renderLayer(sketch, layer: 0)
                     }
                 } else {
                     Text("Sketch not found")
@@ -109,9 +107,9 @@ struct SketchDetailView: View {
         }
     }
 
-    private func renderLayer(_ layer: Layer) -> some View {
+    private func renderLayer(_ sketch: Sketch, layer: Int) -> some View {
         Group {
-            switch layer {
+            switch sketch.layers[layer] {
             case .image(let data):
                 if let image = UIImage(data: data) {
                     Image(uiImage: image)
@@ -120,8 +118,8 @@ struct SketchDetailView: View {
                 }
             case .drawing(let drawing):
                 DrawingCanvasView(
-                    drawing: .constant(drawing), showToolPicker: $showToolPicker,
-                    onDrawingChanged: { _ in })
+                    drawing: drawing, showToolPicker: $showToolPicker
+                )
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
