@@ -88,22 +88,18 @@ struct SketchDetailView: View {
                         ?? UIImage()
                 } else { UIImage() }
 
-            GeometryReader { proxy in
-                ZStack {
-                    // white drawing background
-                    Color.white
+            ZStack {
+                // white drawing background
+                Color.white
 
-                    // render all layers except final layer as an image
-                    Image(uiImage: backgroundLayers)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // render all layers except final layer as an image
+                Image(uiImage: backgroundLayers)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // render final layer
-                    renderLayer(sketch, layer: sketch.layers.count - 1)
-                }
-                // redraw view on screen resize
-                .id(proxy.size)
+                // render final layer
+                renderLayer(sketch, layer: sketch.layers.count - 1)
             }
         } else {
             Text("Sketch not found")
@@ -120,9 +116,13 @@ struct SketchDetailView: View {
                         .scaledToFit()
                 }
             case .drawing(let drawing):
-                DrawingCanvasView(
-                    drawing: drawing, showToolPicker: $showToolPicker
-                )
+                GeometryReader { proxy in
+                    DrawingCanvasView(
+                        drawing: drawing, showToolPicker: $showToolPicker
+                    )
+                    // redraw view on screen resize
+                    .id(proxy.size)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
