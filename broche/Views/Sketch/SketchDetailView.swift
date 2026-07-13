@@ -11,8 +11,8 @@ import SwiftUI
 
 /// PencilKit canvas view for drawing layers
 struct DrawingCanvasView: UIViewRepresentable {
-    @State var drawing: PKDrawing
-    @Binding var showToolPicker: Bool
+    @Binding var drawing: PKDrawing
+    let showToolPicker: Bool
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
@@ -118,10 +118,25 @@ struct SketchDetailView: View {
             case .drawing(let drawing):
                 GeometryReader { proxy in
                     DrawingCanvasView(
-                        drawing: drawing, showToolPicker: $showToolPicker
+                        drawing:
+                            Binding(
+                                get: { drawing },
+                                set: { newDrawing in
+                                    // sync drawing changes back to model
+                                    sketch.layers[layer] = .drawing(drawing: newDrawing)
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        print("Warning: Failed to save drawing changes")
+                                    }
+                                }
+                            ),
+                        showToolPicker: showToolPicker
                     )
-                    // redraw view on screen resize
+                    // force redraw view on screen resize
                     .id(proxy.size)
+                    // force redraw view on sketch change
+                    .id(sketch.id)
                 }
             }
         }
