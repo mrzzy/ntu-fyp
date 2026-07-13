@@ -78,7 +78,8 @@ struct SketchView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        let newSketch = Sketch(title: "Untitled")
+                        // new sketch
+                        let newSketch = Sketch()
                         modelContext.insert(newSketch)
 
                         selectedId = newSketch.id

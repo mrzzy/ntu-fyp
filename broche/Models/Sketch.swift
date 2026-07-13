@@ -8,6 +8,13 @@
 import Foundation
 import SwiftData
 import UIKit
+import PencilKit
+
+
+/// Defines a set of default layers a sketch starts with.
+let SketchDefaultLayers: [Layer] = [ 
+    .drawing(drawing: PKDrawing())
+];
 
 /// Defines a sketch composed of a series of layers
 @Model
@@ -15,7 +22,7 @@ class Sketch {
     var title: String
     var layers: [Layer]
 
-    init(title: String, layers: [Layer] = [], id: UUID = UUID()) {
+    init(title: String = "Untitled", layers: [Layer] = SketchDefaultLayers, id: UUID = UUID()) {
         self.title = title
         self.layers = layers
     }
@@ -31,7 +38,7 @@ class Sketch {
     ///   the sketch has no layers.
     var image: UIImage? {
         // image renders all layers
-        return renderLayers(indices: 0 ..< layers.count)
+        return renderLayers(indices: 0..<layers.count)
     }
 
     /// Renders only the selected layers
