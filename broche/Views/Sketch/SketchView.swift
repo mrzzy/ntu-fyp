@@ -81,8 +81,8 @@ struct SketchView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        // new sketch
-                        let newSketch = Sketch()
+                        // initialise new sketch based on viewport size
+                        let newSketch = Sketch(size: viewportSize ?? CGSize(width: 512, height: 512))
                         modelContext.insert(newSketch)
 
                         selectedId = newSketch.id
@@ -93,7 +93,12 @@ struct SketchView: View {
             }
         } detail: {
             if let id = selectedId {
-                SketchDetailView(id: id)
+                GeometryReader { proxy in
+                    SketchDetailView(id: id)
+                        .onChange(of: proxy.size) {
+                            viewportSize = proxy.size
+                        }
+                }
             } else {
                 ContentUnavailableView("Create or Select a Sketch", systemImage: "pencil.tip")
             }

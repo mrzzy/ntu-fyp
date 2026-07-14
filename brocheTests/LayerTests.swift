@@ -77,11 +77,11 @@ extension LayerTests {
 
 @Suite("Layer-Sketch integration tests")
 struct LayerSketchTests {
-    @Test("Sketch with no layers returns nil image")
+    @Test("Sketch with no layers returns empty image")
     func sketchWithNoLayersReturnsNilImage() {
         let sketch = Sketch(title: "Empty", layers: [])
 
-        #expect(sketch.image == nil, "Empty sketch should return nil image")
+        #expect(sketch.image.size.width == 0, "Empty sketch should return empty image")
     }
 
     @Test("Sketch with single drawing layer renders image")
@@ -89,7 +89,7 @@ struct LayerSketchTests {
         let drawing = PKDrawing()
         let sketch = Sketch(title: "Single Drawing", layers: [.drawing(drawing: drawing)])
 
-        #expect(sketch.image == nil, "Empty drawing should render nil")
+        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
     }
 
     @Test("Sketch with single image layer renders image")
@@ -98,7 +98,7 @@ struct LayerSketchTests {
         let sketch = Sketch(title: "Single Image", layers: [.image(data: imageData)])
 
         let image = sketch.image
-        #expect(image != nil, "Sketch with image should render")
+        #expect(image.size.width > 0, "Sketch with image should render")
     }
 
     @Test("Sketch composites multiple layers correctly")
@@ -116,8 +116,8 @@ struct LayerSketchTests {
             ]
         )
 
-        let image = try #require(sketch.image, "Multiple layers should composite")
-        #expect(image.size.width > 0 && image.size.height > 0)
+        let image = sketch.image
+        #expect(image.size.width > 0 && image.size.height > 0, "Multiple layers should composite")
     }
 
     @Test("Sketch skips layers that fail to render")
@@ -135,10 +135,10 @@ struct LayerSketchTests {
         )
 
         let image = sketch.image
-        #expect(image != nil, "Should render despite invalid layer")
+        #expect(image.size.width > 0, "Should render despite invalid layer")
     }
 
-    @Test("Sketch with only invalid layers returns nil")
+    @Test("Sketch with only invalid layers returns empty image")
     func sketchWithOnlyInvalidLayersReturnsNil() {
         let sketch = Sketch(
             title: "Invalid Only",
@@ -148,7 +148,7 @@ struct LayerSketchTests {
             ]
         )
 
-        #expect(sketch.image == nil, "Sketch with only invalid layers should return nil")
+        #expect(sketch.image.size.width == 0, "Sketch with only invalid layers should return empty image")
     }
 
     @Test("Sketch composites in layer order")
@@ -169,7 +169,7 @@ struct LayerSketchTests {
         )
 
         let image = sketch.image
-        #expect(image != nil, "Should composite layers in order")
+        #expect(image.size.width > 0, "Should composite layers in order")
     }
 
     @Test("Sketch handles complex drawing with multiple strokes")
@@ -178,7 +178,7 @@ struct LayerSketchTests {
 
         let sketch = Sketch(title: "Complex Drawing", layers: [.drawing(drawing: drawing)])
 
-        #expect(sketch.image == nil, "Empty drawing should render nil")
+        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
     }
 }
 

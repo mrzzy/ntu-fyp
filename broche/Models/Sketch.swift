@@ -6,37 +6,40 @@
 //
 
 import Foundation
+import PencilKit
 import SwiftData
 import UIKit
-import PencilKit
-
 
 /// Defines a set of default layers a sketch starts with.
-let SketchDefaultLayers: [Layer] = [ 
+let SketchDefaultLayers: [Layer] = [
     .drawing(drawing: PKDrawing())
-];
+]
 
 /// Defines a sketch composed of a series of layers
 @Model
 class Sketch {
     var title: String
     var layers: [Layer]
+    var size: CGSize
 
-    init(title: String = "Untitled", layers: [Layer] = SketchDefaultLayers, id: UUID = UUID()) {
+    init(
+        title: String = "Untitled", layers: [Layer] = SketchDefaultLayers,
+        size: CGSize = CGSize(width: 512, height: 512)
+    ) {
         self.title = title
         self.layers = layers
+        self.size = size
     }
 
     /// Renders the sketch into a single flattened image by compositing all
     /// layers in order.
     ///
     /// Layers are drawn sequentially, with each subsequent layer composited on
-    /// top of the previous ones. If the sketch contains no layers, this
-    /// property returns `nil`.
+    /// top of the previous ones. If the sketch contains no layers, an entirely transparent image is returned.
     ///
-    /// - Returns: A `UIImage` representing the flattened sketch, or `nil` if
+    /// - Returns: A `UIImage` representing the flattened sketch or an empty image if
     ///   the sketch has no layers.
-    var image: UIImage? {
+    var image: UIImage {
         // image renders all layers
         return renderLayers(indices: 0..<layers.count)
     }
@@ -45,12 +48,10 @@ class Sketch {
     /// indices: Range<Int> - the range of layer indices to render
     ///
     /// Layers are drawn sequentially, with each subsequent layer composited on
-    /// top of the previous ones. If the sketch contains no layers, this
-    /// property returns `nil`.
+    /// top of the previous ones. If the sketch contains no layers an empty image is returned.
     ///
-    /// - Returns: A `UIImage` representing the flattened sketch, or `nil` if
-    ///   the sketch has no layers.
-    func renderLayers(indices: Range<Int>) -> UIImage? {
+    /// - Returns: A `UIImage` representing the flattened sketch or an empty image if the sketch has no layers.
+    func renderLayers(indices: Range<Int>) -> UIImage {
         let selectedLayers = layers[indices]
 
         guard
