@@ -40,15 +40,20 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.topAnchor),
+                equalTo: scrollView.contentLayoutGuide.topAnchor
+            ),
             hostingController.view.bottomAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor
+            ),
             hostingController.view.leadingAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+                equalTo: scrollView.contentLayoutGuide.leadingAnchor
+            ),
             hostingController.view.trailingAnchor.constraint(
-                equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+                equalTo: scrollView.contentLayoutGuide.trailingAnchor
+            ),
             hostingController.view.widthAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.widthAnchor),
+                equalTo: scrollView.frameLayoutGuide.widthAnchor
+            ),
         ])
 
         DispatchQueue.main.async {
@@ -88,6 +93,9 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         }
 
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            let offsetX = max((scrollView.bounds.width - scrollView.contentSize.width) * 0.5, 0)
+            let offsetY = max((scrollView.bounds.height - scrollView.contentSize.height) * 0.5, 0)
+            scrollView.contentInset = UIEdgeInsets(top: offsetY, left: offsetX, bottom: 0, right: 0)
             parent.scale = scrollView.zoomScale
         }
 
@@ -106,4 +114,3 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         }
     }
 }
-
