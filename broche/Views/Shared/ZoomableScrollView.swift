@@ -6,20 +6,13 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct ZoomableScrollView<Content: View>: UIViewRepresentable {
-    let content: Content
-    @Binding var scale: CGFloat
-    @Binding var offset: CGPoint
-
-    init(
-        scale: Binding<CGFloat> = .constant(1.0), offset: Binding<CGPoint> = .constant(.zero),
-        @ViewBuilder content: () -> Content
-    ) {
-        self.content = content()
-        _scale = scale
-        _offset = offset
-    }
+    @ViewBuilder let content: (_ rotation: Angle) -> Content
+    @State private var scale: CGFloat = 1.0
+    @State private var offset: CGPoint = .zero
+    @State private var rotation: Angle = .zero
 
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
@@ -31,7 +24,9 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         scrollView.showsHorizontalScrollIndicator = true
         scrollView.delegate = context.coordinator
 
-        let hostingController = UIHostingController(rootView: content)
+        context.coordinator.setupRotationGesture(scrollView)
+
+        let hostingController = UIHostingController(rootView: content(rotation))
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -65,7 +60,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIScrollView, context: Context) {
-        context.coordinator.hostingController?.rootView = content
+        context.coordinator.hostingController?.rootView = content(rotation)
 
         if uiView.zoomScale != scale {
             uiView.zoomScale = scale
@@ -79,9 +74,10 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         Coordinator(self)
     }
 
-    class Coordinator: NSObject, UIScrollViewDelegate {
+    class Coordinator: NSObject, UIScrollViewDelegate, UIGestureRecognizerDelegate {
         var parent: ZoomableScrollView
         var hostingController: UIHostingController<Content>?
+        var rotationGesture: UIRotationGestureRecognizer?
 
         init(_ parent: ZoomableScrollView) {
             self.parent = parent
@@ -111,6 +107,31 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
             let x = center.x - (width / 2.0)
             let y = center.y - (height / 2.0)
             return CGRect(x: x, y: y, width: width, height: height)
+        }
+
+        /// rotation gesture
+        /// rotation is not performed by ZoomableScrollView, but instead rotation angle is passed upstream
+        /// via rotation binding
+        func setupRotationGesture(_ scrollView: UIScrollView) {
+            rotationGesture = UIRotationGestureRecognizer(
+                target: self, action: #selector(handleRotation(_:))
+            )
+            rotationGesture?.delegate = self
+            scrollView.addGestureRecognizer(rotationGesture!)
+        }
+
+        func gestureRecognizer(
+            _: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer
+        ) -> Bool {
+            return true
+        }
+
+        @objc func handleRotation(_ gesture: UIRotationGestureRecognizer) {
+            if gesture.state == .changed {
+                let currentRotation = parent.rotation.radians
+                parent.rotation = .radians(currentRotation + gesture.rotation)
+                gesture.rotation = 0
+            }
         }
     }
 }

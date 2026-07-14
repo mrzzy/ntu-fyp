@@ -72,8 +72,6 @@ struct SketchDetailView: View {
     let id: Sketch.ID
     @Environment(\.modelContext) private var modelContext
     @State private var showToolPicker: Bool = true
-    @State private var scale: CGFloat = 1.0
-    @State private var offset: CGPoint = .zero
 
     var body: some View {
         // fetch sketch by id to render
@@ -92,7 +90,8 @@ struct SketchDetailView: View {
                 } else { UIImage() }
 
             // render sketch
-            ZoomableScrollView(scale: $scale, offset: $offset) {
+            ZoomableScrollView {
+                rotation in
                 ZStack {
                     // white drawing background
                     Color.white
@@ -106,9 +105,13 @@ struct SketchDetailView: View {
                     // render final layer
                     renderLayer(sketch, layer: sketch.layers.count - 1)
                 }
+                // rotate sketch as per ZoomableScrollView instructions
+                .rotationEffect(rotation)
                 // bound sketch by preset sketch size
                 .frame(width: sketch.size.width, height: sketch.size.height)
             }
+            // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
+            .id(id)
         } else {
             Text("Sketch not found")
         }
