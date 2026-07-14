@@ -20,15 +20,11 @@ let SketchDefaultLayers: [Layer] = [
 class Sketch {
     var title: String
     var layers: [Layer]
-    var width: Double
-    var height: Double
+    private(set) var width: Double
+    private(set) var height: Double
     var size: CGSize {
         get {
             CGSize(width: width, height: height)
-        }
-        set {
-            width = newValue.width
-            height = newValue.height
         }
     }
 
