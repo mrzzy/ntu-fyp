@@ -20,12 +20,15 @@ let SketchDefaultLayers: [Layer] = [
 class Sketch {
     var title: String
     var layers: [Layer]
+    // dimensions of the sketch
     private(set) var width: Double
     private(set) var height: Double
+    // cached compsited image version of the sketch
+    @Transient private var _cachedImage: UIImage = UIImage()
+    @Transient private var cacheImageTTL: Date = Date.distantPast
+
     var size: CGSize {
-        get {
-            CGSize(width: width, height: height)
-        }
+        CGSize(width: width, height: height)
     }
 
     init(
@@ -49,6 +52,24 @@ class Sketch {
     var image: UIImage {
         // image renders all layers
         return renderLayers(indices: 0..<layers.count)
+    }
+
+    /// Returns a cached image of the sketch, rendering it if the cache has expired.
+    ///
+    /// The cached image is valid for 5 seconds after the last render. If the cache
+    /// has expired, the sketch is re-rendered and the cache is updated.
+    var cachedImage: UIImage {
+        let now = Date()
+        // return cached image if still fresh
+        if cacheImageTTL >= now {
+            return _cachedImage
+        }
+
+        // composite all layers into a single image and cache it
+        let renderedImage = renderLayers(indices: 0..<layers.count)
+        _cachedImage = renderedImage
+        cacheImageTTL = now.addingTimeInterval(5)
+        return renderedImage
     }
 
     /// Renders only the selected layers
