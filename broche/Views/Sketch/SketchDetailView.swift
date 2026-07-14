@@ -89,6 +89,7 @@ struct SketchDetailView: View {
                     sketch.renderLayers(indices: 0..<sketch.layers.count - 1)
                 } else { UIImage() }
 
+            // render sketch
             ZStack {
                 // white drawing background
                 Color.white
@@ -102,6 +103,8 @@ struct SketchDetailView: View {
                 // render final layer
                 renderLayer(sketch, layer: sketch.layers.count - 1)
             }
+            // bound sketch by preset sketch size
+            .frame(width: sketch.size.width, height: sketch.size.height)
         } else {
             Text("Sketch not found")
         }
