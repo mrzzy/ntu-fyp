@@ -75,8 +75,8 @@ extension LayerTests {
     }
 }
 
-@Suite("Sketch image generation tests")
-struct SketchTests {
+@Suite("Layer-Sketch integration tests")
+struct LayerSketchTests {
     @Test("Sketch with no layers returns nil image")
     func sketchWithNoLayersReturnsNilImage() {
         let sketch = Sketch(title: "Empty", layers: [])
@@ -182,7 +182,7 @@ struct SketchTests {
     }
 }
 
-extension SketchTests {
+extension LayerSketchTests {
     private func createTestPNGImage(size: CGSize, color: UIColor = .white) throws -> Data {
         let renderer = UIGraphicsImageRenderer(size: size)
         let image = renderer.image { context in
