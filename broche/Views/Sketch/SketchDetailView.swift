@@ -72,6 +72,8 @@ struct SketchDetailView: View {
     let id: Sketch.ID
     @Environment(\.modelContext) private var modelContext
     @State private var showToolPicker: Bool = true
+    @State private var scale: CGFloat = 1.0
+    @State private var offset: CGPoint = .zero
 
     var body: some View {
         // fetch sketch by id to render
@@ -90,21 +92,23 @@ struct SketchDetailView: View {
                 } else { UIImage() }
 
             // render sketch
-            ZStack {
-                // white drawing background
-                Color.white
+            ZoomableScrollView(scale: $scale, offset: $offset) {
+                ZStack {
+                    // white drawing background
+                    Color.white
 
-                // render all layers except final layer as an image
-                Image(uiImage: backgroundLayers)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // render all layers except final layer as an image
+                    Image(uiImage: backgroundLayers)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                // render final layer
-                renderLayer(sketch, layer: sketch.layers.count - 1)
+                    // render final layer
+                    renderLayer(sketch, layer: sketch.layers.count - 1)
+                }
+                // bound sketch by preset sketch size
+                .frame(width: sketch.size.width, height: sketch.size.height)
             }
-            // bound sketch by preset sketch size
-            .frame(width: sketch.size.width, height: sketch.size.height)
         } else {
             Text("Sketch not found")
         }
