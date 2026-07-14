@@ -20,7 +20,17 @@ let SketchDefaultLayers: [Layer] = [
 class Sketch {
     var title: String
     var layers: [Layer]
-    var size: CGSize
+    var width: Double
+    var height: Double
+    var size: CGSize {
+        get {
+            CGSize(width: width, height: height)
+        }
+        set {
+            width = newValue.width
+            height = newValue.height
+        }
+    }
 
     init(
         title: String = "Untitled", layers: [Layer] = SketchDefaultLayers,
@@ -28,7 +38,8 @@ class Sketch {
     ) {
         self.title = title
         self.layers = layers
-        self.size = size
+        width = size.width
+        height = size.height
     }
 
     /// Renders the sketch into a single flattened image by compositing all

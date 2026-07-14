@@ -14,22 +14,17 @@ struct SketchView: View {
     @State private var selectedId: Sketch.ID?
     @State private var editingSketch: Sketch?
     @State private var editedTitle: String = ""
+    @State private var viewportSize: CGSize?
 
     var body: some View {
         NavigationSplitView {
             List(sketches, selection: $selectedId) { sketch in
                 HStack {
-                    if let image = sketch.image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 60, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.secondary.opacity(0.3))
-                            .frame(width: 60, height: 60)
-                    }
+                    Image(uiImage: sketch.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 60, height: 60)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     Text(sketch.title)
                     Spacer()
                 }

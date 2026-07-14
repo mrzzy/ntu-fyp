@@ -13,9 +13,11 @@ import SwiftUI
 struct DrawingCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
     let showToolPicker: Bool
+    let size: CGSize
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
+        canvasView.contentSize = size
         canvasView.drawing = drawing
         canvasView.delegate = context.coordinator
         canvasView.backgroundColor = .clear
@@ -85,7 +87,6 @@ struct SketchDetailView: View {
             let backgroundLayers =
                 if nLayers > 1 {
                     sketch.renderLayers(indices: 0..<sketch.layers.count - 1)
-                        ?? UIImage()
                 } else { UIImage() }
 
             ZStack {
@@ -131,7 +132,8 @@ struct SketchDetailView: View {
                                     }
                                 }
                             ),
-                        showToolPicker: showToolPicker
+                        showToolPicker: showToolPicker,
+                        size: sketch.size
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)
