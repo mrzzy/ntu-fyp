@@ -9,10 +9,10 @@ import SwiftUI
 import UIKit
 
 struct ZoomableScrollView<Content: View>: UIViewRepresentable {
+    @Binding var scale: Double
+    @Binding var offset: CGPoint
+    @Binding var rotation: Angle
     @ViewBuilder let content: (_ rotation: Angle) -> Content
-    @State private var scale: CGFloat = 1.0
-    @State private var offset: CGPoint = .zero
-    @State private var rotation: Angle = .zero
 
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()

@@ -15,24 +15,20 @@ struct ChatView: View {
     let repo: Repository = .shared
 
     var body: some View {
-        Group {
-            if let id = sketchId {
-                NavigationSplitView {
-                    ChatDetailView(sketchId: $sketchId)
-                        .navigationTitle("AI Assistant")
-                } detail: {
-                    Group {
-                        SketchDetailView(sketch: repo.fetchSketch(id: id), isEnabled: false)
-                    }
-                }
-            } else {
-                ContentUnavailableView(
-                    "Pick a sketch to start asking AI for help.",
-                    systemImage: ChatIcon
-                )
+        if let id = sketchId {
+            NavigationSplitView {
+                ChatDetailView(sketchId: $sketchId)
+                    .navigationTitle("AI Assistant")
+            } detail: {
+                SketchDetailView(sketch: repo.fetchSketch(id: id), isEnabled: false)
+                    .navigationTitle("AI")
             }
+        } else {
+            ContentUnavailableView(
+                "Pick a sketch to start asking AI for help.",
+                systemImage: ChatIcon
+            )
         }
-        .navigationTitle("AI")
     }
 }
 
@@ -98,7 +94,7 @@ private struct ChatDetailView: View {
                 avatarURL: nil,
                 isCurrentUser: true
             ),
-            createdAt: Date().addingTimeInterval(-300), // 5 minutes ago
+            createdAt: Date().addingTimeInterval(-300),  // 5 minutes ago
             text: "Hello! Can you help me with my sketch?"
         )
 
@@ -111,9 +107,9 @@ private struct ChatDetailView: View {
                 avatarURL: nil,
                 isCurrentUser: false
             ),
-            createdAt: Date().addingTimeInterval(-290), // 4:50 minutes ago
+            createdAt: Date().addingTimeInterval(-290),  // 4:50 minutes ago
             text:
-            "Of course! I can help you with your sketch. What would you like to work on? I can provide suggestions for improvements, help with composition, or offer creative ideas for your design."
+                "Of course! I can help you with your sketch. What would you like to work on? I can provide suggestions for improvements, help with composition, or offer creative ideas for your design."
         )
 
         // Create user follow-up
@@ -125,9 +121,9 @@ private struct ChatDetailView: View {
                 avatarURL: nil,
                 isCurrentUser: true
             ),
-            createdAt: Date().addingTimeInterval(-180), // 3 minutes ago
+            createdAt: Date().addingTimeInterval(-180),  // 3 minutes ago
             text:
-            "I'd like some suggestions for adding more depth to my landscape sketch. Any ideas?"
+                "I'd like some suggestions for adding more depth to my landscape sketch. Any ideas?"
         )
 
         return [greetingMessage, assistantResponse, followUpMessage]

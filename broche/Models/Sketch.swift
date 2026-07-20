@@ -15,8 +15,19 @@ let SketchDefaultLayers: [Layer] = [
     .drawing(drawing: PKDrawing())
 ]
 
-let SketchDefaultMessages: [Message] = [
-]
+// Zoom
+struct Zoom: Codable {
+    var scale: Double
+    var offsetX: Double
+    var offsetY: Double
+    var rotation: Double
+    init(scale: Double = 1.0, offsetX: Double = 0.0, offsetY: Double = 0.0, rotation: Double = 0.0) {
+        self.scale = scale
+        self.offsetX = offsetX
+        self.offsetY = offsetY
+        self.rotation = rotation
+    }
+}
 
 /// Defines a sketch composed of a series of layers
 @Model
@@ -30,6 +41,9 @@ class Sketch {
     /// AI assistant conversation messages
     @Relationship(deleteRule: .cascade)
     var messages: [Message] = []
+
+    // Zoom view zoom/pan/rotation state
+    var zoom: Zoom = Zoom()
 
     // cached compsited image version of the sketch
     @Transient private var _cachedImage: UIImage = UIImage()

@@ -33,7 +33,20 @@ struct SketchDetailView: View {
                 }
 
             // render sketch
-            ZoomableScrollView {
+            ZoomableScrollView(
+                scale: Binding(
+                    get: { sketch.zoom.scale },
+                    set: { sketch.zoom.scale = $0 }
+                ),
+                offset: Binding(
+                    get: { CGPoint(x: sketch.zoom.offsetX, y: sketch.zoom.offsetY) },
+                    set: { sketch.zoom.offsetX = $0.x; sketch.zoom.offsetY = $0.y }
+                ),
+                rotation: Binding(
+                    get: { .radians(sketch.zoom.rotation) },
+                    set: { sketch.zoom.rotation = $0.radians }
+                )
+            ) {
                 rotation in
                 ZStack {
                     // white drawing background
