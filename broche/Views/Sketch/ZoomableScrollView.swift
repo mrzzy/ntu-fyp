@@ -51,10 +51,8 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
             ),
         ])
 
-        DispatchQueue.main.async {
-            scrollView.zoomScale = scale
-            scrollView.contentOffset = offset
-        }
+        scrollView.zoomScale = scale
+        scrollView.contentOffset = offset
 
         return scrollView
     }

@@ -115,6 +115,19 @@ struct SketchView: View {
                     }
                 }
                 .navigationTitle("Sketch")
+                .toolbar {
+                    if let id = sketchId {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                let sketch = repo.fetchSketch(id: id)
+                                sketch?.zoom = Zoom()
+                            } label: {
+                                Label("Reset Zoom", systemImage: "arrow.counterclockwise")
+                            }
+                            .disabled(sketchId == nil)
+                        }
+                    }
+                }
             }
             .onChange(of: proxy.size) {
                 viewportSize = proxy.size

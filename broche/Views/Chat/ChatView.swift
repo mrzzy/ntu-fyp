@@ -22,6 +22,16 @@ struct ChatView: View {
             } detail: {
                 SketchDetailView(sketch: repo.fetchSketch(id: id), isEnabled: false)
                     .navigationTitle("AI")
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                let sketch = repo.fetchSketch(id: id)
+                                sketch?.zoom = Zoom()
+                            } label: {
+                                Label("Reset Zoom", systemImage: "arrow.counterclockwise")
+                            }
+                        }
+                    }
             }
         } else {
             ContentUnavailableView(
