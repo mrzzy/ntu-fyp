@@ -99,7 +99,7 @@ class Sketch {
             return UIImage()
         }
 
-        let size = firstImage.size
+        let size = CGSize(width: width, height: height)
         let renderer = UIGraphicsImageRenderer(size: size)
 
         return renderer.image { _ in

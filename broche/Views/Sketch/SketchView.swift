@@ -26,7 +26,7 @@ struct SketchView: View {
                     HStack {
                         Image(uiImage: sketch.cachedImage)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: 60, height: 60)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                             // white background so that sketch is visible
