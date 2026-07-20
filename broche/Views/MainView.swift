@@ -11,11 +11,14 @@ import SwiftUI
 enum Tab {
     case Mood
     case Draw
+    case Chat
 }
 
 struct MainView: View {
     /// Currently selected tab
     @State var tab: Tab = .Draw
+    /// currently selected sketch id
+    @State private var sketchId: Sketch.ID?
 
     var body: some View {
         TabView(selection: $tab) {
@@ -25,11 +28,17 @@ struct MainView: View {
                 }
                 .tag(Tab.Mood)
 
-            SketchView()
+            SketchView(sketchId: $sketchId)
                 .tabItem {
-                    Label("Draw", systemImage: "pencil.tip")
+                    Label("Sketch", systemImage: SketchIcon)
                 }
                 .tag(Tab.Draw)
+
+            ChatView(sketchId: $sketchId)
+                .tabItem {
+                    Label("AI", systemImage: ChatIcon)
+                }
+                .tag(Tab.Chat)
         }
     }
 }

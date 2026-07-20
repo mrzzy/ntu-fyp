@@ -15,6 +15,9 @@ let SketchDefaultLayers: [Layer] = [
     .drawing(drawing: PKDrawing())
 ]
 
+let SketchDefaultMessages: [Message] = [
+]
+
 /// Defines a sketch composed of a series of layers
 @Model
 class Sketch {
@@ -23,6 +26,11 @@ class Sketch {
     // dimensions of the sketch
     private(set) var width: Double
     private(set) var height: Double
+
+    /// AI assistant conversation messages
+    @Relationship(deleteRule: .cascade)
+    var messages: [Message] = []
+
     // cached compsited image version of the sketch
     @Transient private var _cachedImage: UIImage = UIImage()
     @Transient private var cacheImageTTL: Date = Date.distantPast

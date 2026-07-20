@@ -9,9 +9,11 @@ import SwiftData
 import SwiftUI
 
 struct SketchView: View {
-    @Environment(\.modelContext) var modelContext
+    /// currently selected sketch id
+    @Binding var sketchId: Sketch.ID?
+
+    let repo: Repository = .shared
     @Query private var sketches: [Sketch]
-    @State private var selectedId: Sketch.ID?
     @State private var editingSketch: Sketch?
     @State private var editedTitle: String = ""
     @State private var viewportSize: CGSize?
@@ -20,27 +22,29 @@ struct SketchView: View {
     var body: some View {
         GeometryReader { proxy in
             NavigationSplitView {
-                List(sketches, selection: $selectedId) { sketch in
+                List(sketches, selection: $sketchId) { sketch in
                     HStack {
                         Image(uiImage: sketch.cachedImage)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 60, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            // white background so that sketch is visible
+                            .background(Color.white)
                         Text(sketch.title)
                         Spacer()
                     }
                     .contentShape(Rectangle())
                     .listRowBackground(
-                        sketch.id == selectedId ? Color.accentColor.opacity(0.1) : Color.clear
+                        sketch.id == sketchId ? Color.accentColor.opacity(0.1) : Color.clear
                     )
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                     .swipeActions(edge: .trailing) {
                         // delete (presented last)
                         Button(role: .destructive) {
-                            modelContext.delete(sketch)
-                            if selectedId == sketch.id {
-                                selectedId = nil
+                            repo.modelContext.delete(sketch)
+                            if sketchId == sketch.id {
+                                sketchId = nil
                             }
                         } label: {
                             Label("Delete", systemImage: "trash")
@@ -55,7 +59,6 @@ struct SketchView: View {
                         .tint(.blue)
                     }
                 }
-                .navigationTitle("Sketches")
                 .alert(
                     "Edit Title",
                     isPresented: Binding(
@@ -84,30 +87,34 @@ struct SketchView: View {
                         }
                         .alert("Choose Sketch Size", isPresented: $showingSizePicker) {
                             Button("Portrait (768×1024)") {
-                                addSketch(size: CGSize(width: 768, height: 1024))
+                                sketchId = repo.addSketch(size: CGSize(width: 768, height: 1024)).id
                             }
                             Button("Landscape (1024×768)") {
-                                addSketch(size: CGSize(width: 1024, height: 768))
+                                sketchId = repo.addSketch(size: CGSize(width: 1024, height: 768)).id
                             }
                             if let viewport = viewportSize {
-                                Button("Viewport Size (\(Int(viewport.width))×\(Int(viewport.height)))") {
-                                    addSketch(size: viewport)
+                                Button(
+                                    "Viewport Size (\(Int(viewport.width))×\(Int(viewport.height)))"
+                                ) {
+                                    sketchId = repo.addSketch(size: viewport).id
                                 }
                             }
-                            Button("Cancel", role: .cancel) { }
+                            Button("Cancel", role: .cancel) {}
                         }
                     }
                 }
+                .navigationTitle("Sketches")
             } detail: {
                 Group {
-                    if let id = selectedId {
-                        SketchDetailView(id: id)
+                    if let id = sketchId {
+                        SketchDetailView(sketch: repo.fetchSketch(id: id))
                     } else {
                         ContentUnavailableView(
-                            "Create or Select a Sketch", systemImage: "pencil.tip"
+                            "Create or Select a Sketch", systemImage: SketchIcon
                         )
                     }
                 }
+                .navigationTitle("Sketch")
             }
             .onChange(of: proxy.size) {
                 viewportSize = proxy.size
@@ -119,16 +126,9 @@ struct SketchView: View {
         editedTitle = ""
         editingSketch = nil
     }
-
-    func addSketch(size: CGSize) {
-        let newSketch = Sketch(size: size)
-        modelContext.insert(newSketch)
-        try! modelContext.save()
-        selectedId = newSketch.id
-    }
 }
 
 #Preview {
-    SketchView()
+    SketchView(sketchId: .constant(nil))
         .modelContainer(for: Sketch.self, inMemory: true)
 }

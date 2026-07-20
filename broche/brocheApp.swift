@@ -14,9 +14,6 @@ struct brocheApp: App {
         WindowGroup {
             MainView()
         }
-        .modelContainer(for: [
-            Mood.self,
-            Sketch.self,
-        ])
+        .modelContainer(Repository.shared.modelContainer)
     }
 }
