@@ -35,10 +35,8 @@ struct MessageTests {
         message.attachments.append(attachment)
 
         // Test conversion
-        let exyteChatMessage = message.toExyteChatMessage(
-            userID: "user-1",
-            userName: "Test User"
-        )
+        let exyteChatMessage = message.toExyteChatMessage()
+
 
         // Verify basic properties
         assert(exyteChatMessage.id == "test-message-1", "Message ID mismatch")
