@@ -5,15 +5,17 @@
 //  Created by Zhu Zhanyan on 2026-07-20.
 //
 
-@testable import broche
 import Foundation
 import Testing
 
-let testModelID = "mlx-community/Qwen3-0.6B-4bit"
+@testable import broche
+
+// use a small model with a tiny memory footprint for testing
+let testModelID = "mlx-community/SmolLM-135M-Instruct-4bit"
 
 @Suite("MLXTextAIModel tests")
+@MainActor
 struct MLXTextAIModelTests {
-
     @Test("Generate throws modelNotLoaded when model is not loaded")
     func generateThrowsModelNotLoadedWhenNotLoaded() async {
         let model = MLXTextAIModel()
@@ -50,7 +52,7 @@ struct MLXTextAIModelTests {
 
         let stream = try await model.generate(
             prompt: "Hello",
-            options: TextGenerationOptions(maxTokens: 16, temperature: 0.5)
+            options: TextGenerationOptions(maxTokens: 16, temperature: 1.0)
         )
 
         var response = ""
@@ -59,23 +61,5 @@ struct MLXTextAIModelTests {
         }
         print(response)
         #expect(!response.isEmpty)
-    }
-
-    @Test("Generate handles empty prompt", .disabled("Requires network download"))
-    func generateHandlesEmptyPrompt() async throws {
-        let model = MLXTextAIModel()
-        try await model.load(modelID: testModelID)
-
-        let stream = try await model.generate(
-            prompt: "",
-            options: TextGenerationOptions()
-        )
-
-        var chunks: [String] = []
-        for try await chunk in stream {
-            chunks.append(chunk)
-        }
-
-        #expect(!chunks.isEmpty)
     }
 }

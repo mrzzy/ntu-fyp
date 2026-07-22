@@ -36,7 +36,7 @@
 			remoteGlobalIDString = 473062D12FD17E5200086379;
 			remoteInfo = broche;
 		};
-		47618D623011BA3B007F4623 /* PBXContainerItemProxy */ = {
+		47E36E223010CC7D00AC348D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 473062CA2FD17E5200086379 /* Project object */;
 			proxyType = 1;
@@ -46,11 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		47E826B5300E3CFD00DB5CE7  /* brocheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		47E826B5300E3CFD00DB5CE7 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		47E826B6300E3CFD00DB5CE7 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		47E826B7300E3CFD00DB5CE7 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
->>>>>>> ab20b6c (build: add mlx-swift-lm as package dependency)
+		47E36E1E3010CC7D00AC348D /* brocheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheIntegrationTests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app/PlugIns/brocheIntegrationTests.xctest"; sourceTree = "<absolute>"; };
+		47E826B5300E3CFD00DB5CE7 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = broche.app; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app"; sourceTree = "<absolute>"; };
+		47E826B6300E3CFD00DB5CE7 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheTests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app/PlugIns/brocheTests.xctest"; sourceTree = "<absolute>"; };
+		47E826B7300E3CFD00DB5CE7 /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheUITests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/brocheUITests-Runner.app/PlugIns/brocheUITests.xctest"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -69,7 +68,7 @@
 			path = brocheUITests;
 			sourceTree = "<group>";
 		};
-		47618D5F3011BA3B007F4623 /* brocheIntegrationTests */ = {
+		47E36E1F3010CC7D00AC348D /* brocheIntegrationTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = brocheIntegrationTests;
 			sourceTree = "<group>";
@@ -110,7 +109,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		47618D5B3011BA3B007F4623 /* Frameworks */ = {
+		47E36E1B3010CC7D00AC348D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -126,11 +125,7 @@
 				473062D42FD17E5200086379 /* broche */,
 				473062E22FD17E5400086379 /* brocheTests */,
 				473062EC2FD17E5400086379 /* brocheUITests */,
-				47E826B5300E3CFD00DB5CE7 /* broche.app */,
-				47E826B6300E3CFD00DB5CE7 /* brocheTests.xctest */,
-				47E826B7300E3CFD00DB5CE7 /* brocheUITests.xctest */,
-				47E826B7300E3CFD00DB5CE7  /* brocheIntegrationTests.xctest */,
-				47E826B7300E3CFD00DB5CE7   /* brocheIntegrationTests */,
+				47E36E1F3010CC7D00AC348D /* brocheIntegrationTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -217,27 +212,27 @@
 			productReference = 47E826B7300E3CFD00DB5CE7 /* brocheUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		47618D5D3011BA3B007F4623 /* brocheIntegrationTests */ = {
+		47E36E1D3010CC7D00AC348D /* brocheIntegrationTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 47618D663011BA3B007F4623 /* Build configuration list for PBXNativeTarget "brocheIntegrationTests" */;
+			buildConfigurationList = 47E36E263010CC7D00AC348D /* Build configuration list for PBXNativeTarget "brocheIntegrationTests" */;
 			buildPhases = (
-				47618D5A3011BA3B007F4623 /* Sources */,
-				47618D5B3011BA3B007F4623 /* Frameworks */,
-				47618D5C3011BA3B007F4623 /* Resources */,
+				47E36E1A3010CC7D00AC348D /* Sources */,
+				47E36E1B3010CC7D00AC348D /* Frameworks */,
+				47E36E1C3010CC7D00AC348D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				47618D633011BA3B007F4623 /* PBXTargetDependency */,
+				47E36E233010CC7D00AC348D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				47618D5F3011BA3B007F4623 /* brocheIntegrationTests */,
+				47E36E1F3010CC7D00AC348D /* brocheIntegrationTests */,
 			);
 			name = brocheIntegrationTests;
 			packageProductDependencies = (
 			);
 			productName = brocheIntegrationTests;
-			productReference = 47618D5E3011BA3B007F4623 /* brocheIntegrationTests.xctest */;
+			productReference = 47E36E1E3010CC7D00AC348D /* brocheIntegrationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -261,7 +256,7 @@
 						CreatedOnToolsVersion = 26.2;
 						TestTargetID = 473062D12FD17E5200086379;
 					};
-					47618D5D3011BA3B007F4623 = {
+					47E36E1D3010CC7D00AC348D = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = 473062D12FD17E5200086379;
 					};
@@ -290,7 +285,7 @@
 				473062D12FD17E5200086379 /* broche */,
 				473062DE2FD17E5400086379 /* brocheTests */,
 				473062E82FD17E5400086379 /* brocheUITests */,
-				47618D5D3011BA3B007F4623 /* brocheIntegrationTests */,
+				47E36E1D3010CC7D00AC348D /* brocheIntegrationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -317,7 +312,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		47618D5C3011BA3B007F4623 /* Resources */ = {
+		47E36E1C3010CC7D00AC348D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -348,7 +343,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		47618D5A3011BA3B007F4623 /* Sources */ = {
+		47E36E1A3010CC7D00AC348D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -368,10 +363,10 @@
 			target = 473062D12FD17E5200086379 /* broche */;
 			targetProxy = 473062EA2FD17E5400086379 /* PBXContainerItemProxy */;
 		};
-		47618D633011BA3B007F4623 /* PBXTargetDependency */ = {
+		47E36E233010CC7D00AC348D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 473062D12FD17E5200086379 /* broche */;
-			targetProxy = 47618D623011BA3B007F4623 /* PBXContainerItemProxy */;
+			targetProxy = 47E36E223010CC7D00AC348D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -645,7 +640,7 @@
 			};
 			name = Release;
 		};
-		47618D643011BA3B007F4623 /* Debug */ = {
+		47E36E243010CC7D00AC348D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -667,7 +662,7 @@
 			};
 			name = Debug;
 		};
-		47618D653011BA3B007F4623 /* Release */ = {
+		47E36E253010CC7D00AC348D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -728,11 +723,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		47618D663011BA3B007F4623 /* Build configuration list for PBXNativeTarget "brocheIntegrationTests" */ = {
+		47E36E263010CC7D00AC348D /* Build configuration list for PBXNativeTarget "brocheIntegrationTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47618D643011BA3B007F4623 /* Debug */,
-				47618D653011BA3B007F4623 /* Release */,
+				47E36E243010CC7D00AC348D /* Debug */,
+				47E36E253010CC7D00AC348D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
