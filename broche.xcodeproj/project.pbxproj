@@ -28,9 +28,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		47859C6F300DEEBB00C137AD /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = broche.app; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app"; sourceTree = "<absolute>"; };
-		47859C70300DEEBB00C137AD /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheTests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app/PlugIns/brocheTests.xctest"; sourceTree = "<absolute>"; };
-		47859C71300DEEBB00C137AD /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheUITests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/brocheUITests-Runner.app/PlugIns/brocheUITests.xctest"; sourceTree = "<absolute>"; };
+		47E36F713010F0AB00AC348D /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		47E36F723010F0AB00AC348D /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		47E36F733010F0AB00AC348D /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -83,6 +83,9 @@
 				473062D42FD17E5200086379 /* broche */,
 				473062E22FD17E5400086379 /* brocheTests */,
 				473062EC2FD17E5400086379 /* brocheUITests */,
+				47E36F713010F0AB00AC348D /* broche.app */,
+				47E36F723010F0AB00AC348D /* brocheTests.xctest */,
+				47E36F733010F0AB00AC348D /* brocheUITests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,7 +112,7 @@
 				47859C6B300DBAB200C137AD /* ExyteChat */,
 			);
 			productName = broche;
-			productReference = 47859C6F300DEEBB00C137AD /* broche.app */;
+			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
 			productType = "com.apple.product-type.application";
 		};
 		473062DE2FD17E5400086379 /* brocheTests */ = {
@@ -132,7 +135,7 @@
 			packageProductDependencies = (
 			);
 			productName = brocheTests;
-			productReference = 47859C70300DEEBB00C137AD /* brocheTests.xctest */;
+			productReference = 47E36F723010F0AB00AC348D /* brocheTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		473062E82FD17E5400086379 /* brocheUITests */ = {
@@ -155,7 +158,7 @@
 			packageProductDependencies = (
 			);
 			productName = brocheUITests;
-			productReference = 47859C71300DEEBB00C137AD /* brocheUITests.xctest */;
+			productReference = 47E36F733010F0AB00AC348D /* brocheUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
