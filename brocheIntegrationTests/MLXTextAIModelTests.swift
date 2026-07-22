@@ -11,7 +11,7 @@ import Testing
 @testable import broche
 
 /// use a small model with a tiny memory footprint for testing
-let testModelID = "mlx-community/SmolLM-135M-Instruct-4bit"
+let testModelID = "mlx-community/Qwen3-0.6B-4bit"
 
 @Suite("MLXTextAIModel tests")
 @MainActor
