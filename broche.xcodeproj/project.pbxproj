@@ -19,6 +19,7 @@
 		47E36C68300E4B5100AC348D /* Hub in Frameworks */ = {isa = PBXBuildFile; productRef = 47E36C67300E4B5100AC348D /* Hub */; };
 		47E36C6A300E4B5100AC348D /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 47E36C69300E4B5100AC348D /* Tokenizers */; };
 		47E36C6C300E4B5100AC348D /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 47E36C6B300E4B5100AC348D /* Transformers */; };
+		4DB69E095C1BCDB164B36631 /* AIBenchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33124CC67CA7DFAE195A5D37 /* AIBenchmark.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		33124CC67CA7DFAE195A5D37 /* AIBenchmark.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; path = AIBenchmark.swift; sourceTree = "<group>"; };
 		47E36E1E3010CC7D00AC348D /* brocheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheIntegrationTests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app/PlugIns/brocheIntegrationTests.xctest"; sourceTree = "<absolute>"; };
 		47E826B5300E3CFD00DB5CE7 /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = broche.app; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app"; sourceTree = "<absolute>"; };
 		47E826B6300E3CFD00DB5CE7 /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = brocheTests.xctest; path = "/Users/mrzzy/Documents/school/fyp/broche/build/Debug-iphoneos/broche.app/PlugIns/brocheTests.xctest"; sourceTree = "<absolute>"; };
@@ -119,6 +121,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C5FEC2691BD670AC2FAF52E /* broche */ = {
+			isa = PBXGroup;
+			children = (
+				4D401382A86F6FB3FCFCB6CC /* Services */,
+			);
+			name = broche;
+			path = broche;
+			sourceTree = "<group>";
+		};
 		473062C92FD17E5200086379 = {
 			isa = PBXGroup;
 			children = (
@@ -126,7 +137,26 @@
 				473062E22FD17E5400086379 /* brocheTests */,
 				473062EC2FD17E5400086379 /* brocheUITests */,
 				47E36E1F3010CC7D00AC348D /* brocheIntegrationTests */,
+				3C5FEC2691BD670AC2FAF52E /* broche */,
 			);
+			sourceTree = "<group>";
+		};
+		4D401382A86F6FB3FCFCB6CC /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B346B1EC6705A546579DB49E /* AI */,
+			);
+			name = Services;
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B346B1EC6705A546579DB49E /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				33124CC67CA7DFAE195A5D37 /* AIBenchmark.swift */,
+			);
+			name = AI;
+			path = AI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DB69E095C1BCDB164B36631 /* AIBenchmark.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
