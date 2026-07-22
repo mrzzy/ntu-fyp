@@ -41,8 +41,8 @@ final class MLXTextAIModel: TextAIModel {
 
     func generate(
         prompt: String,
-        options: TextGenerationOptions
-    ) async throws -> AsyncThrowingStream<String, Error> {
+        options: TextAIOptions
+    ) async throws -> AsyncThrowingStream<TextAIOutput, Error> {
         guard let chat else {
             throw LLMError.modelNotLoaded
         }
@@ -55,11 +55,23 @@ final class MLXTextAIModel: TextAIModel {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    let response = chat.streamResponse(to: prompt)
-                    for try await chunk in response {
-                        continuation.yield(chunk)
+                    let stream = chat.streamDetails(to: prompt)
+                    for try await generation in stream {
+                        switch generation {
+                        case .chunk(let text):
+                            continuation.yield(.chunk(text: text))
+                        case .toolCall(let call):
+                            print("Tool call: \(call)")
+                        // completion info at the end of generation
+                        case .info(let info):
+                            let metrics = TextAIMetrics(
+                                nPromptTokens: info.promptTokenCount,
+                                nGenerationTokens: info.generationTokenCount,
+                            )
+                            continuation.yield(.complete(metrics: metrics))
+                            continuation.finish()
+                        }
                     }
-                    continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
