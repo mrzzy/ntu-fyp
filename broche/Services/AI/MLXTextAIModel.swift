@@ -57,7 +57,8 @@ final class MLXTextAIModel: TextAIModel {
 
         chat.generateParameters = GenerateParameters(
             maxTokens: maxTokens,
-            temperature: options.temperature
+            temperature: options.temperature,
+            seed: UInt64(options.seed),
         )
 
         return AsyncThrowingStream { continuation in
