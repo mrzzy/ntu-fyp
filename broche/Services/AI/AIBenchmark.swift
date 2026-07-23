@@ -53,21 +53,19 @@ extension AIBenchmarkResult: CustomStringConvertible {
 ///
 /// - Parameters:
 ///   - model: Any conformer to ``TextAIModel`` (e.g. ``MLXTextAIModel``).
-///   - modelID: The HuggingFace model ID passed to ``TextAIModel/load(modelID:)``.
 ///   - prompt: The input prompt for text generation.
 ///   - options: Configuration controlling generation behavior.
 /// - Returns: A ``AIBenchmarkResult`` containing timings, metrics, memory usage, and the response.
 /// - Throws: Any error from model loading or text generation.
 func benchmarkAI(
     _ model: some TextAIModel,
-    modelID: String,
     prompt: String,
     options: TextAIOptions
 ) async throws -> AIBenchmarkResult {
     let memBefore = memoryFootprint()
 
     let loadStart = CFAbsoluteTimeGetCurrent()
-    try await model.load(modelID: modelID)
+    try await model.load()
     let loadTime = CFAbsoluteTimeGetCurrent() - loadStart
 
     let stream = try await model.generate(prompt: prompt, options: options)
@@ -89,7 +87,7 @@ func benchmarkAI(
     let memoryUsedMB = memAfter.map { ($0 - memBefore!) / 1024 / 1024 }
 
     return AIBenchmarkResult(
-        modelID: modelID,
+        modelID: model.modelID,
         loadTimeSecs: loadTime,
         wallClockGenTimeSecs: genTime,
         response: response,
