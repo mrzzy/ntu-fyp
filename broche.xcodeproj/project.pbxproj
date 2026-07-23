@@ -38,7 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2E403F102C47326982A2F5C8 /* Filesystem.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
+		2E403F102C47326982A2F5C8 /* Filesystem.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		47618D5E3011BA3B007F4623 /* brocheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F713010F0AB00AC348D /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F723010F0AB00AC348D /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,7 +108,6 @@
 			children = (
 				4D401382A86F6FB3FCFCB6CC /* Services */,
 			);
-			name = broche;
 			path = broche;
 			sourceTree = "<group>";
 		};
@@ -132,7 +131,6 @@
 			children = (
 				2E403F102C47326982A2F5C8 /* Filesystem.swift */,
 			);
-			name = Services;
 			path = Services;
 			sourceTree = "<group>";
 		};

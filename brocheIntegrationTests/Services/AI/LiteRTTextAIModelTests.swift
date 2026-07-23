@@ -48,7 +48,7 @@ struct LiteRTTextAIModelTests {
             model,
             modelID: testModelID,
             patterns: testPatterns,
-            prompt: "Generate lorem ipsum forever",
+            prompt: "Explain the steps in a watercolour painting",
             options: TextAIOptions(maxTokens: 1024, temperature: 1.0),
         )
 
