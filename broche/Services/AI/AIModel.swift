@@ -22,7 +22,7 @@ struct TextAIOptions {
     /// Controls randomness during sampling.
     var temperature: Float = 1.0
     /// Controls the cumulative probability threshold for top-p sampling. Only used if temperature > 0.
-    var topP: float = 1.0
+    var topP: Float = 1.0
     /// Controls the number of highest probability tokens to keep for top-k sampling. Only used if temperature > 0.
     var topK: Int = 40
     /// Sets the generation seed for reproducibility. If set to 0, a random seed will be used.
