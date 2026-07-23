@@ -35,6 +35,7 @@ final class UzuTextAIModel: TextAIModel {
     let maxTokens: Int
 
     private var engine: Engine?
+    private var model: Model?
     private var session: ChatSession?
 
     init(modelID: String, maxTokens: Int = 2048) {
@@ -52,25 +53,31 @@ final class UzuTextAIModel: TextAIModel {
         guard let model = try await engine.model(identifier: modelID) else {
             throw UzuError.modelNotFound(modelID: modelID)
         }
+        self.model = model
 
         for try await _ in try await engine.download(model: model).iterator() {}
-
-        let session = try await engine.chat(model: model, config: .create())
         self.engine = engine
-        self.session = session
     }
 
     func generate(
         prompt: String,
-        options _: TextAIOptions
+        options: TextAIOptions
     ) async throws -> AsyncThrowingStream<TextAIOutput, Error> {
-        guard let session else {
+        guard let engine, let model else {
             throw UzuError.engineNotInitialized
+        }
+
+        // create new chat session if none has been created
+        if session == nil {
+            session = try await engine.chat(
+                model: model,
+                config: .create().withSamplingSeed(samplingSeed: .custom(seed: Int64(options.seed)))
+            )
         }
 
         let messages = [ChatMessage.user().withText(text: prompt)]
         let replyConfig = ChatReplyConfig.create().withTokenLimit(tokenLimit: UInt32(maxTokens))
-        let stream = await session.replyWithStream(input: messages, config: replyConfig)
+        let stream = await session!.replyWithStream(input: messages, config: replyConfig)
 
         return AsyncThrowingStream { continuation in
             Task {
@@ -103,7 +110,7 @@ final class UzuTextAIModel: TextAIModel {
                         .complete(
                             metrics: TextAIMetrics(
                                 nPromptTokens: Int(lastReply?.stats.tokensCountInput ?? 0),
-                                nGenerationTokens: Int(lastReply?.stats.tokensCountOutput ?? 0),
+                                nGenerationTokens: Int(lastReply?.stats.tokensCountOutput ?? 0)
                             )
                         )
                     )
