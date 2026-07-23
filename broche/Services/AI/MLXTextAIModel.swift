@@ -19,7 +19,7 @@ enum LLMError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .modelNotLoaded:
-            "Model has not been loaded. Call load(modelID:) first."
+            "Model has not been loaded. Call load(:) first."
         case .invalidModelPath(let path):
             "Invalid model path: \(path)"
         }
@@ -27,9 +27,17 @@ enum LLMError: Error, LocalizedError {
 }
 
 final class MLXTextAIModel: TextAIModel {
+    let modelID: String
+    let maxTokens: Int
+
     private var chat: ChatSession?
 
-    func load(modelID: String) async throws {
+    init(modelID: String, maxTokens: Int = 2048) {
+        self.modelID = modelID
+        self.maxTokens = maxTokens
+    }
+
+    func load() async throws {
         let model = try await LLMModelFactory.shared.loadContainer(
             from: #hubDownloader(),
             using: #huggingFaceTokenizerLoader(),
@@ -48,7 +56,7 @@ final class MLXTextAIModel: TextAIModel {
         }
 
         chat.generateParameters = GenerateParameters(
-            maxTokens: options.maxTokens,
+            maxTokens: maxTokens,
             temperature: options.temperature
         )
 
@@ -66,7 +74,7 @@ final class MLXTextAIModel: TextAIModel {
                         case .info(let info):
                             let metrics = TextAIMetrics(
                                 nPromptTokens: info.promptTokenCount,
-                                nGenerationTokens: info.generationTokenCount,
+                                nGenerationTokens: info.generationTokenCount
                             )
                             continuation.yield(.complete(metrics: metrics))
                             continuation.finish()

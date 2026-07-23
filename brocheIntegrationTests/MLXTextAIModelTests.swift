@@ -18,7 +18,7 @@ let testModelID = "mlx-community/Qwen3-0.6B-4bit"
 struct MLXTextAIModelTests {
     @Test("Generate throws modelNotLoaded when model is not loaded")
     func generateThrowsModelNotLoadedWhenNotLoaded() async {
-        let model = MLXTextAIModel()
+        let model = MLXTextAIModel(modelID: testModelID)
 
         await #expect(throws: LLMError.self) {
             try await model.generate(
@@ -30,10 +30,10 @@ struct MLXTextAIModelTests {
 
     @Test("Load throws for invalid model ID")
     func loadThrowsForInvalidModelID() async {
-        let model = MLXTextAIModel()
+        let model = MLXTextAIModel(modelID: "invalid/model/id")
 
         await #expect(throws: Error.self) {
-            try await model.load(modelID: "invalid/model/id")
+            try await model.load()
         }
     }
 
@@ -47,13 +47,12 @@ struct MLXTextAIModelTests {
 
     @Test("Generate returns streaming response with metrics")
     func generateReturnsStreamingResponse() async throws {
-        let model = MLXTextAIModel()
+        let model = MLXTextAIModel(modelID: testModelID, maxTokens: 1024)
 
         let result = try await benchmarkAI(
             model,
-            modelID: testModelID,
             prompt: "Hello",
-            options: TextAIOptions(maxTokens: 1024, temperature: 1.0)
+            options: TextAIOptions(temperature: 1.0)
         )
         print("\n\(result)")
 
