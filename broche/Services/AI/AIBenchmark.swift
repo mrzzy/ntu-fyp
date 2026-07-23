@@ -43,7 +43,7 @@ extension AIBenchmarkResult: CustomStringConvertible {
         if let memoryUsedMB {
             lines.append("Memory Used:     \(String(format: "%.1f", memoryUsedMB)) MB")
         }
-        lines.append("Response:        \(response.prefix(200))")
+        lines.append("Response:        \(response)")
         lines.append("---------------------------")
         return lines.joined(separator: "\n")
     }
