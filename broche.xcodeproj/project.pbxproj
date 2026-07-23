@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		47618CA73011B8BF007F4623 /* LiteRTLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47618CA63011B8BF007F4623 /* LiteRTLM */; };
+		47618EDF3011BFCF007F4623 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47618EDE3011BFCF007F4623 /* HuggingFace */; };
 		4795B5323011B28B0000EEC4 /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 4795B5313011B28B0000EEC4 /* ExyteChat */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 			files = (
 				4795B5323011B28B0000EEC4 /* ExyteChat in Frameworks */,
 				47618CA73011B8BF007F4623 /* LiteRTLM in Frameworks */,
+				47618EDF3011BFCF007F4623 /* HuggingFace in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +137,7 @@
 			packageProductDependencies = (
 				4795B5313011B28B0000EEC4 /* ExyteChat */,
 				47618CA63011B8BF007F4623 /* LiteRTLM */,
+				47618EDE3011BFCF007F4623 /* HuggingFace */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -248,6 +251,7 @@
 			packageReferences = (
 				4795B5303011B28B0000EEC4 /* XCRemoteSwiftPackageReference "exyte-Chat" */,
 				47618CA53011B8BF007F4623 /* XCRemoteSwiftPackageReference "LiteRT-LM" */,
+				47618EDD3011BFCF007F4623 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -715,6 +719,14 @@
 				kind = branch;
 			};
 		};
+		47618EDD3011BFCF007F4623 /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
 		4795B5303011B28B0000EEC4 /* XCRemoteSwiftPackageReference "exyte-Chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mrzzy/exyte-Chat.git";
@@ -730,6 +742,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47618CA53011B8BF007F4623 /* XCRemoteSwiftPackageReference "LiteRT-LM" */;
 			productName = LiteRTLM;
+		};
+		47618EDE3011BFCF007F4623 /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47618EDD3011BFCF007F4623 /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
 		};
 		4795B5313011B28B0000EEC4 /* ExyteChat */ = {
 			isa = XCSwiftPackageProductDependency;
