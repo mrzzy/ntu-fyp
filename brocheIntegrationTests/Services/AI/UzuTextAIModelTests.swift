@@ -17,7 +17,6 @@ private let testModelID = "Qwen/Qwen3-0.6B-MLX-4bit"
 @Suite("UzuTextAIModel tests")
 @MainActor
 struct UzuTextAIModelTests {
-
     @Test("Generate throws engineNotInitialized when model is not loaded")
     func generateThrowsEngineNotInitializedWhenNotLoaded() async {
         let model = UzuTextAIModel(modelID: testModelID)
@@ -40,11 +39,7 @@ struct UzuTextAIModelTests {
     func generateReturnsStreamingResponse() async throws {
         let model = UzuTextAIModel(modelID: testModelID, maxTokens: 1024)
 
-        let result = try await benchmarkAI(
-            model,
-            prompt: "Explain how to paint a watercolor, step by step.",
-            options: TextAIOptions(temperature: 1.0),
-        )
+        let result = try await benchmarkAI(model)
 
         print("\n\(result)")
 
