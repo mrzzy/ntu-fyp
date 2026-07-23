@@ -100,8 +100,8 @@ final class LiteRTTextAIModel: TextAIModel {
         }
 
         let samplerConfig = try SamplerConfig(
-            topK: 50,
-            topP: 1.0,
+            topK: options.topK,
+            topP: options.topP,
             temperature: options.temperature,
             seed: options.seed,
         )
