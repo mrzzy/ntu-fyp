@@ -36,29 +36,24 @@ enum LiteRTError: Error, LocalizedError {
 /// HuggingFace repository ID (e.g. `"google/gemma-4-2b-it-litert"`).
 /// In the latter case the model is downloaded automatically via ``HubClient``.
 final class LiteRTTextAIModel: TextAIModel {
-    let nMaxTokens: Int
+    let modelID: String
     let patterns: [String]
+    let maxTokens: Int
     
     /// The underlying LiteRT engine, or `nil` if the model has not been loaded.
     private var engine: Engine?
 
-    init(nMaxTokens: Int = 1024, patterns: [String] = ["*.litertlm"]) {
-        self.nMaxTokens = nMaxTokens
+    init(modelID: String, patterns: [String] = ["*.litertlm"], maxTokens: Int = 2048) {
+        self.modelID = modelID
+        self.maxTokens = maxTokens
         self.patterns = patterns
     }
     
 
     /// Loads a LiteRT-LM model from a local path or HuggingFace repository.
     ///
-    /// If `modelID` is an existing file path it is used directly.
-    /// Otherwise it is treated as a HuggingFace repo ID and the snapshot is
-    /// downloaded with `options.patterns` as glob filters. The first file whose name
-    /// ends with `"litertlm"` in the snapshot is passed to the LiteRT engine.
-    ///
-    /// - Parameters:
-    ///   - modelID: A local `.litertlm` file path or a HuggingFace repository ID.
     /// - Throws: ``LiteRTError`` or any error from downloading or engine initialization.
-    func load(modelID: String, options: TextAILoadOptions) async throws {
+    func load() async throws {
         let modelPath: String
         let fm = FileManager.default
 
@@ -72,7 +67,7 @@ final class LiteRTTextAIModel: TextAIModel {
             }
             let snapshotDir = try await hubClient.downloadSnapshot(
                 of: repo,
-                matching: options.patterns
+                matching: patterns
             )
             guard let file = Filesystem.findFile(in: snapshotDir, withSuffix: "litertlm")
             else {
@@ -88,7 +83,7 @@ final class LiteRTTextAIModel: TextAIModel {
         let config = try EngineConfig(
             modelPath: modelPath,
             backend: .gpu,
-            maxNumTokens: options.maxTokens,
+            maxNumTokens: maxTokens,
             cacheDir: NSTemporaryDirectory()
         )
         let engine = Engine(engineConfig: config)

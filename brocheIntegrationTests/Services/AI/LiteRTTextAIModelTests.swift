@@ -24,7 +24,7 @@ struct LiteRTTextAIModelTests {
 
     @Test("Generate throws engineNotInitialized when model is not loaded")
     func generateThrowsEngineNotInitializedWhenNotLoaded() async {
-        let model = LiteRTTextAIModel()
+        let model = LiteRTTextAIModel(modelID: testModelID, patterns: testPatterns)
 
         await #expect(throws: LiteRTError.self) {
             try await model.generate(
@@ -42,14 +42,12 @@ struct LiteRTTextAIModelTests {
 
     @Test("Generate returns streaming response with metrics")
     func generateReturnsStreamingResponse() async throws {
-        let model = LiteRTTextAIModel()
+        let model = LiteRTTextAIModel(modelID: testModelID, patterns: testPatterns, maxTokens: 1024)
 
         let result = try await benchmarkAI(
             model,
-            modelID: testModelID,
-            patterns: testPatterns,
-            prompt: "Explain the steps in a watercolour painting",
-            options: TextAIOptions(maxTokens: 1024, temperature: 1.0),
+            prompt: "Explain how to paint a watercolor, step by step.",
+            options: TextAIOptions(temperature: 1.0),
         )
 
         print("\n\(result)")
