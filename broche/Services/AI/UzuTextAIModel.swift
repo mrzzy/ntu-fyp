@@ -19,7 +19,7 @@ enum UzuError: Error, LocalizedError {
         switch self {
         case .engineNotInitialized:
             "Engine has not been initialized. Call load() first."
-        case .modelNotFound(let id):
+        case let .modelNotFound(id):
             "Model '\(id)' not found in the Uzu model registry"
         }
     }
@@ -76,7 +76,11 @@ final class UzuTextAIModel: TextAIModel {
         }
 
         let messages = [ChatMessage.user().withText(text: prompt)]
-        let replyConfig = ChatReplyConfig.create().withTokenLimit(tokenLimit: UInt32(maxTokens))
+        let replyConfig = (
+            ChatReplyConfig.create()
+                .withTokenLimit(tokenLimit: UInt32(maxTokens))
+                .withSamplingMethod(samplingMethod: .stochastic(temperature: Double(options.temperature), topK: Int64(options.topK), topP: Double(options.topP), minP: nil))
+        )
         let stream = await session!.replyWithStream(input: messages, config: replyConfig)
 
         return AsyncThrowingStream { continuation in
@@ -87,7 +91,7 @@ final class UzuTextAIModel: TextAIModel {
 
                     for try await update in stream.iterator() {
                         switch update {
-                        case .replies(let replies):
+                        case let .replies(replies):
                             if let reply = replies.last {
                                 lastReply = reply
                                 let text = reply.message.text() ?? ""
@@ -100,7 +104,7 @@ final class UzuTextAIModel: TextAIModel {
                                     previousLength = text.count
                                 }
                             }
-                        case .error(let error):
+                        case let .error(error):
                             continuation.finish(throwing: error)
                             return
                         }
