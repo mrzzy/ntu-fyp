@@ -21,6 +21,8 @@ protocol AIModel {
 struct TextAIOptions {
     /// Controls randomness during sampling.
     var temperature: Float = 1.0
+    /// Sets the generation seed for reproducibility. If set to 0, a random seed will be used.
+    var seed: Int = 42
 }
 
 /// Metrics collected during text generation.
