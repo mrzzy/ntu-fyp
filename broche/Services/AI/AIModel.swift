@@ -7,14 +7,13 @@
 
 /// A minimal interface for loading a AI model
 protocol AIModel {
-    // String identifier of the model
+    /// String identifier of the model
     var modelID: String { get }
 
     /// Loads the model weights of a model for inference.
     ///
     /// - Throws: An error if the model cannot be found, loaded, or initialized.
     func load() async throws
-
 }
 
 /// Text Generation AI models aka Language Models (LLMs)

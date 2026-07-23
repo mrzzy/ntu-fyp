@@ -1,5 +1,5 @@
 //
-//  Benchmark.swift
+//  AIBenchmark.swift
 //  broche
 //
 //  Created by Zhu Zhanyan on 2026-07-22
@@ -53,22 +53,19 @@ extension AIBenchmarkResult: CustomStringConvertible {
 ///
 /// - Parameters:
 ///   - model: Any conformer to ``TextAIModel`` (e.g. ``MLXTextAIModel``).
-///   - prompt: The input prompt for text generation.
-///   - options: Configuration controlling generation behavior.
 /// - Returns: A ``AIBenchmarkResult`` containing timings, metrics, memory usage, and the response.
 /// - Throws: Any error from model loading or text generation.
-func benchmarkAI(
-    _ model: some TextAIModel,
-    prompt: String,
-    options: TextAIOptions
-) async throws -> AIBenchmarkResult {
+func benchmarkAI(_ model: some TextAIModel) async throws -> AIBenchmarkResult {
     let memBefore = memoryFootprint()
 
     let loadStart = CFAbsoluteTimeGetCurrent()
     try await model.load()
     let loadTime = CFAbsoluteTimeGetCurrent() - loadStart
 
-    let stream = try await model.generate(prompt: prompt, options: options)
+    let stream = try await model.generate(
+        prompt: "Explain how to paint a watercolor, step by step",
+        options: TextAIOptions(temperature: 1.0, seed: 42)
+    )
 
     var response = ""
     var metrics: TextAIMetrics?
