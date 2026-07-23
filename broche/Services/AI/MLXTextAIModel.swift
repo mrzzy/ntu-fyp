@@ -58,6 +58,8 @@ final class MLXTextAIModel: TextAIModel {
         chat.generateParameters = GenerateParameters(
             maxTokens: maxTokens,
             temperature: options.temperature,
+            topP: options.topP,
+            topK: options.topK,
             seed: UInt64(options.seed),
         )
 
