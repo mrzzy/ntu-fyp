@@ -73,7 +73,7 @@ struct HuggingFaceDownloader {
     ///   - directory: The root directory to search.
     ///   - suffix: A file extension or suffix to match (e.g. `"litertlm"`).
     /// - Returns: The URL of the first matching file, or `nil` if none is found.
-    func findFile(in directory: URL, withSuffix suffix: String) -> URL? {
+    static func findFile(in directory: URL, withSuffix suffix: String) -> URL? {
         guard let enumerator = FileManager.default.enumerator(
             at: directory,
             includingPropertiesForKeys: [.isRegularFileKey]

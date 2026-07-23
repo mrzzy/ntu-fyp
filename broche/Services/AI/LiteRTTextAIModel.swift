@@ -58,7 +58,7 @@ final class LiteRTTextAIModel: TextAIModel {
                 repoID: modelID,
                 matching: patterns
             )
-            guard let file = downloader.findFile(in: snapshotDir, withSuffix: "litertlm")
+            guard let file = Filesystem.findFile(in: snapshotDir, withSuffix: "litertlm")
             else {
                 throw LiteRTError.modelFileNotFound(modelID: modelID)
             }

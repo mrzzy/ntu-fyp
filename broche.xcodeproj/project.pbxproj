@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2559836224FD1CAFE7FFA358 /* Filesystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E403F102C47326982A2F5C8 /* Filesystem.swift */; };
 		47618CA73011B8BF007F4623 /* LiteRTLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47618CA63011B8BF007F4623 /* LiteRTLM */; };
 		47618EDF3011BFCF007F4623 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47618EDE3011BFCF007F4623 /* HuggingFace */; };
 		4795B5323011B28B0000EEC4 /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 4795B5313011B28B0000EEC4 /* ExyteChat */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2E403F102C47326982A2F5C8 /* Filesystem.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		47618D5E3011BA3B007F4623 /* brocheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F713010F0AB00AC348D /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F723010F0AB00AC348D /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +103,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C5FEC2691BD670AC2FAF52E /* broche */ = {
+			isa = PBXGroup;
+			children = (
+				4D401382A86F6FB3FCFCB6CC /* Services */,
+			);
+			name = broche;
+			path = broche;
+			sourceTree = "<group>";
+		};
 		473062C92FD17E5200086379 = {
 			isa = PBXGroup;
 			children = (
@@ -112,7 +123,17 @@
 				47E36F733010F0AB00AC348D /* brocheUITests.xctest */,
 				47618D5E3011BA3B007F4623 /* brocheIntegrationTests.xctest */,
 				47618D5F3011BA3B007F4623 /* brocheIntegrationTests */,
+				3C5FEC2691BD670AC2FAF52E /* broche */,
 			);
+			sourceTree = "<group>";
+		};
+		4D401382A86F6FB3FCFCB6CC /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2E403F102C47326982A2F5C8 /* Filesystem.swift */,
+			);
+			name = Services;
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -302,6 +323,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2559836224FD1CAFE7FFA358 /* Filesystem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
