@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
+		47618CA73011B8BF007F4623 /* LiteRTLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47618CA63011B8BF007F4623 /* LiteRTLM */; };
+		4795B5323011B28B0000EEC4 /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 4795B5313011B28B0000EEC4 /* ExyteChat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
+				4795B5323011B28B0000EEC4 /* ExyteChat in Frameworks */,
+				47618CA73011B8BF007F4623 /* LiteRTLM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,7 +133,8 @@
 			);
 			name = broche;
 			packageProductDependencies = (
-				47859C6B300DBAB200C137AD /* ExyteChat */,
+				4795B5313011B28B0000EEC4 /* ExyteChat */,
+				47618CA63011B8BF007F4623 /* LiteRTLM */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -243,7 +246,8 @@
 			mainGroup = 473062C92FD17E5200086379;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
+				4795B5303011B28B0000EEC4 /* XCRemoteSwiftPackageReference "exyte-Chat" */,
+				47618CA53011B8BF007F4623 /* XCRemoteSwiftPackageReference "LiteRT-LM" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -703,7 +707,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */ = {
+		47618CA53011B8BF007F4623 /* XCRemoteSwiftPackageReference "LiteRT-LM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google-ai-edge/LiteRT-LM";
+			requirement = {
+				branch = release/v0.14;
+				kind = branch;
+			};
+		};
+		4795B5303011B28B0000EEC4 /* XCRemoteSwiftPackageReference "exyte-Chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mrzzy/exyte-Chat.git";
 			requirement = {
@@ -714,9 +726,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		47859C6B300DBAB200C137AD /* ExyteChat */ = {
+		47618CA63011B8BF007F4623 /* LiteRTLM */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */;
+			package = 47618CA53011B8BF007F4623 /* XCRemoteSwiftPackageReference "LiteRT-LM" */;
+			productName = LiteRTLM;
+		};
+		4795B5313011B28B0000EEC4 /* ExyteChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4795B5303011B28B0000EEC4 /* XCRemoteSwiftPackageReference "exyte-Chat" */;
 			productName = ExyteChat;
 		};
 /* End XCSwiftPackageProductDependency section */
