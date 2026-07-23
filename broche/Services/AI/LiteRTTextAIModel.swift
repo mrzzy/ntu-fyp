@@ -102,7 +102,8 @@ final class LiteRTTextAIModel: TextAIModel {
         let samplerConfig = try SamplerConfig(
             topK: 50,
             topP: 1.0,
-            temperature: options.temperature
+            temperature: options.temperature,
+            seed: options.seed,
         )
         let conversationConfig = ConversationConfig(samplerConfig: samplerConfig)
         let conversation = try await engine.createConversation(with: conversationConfig)

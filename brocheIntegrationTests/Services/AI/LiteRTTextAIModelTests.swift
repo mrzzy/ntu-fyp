@@ -13,7 +13,7 @@ import Testing
 /// The HuggingFace model ID for the ``Qwen3-0.6B`` INT4 LiteRT-LM conversion.
 ///
 /// This is a ~332 MB quantized model suitable for integration testing.
-private let testModelID =  "litert-community/Qwen3-0.6B-int4"
+private let testModelID = "litert-community/Qwen3-0.6B-int4"
 
 /// Downloads only the thinking-on variant of the model.
 private let testPatterns: [String] = ["qwen3_0.6b_q4_block32_ekv1280.litertlm"]
@@ -21,7 +21,6 @@ private let testPatterns: [String] = ["qwen3_0.6b_q4_block32_ekv1280.litertlm"]
 @Suite("LiteRTTextAIModel tests")
 @MainActor
 struct LiteRTTextAIModelTests {
-
     @Test("Generate throws engineNotInitialized when model is not loaded")
     func generateThrowsEngineNotInitializedWhenNotLoaded() async {
         let model = LiteRTTextAIModel(modelID: testModelID, patterns: testPatterns)
@@ -44,11 +43,7 @@ struct LiteRTTextAIModelTests {
     func generateReturnsStreamingResponse() async throws {
         let model = LiteRTTextAIModel(modelID: testModelID, patterns: testPatterns, maxTokens: 1024)
 
-        let result = try await benchmarkAI(
-            model,
-            prompt: "Explain how to paint a watercolor, step by step.",
-            options: TextAIOptions(temperature: 1.0),
-        )
+        let result = try await benchmarkAI(model)
 
         print("\n\(result)")
 
