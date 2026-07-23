@@ -51,7 +51,7 @@ struct MLXTextAIModelTests {
 
         let result = try await benchmarkAI(
             model,
-            prompt: "Hello",
+            prompt: "Explain how to paint a watercolor, step by step.",
             options: TextAIOptions(temperature: 1.0)
         )
         print("\n\(result)")
