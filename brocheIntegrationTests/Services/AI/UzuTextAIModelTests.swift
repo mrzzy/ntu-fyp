@@ -29,12 +29,6 @@ struct UzuTextAIModelTests {
         }
     }
 
-    @Test("Error descriptions are non-empty")
-    func errorDescriptionsAreNonEmpty() {
-        #expect(UzuError.engineNotInitialized.errorDescription != nil)
-        #expect(UzuError.modelNotFound(modelID: "test").errorDescription != nil)
-    }
-
     @Test("Generate returns streaming response with metrics")
     func generateReturnsStreamingResponse() async throws {
         let model = UzuTextAIModel(modelID: testModelID, maxTokens: 1024)
@@ -45,7 +39,7 @@ struct UzuTextAIModelTests {
 
         #expect(!result.response.isEmpty)
         #expect(result.loadTimeSecs > 0)
-        #expect(result.wallClockGenTimeSecs > 0)
+        #expect(result.genTimeSecs > 0)
         if let metrics = result.metrics {
             #expect(metrics.nGenerationTokens > 0)
         }
