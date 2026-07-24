@@ -36,10 +36,9 @@ protocol ImageAIModel: AIModel {
     ///   - prompt: The textual description guiding the edits.
     ///   - options: Configuration controlling the editing process.
     /// - Returns: An async throwing stream of output updates (progress or final image).
-    /// - Throws: An error if editing fails or the model has not been loaded.
     func edit(
         image: Data,
         prompt: String,
         options: ImageAIOptions
-    ) async throws -> AsyncThrowingStream<ImageAIOutput, Error>
+    ) -> AsyncThrowingStream<ImageAIOutput, Error>
 }

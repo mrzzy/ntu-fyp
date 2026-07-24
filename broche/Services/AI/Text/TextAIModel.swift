@@ -45,5 +45,5 @@ protocol TextAIModel: AIModel {
     func generate(
         prompt: String,
         options: TextAIOptions
-    ) async throws -> AsyncThrowingStream<TextAIOutput, Error>
+    ) -> AsyncThrowingStream<TextAIOutput, Error>
 }

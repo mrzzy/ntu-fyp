@@ -37,7 +37,7 @@ extension AIBenchmarkResult: CustomStringConvertible {
             lines.append("Generated tokens:\(metrics.nGenerationTokens)")
             let tps =
                 genTimeSecs > 0
-                    ? Double(metrics.nGenerationTokens) / genTimeSecs : 0
+                ? Double(metrics.nGenerationTokens) / genTimeSecs : 0
             lines.append("TPS:             \(String(format: "%.2f", tps))")
         }
         if let memoryUsedMB {
@@ -62,7 +62,7 @@ func benchmarkAI(_ model: some TextAIModel) async throws -> AIBenchmarkResult {
     try await model.load()
     let loadTime = CFAbsoluteTimeGetCurrent() - loadStart
 
-    let stream = try await model.generate(
+    let stream = model.generate(
         prompt: "Explain how to paint a watercolor, step by step",
         options: TextAIOptions(temperature: 1.0, topP: 1.0, topK: 40, seed: 42)
     )
@@ -72,9 +72,9 @@ func benchmarkAI(_ model: some TextAIModel) async throws -> AIBenchmarkResult {
     let genStart = CFAbsoluteTimeGetCurrent()
     for try await output in stream {
         switch output {
-        case let .chunk(text):
+        case .chunk(let text):
             response += text
-        case let .complete(m):
+        case .complete(let m):
             metrics = m
         }
     }

@@ -21,8 +21,8 @@ struct UzuTextAIModelTests {
     func generateThrowsEngineNotInitializedWhenNotLoaded() async {
         let model = UzuTextAIModel(modelID: testModelID)
 
-        await #expect(throws: UzuError.self) {
-            try await model.generate(
+        #expect(throws: UzuError.self) {
+            model.generate(
                 prompt: "Hello",
                 options: TextAIOptions()
             )
@@ -33,7 +33,7 @@ struct UzuTextAIModelTests {
     func generateReturnsStreamingResponse() async throws {
         let model = UzuTextAIModel(modelID: testModelID, maxTokens: 1024)
 
-        let result = try await benchmarkAI(model)
+        let result = benchmarkAI(model)
 
         print("\n\(result)")
 

@@ -19,7 +19,7 @@ enum UzuError: Error, LocalizedError {
         switch self {
         case .engineNotInitialized:
             "Engine has not been initialized. Call load() first."
-        case let .modelNotFound(id):
+        case .modelNotFound(let id):
             "Model '\(id)' not found in the Uzu model registry"
         }
     }
@@ -62,36 +62,44 @@ final class UzuTextAIModel: TextAIModel {
     func generate(
         prompt: String,
         options: TextAIOptions
-    ) async throws -> AsyncThrowingStream<TextAIOutput, Error> {
-        guard let engine, let model else {
-            throw UzuError.engineNotInitialized
-        }
-
-        // create new chat session if none has been created
-        if session == nil {
-            session = try await engine.chat(
-                model: model,
-                config: .create().withSamplingSeed(samplingSeed: .custom(seed: Int64(options.seed)))
-            )
-        }
-
-        let messages = [ChatMessage.user().withText(text: prompt)]
-        let replyConfig = (
-            ChatReplyConfig.create()
-                .withTokenLimit(tokenLimit: UInt32(maxTokens))
-                .withSamplingMethod(samplingMethod: .stochastic(temperature: Double(options.temperature), topK: Int64(options.topK), topP: Double(options.topP), minP: nil))
-        )
-        let stream = await session!.replyWithStream(input: messages, config: replyConfig)
-
+    ) -> AsyncThrowingStream<TextAIOutput, Error> {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
+                    guard let engine, let model else {
+                        throw UzuError.engineNotInitialized
+                    }
+                    // create new chat session if none has been created
+                    if session == nil {
+                        session = try await engine.chat(
+                            model: model,
+                            config: .create().withSamplingSeed(
+                                samplingSeed: .custom(seed: Int64(options.seed))
+                            )
+                        )
+                    }
+
+                    let messages = [ChatMessage.user().withText(text: prompt)]
+                    let replyConfig =
+                        (ChatReplyConfig.create()
+                            .withTokenLimit(tokenLimit: UInt32(maxTokens))
+                            .withSamplingMethod(
+                                samplingMethod: .stochastic(
+                                    temperature: Double(options.temperature),
+                                    topK: Int64(options.topK),
+                                    topP: Double(options.topP), minP: nil
+                                )
+                            ))
+                    let stream = await session!.replyWithStream(
+                        input: messages, config: replyConfig
+                    )
+
                     var previousLength = 0
                     var lastReply: ChatReply?
 
                     for try await update in stream.iterator() {
                         switch update {
-                        case let .replies(replies):
+                        case .replies(let replies):
                             if let reply = replies.last {
                                 lastReply = reply
                                 let text = reply.message.text() ?? ""
@@ -104,7 +112,7 @@ final class UzuTextAIModel: TextAIModel {
                                     previousLength = text.count
                                 }
                             }
-                        case let .error(error):
+                        case .error(let error):
                             continuation.finish(throwing: error)
                             return
                         }
