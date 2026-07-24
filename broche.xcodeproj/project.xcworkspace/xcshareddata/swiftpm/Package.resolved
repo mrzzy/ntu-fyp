@@ -1,5 +1,5 @@
 {
-  "originHash" : "aed3ce6f69b816d1c4752470e811a6d77218bb702d5193c850b94da7d9a502f9",
+  "originHash" : "346eab060de81656b27547080de25ec2096b7d28abc2a7efee88e0256d77b1e0",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -62,6 +62,15 @@
       "state" : {
         "revision" : "1c9b2a3566e2bbca59c6fc2d00e55ec0627239c1",
         "version" : "3.4.0"
+      }
+    },
+    {
+      "identity" : "ml-stable-diffusion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/ml-stable-diffusion",
+      "state" : {
+        "revision" : "5a170d29cf38e674b80541d7ce22929c6a11cdde",
+        "version" : "1.1.1"
       }
     },
     {

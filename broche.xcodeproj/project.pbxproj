@@ -11,6 +11,7 @@
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
 		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
 		F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */; };
+		47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 47D840593012FA1D005AF28C /* StableDiffusion */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
+				47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */,
 				47D8349F3011FD21005AF28C /* Uzu in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,6 +183,7 @@
 			packageProductDependencies = (
 				47859C6B300DBAB200C137AD /* ExyteChat */,
 				47D8349E3011FD21005AF28C /* Uzu */,
+				47D840593012FA1D005AF28C /* StableDiffusion */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -294,6 +297,7 @@
 			packageReferences = (
 				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
 				47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */,
+				47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -778,6 +782,14 @@
 				minimumVersion = 0.5.12;
 			};
 		};
+		47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -790,6 +802,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */;
 			productName = Uzu;
+		};
+		47D840593012FA1D005AF28C /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
