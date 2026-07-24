@@ -12,6 +12,7 @@
 		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
 		F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */; };
 		47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 47D840593012FA1D005AF28C /* StableDiffusion */; };
+		47D8405D3012FBE4005AF28C /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8405C3012FBE4005AF28C /* HuggingFace */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
 				47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */,
 				47D8349F3011FD21005AF28C /* Uzu in Frameworks */,
+				47D8405D3012FBE4005AF28C /* HuggingFace in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +186,7 @@
 				47859C6B300DBAB200C137AD /* ExyteChat */,
 				47D8349E3011FD21005AF28C /* Uzu */,
 				47D840593012FA1D005AF28C /* StableDiffusion */,
+				47D8405C3012FBE4005AF28C /* HuggingFace */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -298,6 +301,7 @@
 				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
 				47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */,
 				47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
+				47D8405B3012FBE4005AF28C /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -790,6 +794,14 @@
 				minimumVersion = 1.1.1;
 			};
 		};
+		47D8405B3012FBE4005AF28C /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -807,6 +819,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
 			productName = StableDiffusion;
+		};
+		47D8405C3012FBE4005AF28C /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47D8405B3012FBE4005AF28C /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
