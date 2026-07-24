@@ -19,6 +19,14 @@ struct ImageAIOptions {
     var seed: UInt32 = 0
 }
 
+/// Output from an image AI model, either progress updates or the final image
+enum ImageAIOutput {
+    /// Progress update during image generation
+    case progress(step: Int)
+    /// Final edited image
+    case image(Data)
+}
+
 /// Image Editing AI Model
 protocol ImageAIModel: AIModel {
     /// Edits an image based on the provided prompt and options.
@@ -27,11 +35,11 @@ protocol ImageAIModel: AIModel {
     ///   - image: The input image to be edited.
     ///   - prompt: The textual description guiding the edits.
     ///   - options: Configuration controlling the editing process.
-    /// - Returns: The edited image.
+    /// - Returns: An async throwing stream of output updates (progress or final image).
     /// - Throws: An error if editing fails or the model has not been loaded.
     func edit(
         image: Data,
         prompt: String,
         options: ImageAIOptions
-    ) async throws -> Data
+    ) async throws -> AsyncThrowingStream<ImageAIOutput, Error>
 }
