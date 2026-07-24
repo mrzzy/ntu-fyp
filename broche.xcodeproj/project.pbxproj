@@ -10,9 +10,9 @@
 		010AE55E539E4BDFAF57F701 /* TextAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75ACF126DE85BAACAE9660B /* TextAIModel.swift */; };
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
 		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
-		F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */; };
 		47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 47D840593012FA1D005AF28C /* StableDiffusion */; };
 		47D8405D3012FBE4005AF28C /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8405C3012FBE4005AF28C /* HuggingFace */; };
+		F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -801,6 +801,8 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.9.0;
 			};
+			traits = (
+			);
 		};
 /* End XCRemoteSwiftPackageReference section */
 
