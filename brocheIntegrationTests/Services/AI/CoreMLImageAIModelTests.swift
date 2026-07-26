@@ -48,22 +48,35 @@ struct CoreMLImageAIModelTests {
     func loadAndEditReturnsImage() async throws {
         let model = CoreMLImageAIModel(modelID: testModelID, patterns: testPatterns, path: testPath)
 
-        try await model.load()
+        if let resourcePath = Bundle.main.resourcePath {
+            try print(
+                FileManager.default.contentsOfDirectory(
+                    atPath: resourcePath
+                )
+            )
+        }
 
-        let steps = 30
-        var imageData: Data?
-        var progressCount = 0
-        // edit image withn model
         guard
             let url = Bundle.main.url(
-                forResource: "apple_sketch", withExtension: "png", subdirectory: "Resources"
+                forResource: "apple_sketch", withExtension: "png"
             )
         else {
             throw URLError(.fileDoesNotExist)
         }
+
+        try await model.load()
+
+        let steps = 30
+        let documentsDir = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        )[0]
+
+        var imageData: Data?
+        var progressCount = 0
         let stream = try model.edit(
             image: Data(contentsOf: url),
-            prompt: "Render in a style of a watercolor",
+            prompt: "Rerender in a style of a watercolor",
             options: ImageAIOptions(
                 steps: steps,
                 guidance: 7.5,
@@ -86,5 +99,12 @@ struct CoreMLImageAIModelTests {
         #expect(progressCount > 0)
         #expect(imageData != nil)
         #expect(try !#require(imageData?.isEmpty))
+
+        // write output to disk for visual verification
+        let outputURL = documentsDir.appendingPathComponent(
+            "CoreMLImageAIModelTests_loadAndEditReturnsImage.5.png"
+        )
+        try imageData?.write(to: outputURL)
+        print("Saved generated image :", outputURL.path)
     }
 }

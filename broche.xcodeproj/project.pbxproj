@@ -48,6 +48,30 @@
 		A75ACF126DE85BAACAE9660B /* TextAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TextAIModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		476A501C30159B6B00464D15 /* Exceptions for "brocheIntegrationTests" folder in "brocheTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/apple_sketch.png,
+			);
+			target = 473062DE2FD17E5400086379 /* brocheTests */;
+		};
+		476A502130159F5A00464D15 /* Exceptions for "brocheIntegrationTests" folder in "brocheIntegrationTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/apple_sketch.png,
+			);
+			target = 47618D5D3011BA3B007F4623 /* brocheIntegrationTests */;
+		};
+		476A502330159F6300464D15 /* Exceptions for "brocheIntegrationTests" folder in "broche" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/apple_sketch.png,
+			);
+			target = 473062D12FD17E5200086379 /* broche */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		473062D42FD17E5200086379 /* broche */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -66,6 +90,11 @@
 		};
 		47618D5F3011BA3B007F4623 /* brocheIntegrationTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				476A502330159F6300464D15 /* Exceptions for "brocheIntegrationTests" folder in "broche" target */,
+				476A501C30159B6B00464D15 /* Exceptions for "brocheIntegrationTests" folder in "brocheTests" target */,
+				476A502130159F5A00464D15 /* Exceptions for "brocheIntegrationTests" folder in "brocheIntegrationTests" target */,
+			);
 			path = brocheIntegrationTests;
 			sourceTree = "<group>";
 		};
