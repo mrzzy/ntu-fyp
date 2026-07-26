@@ -20,7 +20,7 @@ enum CoreMLImageAIError: Error, Equatable {
         switch self {
         case .pipelineNotLoaded:
             "Pipeline has not been loaded. Call load() first."
-        case .invalidModelID(let id):
+        case let .invalidModelID(id):
             "Model ID '\(id)' is not a valid HuggingFace repository identifier (expected 'namespace/name')."
         case .generationFailed:
             "Image generation failed."
@@ -69,32 +69,43 @@ final class CoreMLImageAIModel: ImageAIModel {
         self.pipeline = pipeline
     }
 
-    func edit(image _: Data, prompt: String, options: ImageAIOptions) async throws -> Data {
-        guard let pipeline else {
-            throw CoreMLImageAIError.pipelineNotLoaded
-        }
+    func edit(image _: Data, prompt: String, options: ImageAIOptions) -> AsyncThrowingStream<ImageAIOutput, Error> {
+        return AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    guard let pipeline else {
+                        throw CoreMLImageAIError.pipelineNotLoaded
+                    }
 
-        var config = StableDiffusionPipeline.Configuration(prompt: prompt)
-        config.stepCount = options.steps
-        config.seed = options.seed
-        config.strength = options.strength
-        config.guidanceScale = options.guidance
+                    var config = StableDiffusionPipeline.Configuration(prompt: prompt)
+                    config.stepCount = options.steps
+                    config.seed = options.seed
+                    config.strength = options.strength
+                    config.guidanceScale = options.guidance
 
-        let images = try pipeline.generateImages(configuration: config) {
-            p in
-            print(
-                "Progress: \(p.step)/\(p.stepCount) \(Float(p.step) / Float(p.stepCount) * 100.0)%")
-            return true
-        }
-        guard let outputImage = images.first, let cgOutput = outputImage else {
-            throw CoreMLImageAIError.generationFailed
-        }
+                    let images = try pipeline.generateImages(configuration: config) { p in
+                        continuation.yield(.progress(step: p.step))
+                        return !task.isCancelled
+                    }
+                    guard let outputImage = images.first, let cgOutput = outputImage else {
+                        throw CoreMLImageAIError.generationFailed
+                    }
 
-        guard let data = Self.pngData(from: cgOutput) else {
-            throw CoreMLImageAIError.generationFailed
-        }
+                    guard let data = Self.pngData(from: cgOutput) else {
+                        throw CoreMLImageAIError.generationFailed
+                    }
 
-        return data
+                    continuation.yield(.image(data))
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
 
     private static func pngData(from cgImage: CGImage) -> Data? {

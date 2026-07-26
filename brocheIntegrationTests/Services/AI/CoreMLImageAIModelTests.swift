@@ -29,7 +29,7 @@ struct CoreMLImageAIModelTests {
         let model = CoreMLImageAIModel(modelID: testModelID)
 
         await #expect(throws: CoreMLImageAIError.self) {
-            try await model.edit(image: Data(), prompt: "a cat", options: ImageAIOptions())
+            for try await _ in try await model.edit(image: Data(), prompt: "a cat", options: ImageAIOptions()) {}
         }
     }
 
@@ -42,25 +42,35 @@ struct CoreMLImageAIModelTests {
         }
     }
 
-    @Test("Load succeeds with valid model ID")
-    func loadSucceeds() async throws {
-        let model = CoreMLImageAIModel(modelID: testModelID, patterns: testPatterns, path: testPath)
-        // M2 iPad: takes about 82s
-        try await model.load()
-    }
-
     @Test("Load and Edit returns non-empty image data")
     func loadAndEditReturnsImage() async throws {
         let model = CoreMLImageAIModel(modelID: testModelID, patterns: testPatterns, path: testPath)
 
         try await model.load()
 
-        let result = try await model.edit(
+        let steps = 30
+        var imageData: Data?
+        var progressCount = 0
+
+        let stream = try await model.edit(
             image: Data(),
             prompt: "a watercolor painting of a cat",
-            options: ImageAIOptions(steps: 30)
+            options: ImageAIOptions(steps: steps)
         )
 
-        #expect(!result.isEmpty)
+        for try await output in stream {
+            switch output {
+            case .progress(let step):
+                progressCount += 1
+                #expect(step <= steps)
+                print("Generating image: step \(step)/\(steps)")
+            case .image(let data):
+                imageData = data
+            }
+        }
+
+        #expect(progressCount > 0)
+        #expect(imageData != nil)
+        #expect(!imageData!.isEmpty)
     }
 }
