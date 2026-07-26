@@ -29,7 +29,9 @@ struct CoreMLImageAIModelTests {
         let model = CoreMLImageAIModel(modelID: testModelID)
 
         await #expect(throws: CoreMLImageAIError.self) {
-            for try await _ in try await model.edit(image: Data(), prompt: "a cat", options: ImageAIOptions()) {}
+            for try await _ in try await model.edit(
+                image: Data(), prompt: "a cat", options: ImageAIOptions()
+            ) {}
         }
     }
 
@@ -51,11 +53,23 @@ struct CoreMLImageAIModelTests {
         let steps = 30
         var imageData: Data?
         var progressCount = 0
-
-        let stream = try await model.edit(
-            image: Data(),
-            prompt: "a watercolor painting of a cat",
-            options: ImageAIOptions(steps: steps)
+        // edit image withn model
+        guard
+            let url = Bundle.main.url(
+                forResource: "apple_sketch", withExtension: "png", subdirectory: "Resources"
+            )
+        else {
+            throw URLError(.fileDoesNotExist)
+        }
+        let stream = try model.edit(
+            image: Data(contentsOf: url),
+            prompt: "Render in a style of a watercolor",
+            options: ImageAIOptions(
+                steps: steps,
+                guidance: 7.5,
+                strength: 0.8,
+                seed: 42
+            )
         )
 
         for try await output in stream {
@@ -71,6 +85,6 @@ struct CoreMLImageAIModelTests {
 
         #expect(progressCount > 0)
         #expect(imageData != nil)
-        #expect(!imageData!.isEmpty)
+        #expect(try !#require(imageData?.isEmpty))
     }
 }
