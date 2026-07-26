@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		010AE55E539E4BDFAF57F701 /* TextAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75ACF126DE85BAACAE9660B /* TextAIModel.swift */; };
+		476A502C3015CDF000464D15 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 476A502B3015CDF000464D15 /* ZIPFoundation */; };
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
 		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
 		47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 47D840593012FA1D005AF28C /* StableDiffusion */; };
@@ -109,6 +110,7 @@
 				47D8405A3012FA1D005AF28C /* StableDiffusion in Frameworks */,
 				47D8349F3011FD21005AF28C /* Uzu in Frameworks */,
 				47D8405D3012FBE4005AF28C /* HuggingFace in Frameworks */,
+				476A502C3015CDF000464D15 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +218,7 @@
 				47D8349E3011FD21005AF28C /* Uzu */,
 				47D840593012FA1D005AF28C /* StableDiffusion */,
 				47D8405C3012FBE4005AF28C /* HuggingFace */,
+				476A502B3015CDF000464D15 /* ZIPFoundation */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -331,6 +334,7 @@
 				47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */,
 				47D840583012FA1D005AF28C /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 				47D8405B3012FBE4005AF28C /* XCRemoteSwiftPackageReference "swift-huggingface" */,
+				476A502A3015CDF000464D15 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -799,6 +803,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		476A502A3015CDF000464D15 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
 		47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mrzzy/exyte-Chat.git";
@@ -836,6 +848,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		476A502B3015CDF000464D15 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 476A502A3015CDF000464D15 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
 		47859C6B300DBAB200C137AD /* ExyteChat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */;
