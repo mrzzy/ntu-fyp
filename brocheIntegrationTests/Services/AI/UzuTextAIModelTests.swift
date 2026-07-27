@@ -18,7 +18,7 @@ private let testModelID = "Qwen/Qwen3-0.6B-MLX-4bit"
 @MainActor
 struct UzuTextAIModelTests {
     @Test("Generate throws engineNotInitialized when model is not loaded")
-    func generateThrowsEngineNotInitializedWhenNotLoaded() async {
+    func generateThrowsEngineNotInitializedWhenNotLoaded() {
         let model = UzuTextAIModel(modelID: testModelID)
 
         #expect(throws: UzuError.self) {
@@ -33,7 +33,7 @@ struct UzuTextAIModelTests {
     func generateReturnsStreamingResponse() async throws {
         let model = UzuTextAIModel(modelID: testModelID, maxTokens: 1024)
 
-        let result = benchmarkAI(model)
+        let result = try await benchmarkAI(model)
 
         print("\n\(result)")
 
