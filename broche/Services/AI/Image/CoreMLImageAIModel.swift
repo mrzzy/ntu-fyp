@@ -101,7 +101,7 @@ final class CoreMLImageAIModel: ImageAIModel {
                     config.seed = options.seed
                     config.strength = options.strength
                     config.guidanceScale = options.guidance
-                    config.controlNetInputs = [padAndResize(cgImage, to: inputSize)!]
+                    config.controlNetInputs = [resize(cgImage, to: inputSize)!]
 
                     let images = try pipeline.generateImages(configuration: config) { p in
                         continuation.yield(.progress(step: p.step))
@@ -111,8 +111,8 @@ final class CoreMLImageAIModel: ImageAIModel {
                         throw CoreMLImageAIError.generationFailed
                     }
 
-                    // restore original aspect ratio by cropping away padding
-                    let restoredOutput = restoreAspectRatio(cgOutput, to: originalSize)!
+                    // stretch output back to original aspect ratio
+                    let restoredOutput = resize(cgOutput, to: originalSize)!
 
                     guard let data = Self.pngData(from: restoredOutput) else {
                         throw CoreMLImageAIError.generationFailed
@@ -131,91 +131,22 @@ final class CoreMLImageAIModel: ImageAIModel {
         }
     }
 
-    /// Pads the image to a square (on the shorter axis) with black pixels, then resizes to target size.
-    func padAndResize(
+    /// Resizes the image to the target size without preserving aspect ratio.
+    func resize(
         _ cgImage: CGImage,
         to size: CGSize,
         context: CIContext = CIContext()
     ) -> CGImage? {
         let ciImage = CIImage(cgImage: cgImage)
         let extent = ciImage.extent
-        let squareSize = max(extent.width, extent.height)
-
-        // Create black background filling the square
-        let squareRect = CGRect(x: 0, y: 0, width: squareSize, height: squareSize)
-        let background = CIImage(color: CIColor.black).cropped(to: squareRect)
-
-        // Center the original image over the black background
-        let offsetX = (squareSize - extent.width) / 2 - extent.origin.x
-        let offsetY = (squareSize - extent.height) / 2 - extent.origin.y
-        let centered = ciImage.transformed(
-            by: CGAffineTransform(translationX: offsetX, y: offsetY)
-        )
-        let padded = centered.composited(over: background)
-
-        // Resize to target size
-        let scaleX = size.width / squareSize
-        let scaleY = size.height / squareSize
-        let resized = padded.transformed(
+        let scaleX = size.width / extent.width
+        let scaleY = size.height / extent.height
+        let resized = ciImage.transformed(
             by: CGAffineTransform(scaleX: scaleX, y: scaleY)
         )
-
         return context.createCGImage(
             resized,
             from: CGRect(origin: .zero, size: size)
-        )
-    }
-
-    /// Crops the generated square image back to the original aspect ratio, removing padding,
-    /// then resizes to the original dimensions.
-    func restoreAspectRatio(
-        _ cgImage: CGImage,
-        to originalSize: CGSize,
-        context: CIContext = CIContext()
-    ) -> CGImage? {
-        let ciImage = CIImage(cgImage: cgImage)
-        let extent = ciImage.extent
-        let originalAspect = originalSize.width / originalSize.height
-
-        // Calculate crop rect to remove padding and restore original aspect ratio
-        let cropRect: CGRect
-        if originalAspect > 1 {
-            // Landscape: crop top and bottom padding
-            let cropHeight = extent.width / originalAspect
-            let yOffset = (extent.height - cropHeight) / 2
-            cropRect = CGRect(
-                x: extent.origin.x,
-                y: extent.origin.y + yOffset,
-                width: extent.width,
-                height: cropHeight
-            )
-        } else if originalAspect < 1 {
-            // Portrait: crop left and right padding
-            let cropWidth = extent.height * originalAspect
-            let xOffset = (extent.width - cropWidth) / 2
-            cropRect = CGRect(
-                x: extent.origin.x + xOffset,
-                y: extent.origin.y,
-                width: cropWidth,
-                height: extent.height
-            )
-        } else {
-            // Square: no crop needed
-            cropRect = extent
-        }
-
-        let cropped = ciImage.cropped(to: cropRect)
-
-        // Resize back to original dimensions
-        let scaleX = originalSize.width / cropRect.width
-        let scaleY = originalSize.height / cropRect.height
-        let resized = cropped.transformed(
-            by: CGAffineTransform(scaleX: scaleX, y: scaleY)
-        )
-
-        return context.createCGImage(
-            resized,
-            from: CGRect(origin: .zero, size: originalSize)
         )
     }
 
