@@ -14,7 +14,10 @@
 		47B3542A3018217B00CF5413 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47B354293018217B00CF5413 /* MLXHuggingFace */; };
 		47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542B3018217B00CF5413 /* MLXLMCommon */; };
 		47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542D3018217B00CF5413 /* MLXVLM */; };
+		47B2428C301762B60071715C /* MediaGenerationKit in Frameworks */ = {isa = PBXBuildFile; productRef = 47B2428B301762B60071715C /* MediaGenerationKit */; };
 		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
+		684B47A810A7649F8246EF47 /* MGKImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF7CCD21084C7504EC0F2CD /* MGKImageAIModel.swift */; };
+		F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +49,9 @@
 		47E36F713010F0AB00AC348D /* broche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = broche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F723010F0AB00AC348D /* brocheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E36F733010F0AB00AC348D /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = ImageAIModel.swift; sourceTree = "<group>"; };
+		A75ACF126DE85BAACAE9660B /* TextAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TextAIModel.swift; sourceTree = "<group>"; };
+		BFF7CCD21084C7504EC0F2CD /* MGKImageAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = MGKImageAIModel.swift; path = MGKImageAIModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -78,7 +84,7 @@
 			files = (
 				47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */,
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
-				47B354283018217B00CF5413 /* BenchmarkHelpers in Frameworks */,
+				47B2428C301762B60071715C /* MediaGenerationKit in Frameworks */,
 				47D8349F3011FD21005AF28C /* Uzu in Frameworks */,
 				47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */,
 				47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */,
@@ -153,6 +159,7 @@
 				47B354293018217B00CF5413 /* MLXHuggingFace */,
 				47B3542B3018217B00CF5413 /* MLXLMCommon */,
 				47B3542D3018217B00CF5413 /* MLXVLM */,
+				47B2428B301762B60071715C /* MediaGenerationKit */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -269,6 +276,7 @@
 				47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 				47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				47B2428A301762B60071715C /* XCRemoteSwiftPackageReference "media-generation-kit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -319,6 +327,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				010AE55E539E4BDFAF57F701 /* TextAIModel.swift in Sources */,
+				F15D78032172FE3C6541D457 /* ImageAIModel.swift in Sources */,
+				684B47A810A7649F8246EF47 /* MGKImageAIModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -767,6 +778,14 @@
 				minimumVersion = 3.31.4;
 			};
 		};
+		47B2428A301762B60071715C /* XCRemoteSwiftPackageReference "media-generation-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/drawthingsai/media-generation-kit.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/trymirai/uzu.git";
@@ -812,6 +831,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
 			productName = MLXVLM;
+		};
+		47B2428B301762B60071715C /* MediaGenerationKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47B2428A301762B60071715C /* XCRemoteSwiftPackageReference "media-generation-kit" */;
+			productName = MediaGenerationKit;
 		};
 		47D8349E3011FD21005AF28C /* Uzu */ = {
 			isa = XCSwiftPackageProductDependency;
