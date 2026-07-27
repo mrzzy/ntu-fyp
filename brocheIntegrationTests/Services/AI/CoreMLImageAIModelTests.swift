@@ -5,10 +5,9 @@
 //  Created by Zhu Zhanyan on 2026-07-24.
 //
 
+@testable import broche
 import Foundation
 import Testing
-
-@testable import broche
 
 private let testModelID = "mrzzy/coreml-sd-v1-5-controlnet"
 
@@ -54,27 +53,41 @@ struct CoreMLImageAIModelTests {
 
         try await model.load()
 
+        let sketchData = try Data(contentsOf: url)
+        let prompt =
+            "Render apple, plate & cup in a watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique,  loose expressive brushstrokes, soft edges, subtle gradients, natural pigments"
+
+        let documentsDir = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        )[0]
+        let outputDir = documentsDir.appendingPathComponent(
+            "CoreMLImageAIModelTests_sweep"
+        )
+        try FileManager.default.createDirectory(
+            at: outputDir, withIntermediateDirectories: true
+        )
+
         let steps = 50
         var imageData: Data?
         var progressCount = 0
-        let stream = try model.edit(
-            image: Data(contentsOf: url),
-            prompt:
-                "lines form shapes that should be colored in, watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique,  loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
+        let stream = model.edit(
+            image: sketchData,
+            prompt: prompt,
             options: ImageAIOptions(
                 steps: steps,
-                guidance: 7.5,
+                guidance: 3.0,
                 seed: 42
             )
         )
 
         for try await output in stream {
             switch output {
-            case .progress(let step):
+            case let .progress(step):
                 progressCount += 1
                 #expect(step <= steps)
-                print("Generating image: step \(step)/\(steps)")
-            case .image(let data):
+                print("  step \(step)/\(steps)")
+            case let .image(data):
                 imageData = data
             }
         }
@@ -83,15 +96,8 @@ struct CoreMLImageAIModelTests {
         #expect(imageData != nil)
         #expect(try !#require(imageData?.isEmpty))
 
-        // write output to disk for visual verification
-        let documentsDir = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        )[0]
-        let outputURL = documentsDir.appendingPathComponent(
-            "CoreMLImageAIModelTests_loadAndEditReturnsImage.png"
-        )
+        let outputURL = outputDir.appendingPathComponent("CoreMLImageAIModelTests_loadAndEditReturnsImage.png")
         try imageData?.write(to: outputURL)
-        print("Saved generated image :", outputURL.path)
+        print("  Saved: \(outputURL.path)")
     }
 }
