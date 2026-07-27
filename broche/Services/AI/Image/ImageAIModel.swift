@@ -13,8 +13,6 @@ struct ImageAIOptions {
     var steps: Int = 8
     /// The scale factor for prompt guidance during the editing process. Higher values may produce more pronounced edits.
     var guidance: Float = 7.5
-    /// The strength of the editing effect. A value of 0.0 means no change from original image, while 1.0 means full application of the edits.
-    var strength: Float = 0.8
     /// Seed for random number generation to ensure reproducibility.
     var seed: UInt32 = 0
 }
