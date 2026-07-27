@@ -99,7 +99,6 @@ final class CoreMLImageAIModel: ImageAIModel {
                     var config = StableDiffusionPipeline.Configuration(prompt: prompt)
                     config.stepCount = options.steps
                     config.seed = options.seed
-                    config.strength = options.strength
                     config.guidanceScale = options.guidance
                     config.controlNetInputs = [resize(cgImage, to: inputSize)!]
 
