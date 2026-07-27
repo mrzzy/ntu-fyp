@@ -24,7 +24,7 @@ enum CoreMLImageAIError: Error, Equatable {
             "Pipeline has not been loaded. Call load() first."
         case .imageLoadFailed:
             "Input image data could not be loaded."
-        case .invalidModelID(let id):
+        case let .invalidModelID(id):
             "Model ID '\(id)' is not a valid HuggingFace repository identifier (expected 'namespace/name')."
         case .generationFailed:
             "Image generation failed."
@@ -70,14 +70,27 @@ final class CoreMLImageAIModel: ImageAIModel {
         )
 
         let configuration = MLModelConfiguration()
-        let pipeline = try StableDiffusionPipeline(
-            resourcesAt: modelPath.appending(component: path),
-            controlNet: controlNets,
-            configuration: configuration,
-            reduceMemory: false
-        )
-        try pipeline.loadResources()
-        self.pipeline = pipeline
+
+        // load the model with retries to overcome transient failures
+        let maxRetries = 3
+        for nRetry in 1 ... maxRetries {
+            do {
+                let pipeline = try StableDiffusionPipeline(
+                    resourcesAt: modelPath.appending(component: path),
+                    controlNet: controlNets,
+                    configuration: configuration,
+                    reduceMemory: false
+                )
+                try pipeline.loadResources()
+                self.pipeline = pipeline
+                break
+            } catch {
+                print("Model load failed (attempt \(nRetry)/\(maxRetries)),: \(error)")
+                if nRetry == maxRetries {
+                    throw error
+                }
+            }
+        }
     }
 
     func edit(image: Data, prompt: String, options: ImageAIOptions) -> AsyncThrowingStream<

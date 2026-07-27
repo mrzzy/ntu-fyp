@@ -5,9 +5,10 @@
 //  Created by Zhu Zhanyan on 2026-07-24.
 //
 
-@testable import broche
 import Foundation
 import Testing
+
+@testable import broche
 
 private let testModelID = "mrzzy/coreml-sd-v1-5-controlnet"
 
@@ -83,11 +84,11 @@ struct CoreMLImageAIModelTests {
 
         for try await output in stream {
             switch output {
-            case let .progress(step):
+            case .progress(let step):
                 progressCount += 1
                 #expect(step <= steps)
                 print("  step \(step)/\(steps)")
-            case let .image(data):
+            case .image(let data):
                 imageData = data
             }
         }
@@ -96,7 +97,8 @@ struct CoreMLImageAIModelTests {
         #expect(imageData != nil)
         #expect(try !#require(imageData?.isEmpty))
 
-        let outputURL = outputDir.appendingPathComponent("CoreMLImageAIModelTests_loadAndEditReturnsImage.png")
+        let outputURL = outputDir.appendingPathComponent(
+            "CoreMLImageAIModelTests_loadAndEditReturnsImage.png")
         try imageData?.write(to: outputURL)
         print("  Saved: \(outputURL.path)")
     }
