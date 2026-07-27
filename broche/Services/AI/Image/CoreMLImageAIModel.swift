@@ -5,6 +5,7 @@
 //  Created by Zhu Zhanyan on 2026-07-24.
 //
 
+import CoreImage
 import CoreML
 import Foundation
 import HuggingFace
@@ -13,6 +14,7 @@ import StableDiffusion
 
 enum CoreMLImageAIError: Error, Equatable {
     case pipelineNotLoaded
+    case imageLoadFailed
     case invalidModelID(modelID: String)
     case generationFailed
 
@@ -20,7 +22,9 @@ enum CoreMLImageAIError: Error, Equatable {
         switch self {
         case .pipelineNotLoaded:
             "Pipeline has not been loaded. Call load() first."
-        case let .invalidModelID(id):
+        case .imageLoadFailed:
+            "Input image data could not be loaded."
+        case .invalidModelID(let id):
             "Model ID '\(id)' is not a valid HuggingFace repository identifier (expected 'namespace/name')."
         case .generationFailed:
             "Image generation failed."
@@ -32,17 +36,25 @@ final class CoreMLImageAIModel: ImageAIModel {
     let modelID: String
     let patterns: [String]
     let path: String
+    let inputSize: CGSize
+    let controlNets: [String]
 
-    private var pipeline: (any StableDiffusionPipelineProtocol)?
+    private var pipeline: StableDiffusionPipelineProtocol?
 
     init(
         modelID: String,
-        patterns: [String] = [],
-        path: String = ""
+        // pattern is necessary to ensure only files entries are downloaded
+        // swift-huggingface fails to download directory entries
+        patterns: [String] = ["*.*"],
+        path: String = "",
+        inputSize: CGSize = CGSize(width: 512, height: 512),
+        controlNets: [String] = []
     ) {
         self.modelID = modelID
         self.patterns = patterns
         self.path = path
+        self.inputSize = inputSize
+        self.controlNets = controlNets
     }
 
     func load() async throws {
@@ -54,14 +66,13 @@ final class CoreMLImageAIModel: ImageAIModel {
         let client = HubClient.default
         let modelPath = try await client.downloadSnapshot(
             of: repoID,
-            kind: .model,
-            matching: patterns
+            kind: .model
         )
 
         let configuration = MLModelConfiguration()
         let pipeline = try StableDiffusionPipeline(
             resourcesAt: modelPath.appending(component: path),
-            controlNet: [],
+            controlNet: controlNets,
             configuration: configuration,
             reduceMemory: false
         )
@@ -69,7 +80,9 @@ final class CoreMLImageAIModel: ImageAIModel {
         self.pipeline = pipeline
     }
 
-    func edit(image _: Data, prompt: String, options: ImageAIOptions) -> AsyncThrowingStream<ImageAIOutput, Error> {
+    func edit(image: Data, prompt: String, options: ImageAIOptions) -> AsyncThrowingStream<
+        ImageAIOutput, Error
+    > {
         return AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -77,21 +90,31 @@ final class CoreMLImageAIModel: ImageAIModel {
                         throw CoreMLImageAIError.pipelineNotLoaded
                     }
 
+                    guard let cgImage = cgimageFromData(image) else {
+                        throw CoreMLImageAIError.imageLoadFailed
+                    }
+
+                    let originalSize = CGSize(width: cgImage.width, height: cgImage.height)
+
                     var config = StableDiffusionPipeline.Configuration(prompt: prompt)
                     config.stepCount = options.steps
                     config.seed = options.seed
                     config.strength = options.strength
                     config.guidanceScale = options.guidance
+                    config.controlNetInputs = [padAndResize(cgImage, to: inputSize)!]
 
                     let images = try pipeline.generateImages(configuration: config) { p in
                         continuation.yield(.progress(step: p.step))
-                        return !task.isCancelled
+                        return !Task.isCancelled
                     }
                     guard let outputImage = images.first, let cgOutput = outputImage else {
                         throw CoreMLImageAIError.generationFailed
                     }
 
-                    guard let data = Self.pngData(from: cgOutput) else {
+                    // restore original aspect ratio by cropping away padding
+                    let restoredOutput = restoreAspectRatio(cgOutput, to: originalSize)!
+
+                    guard let data = Self.pngData(from: restoredOutput) else {
                         throw CoreMLImageAIError.generationFailed
                     }
 
@@ -106,6 +129,101 @@ final class CoreMLImageAIModel: ImageAIModel {
                 task.cancel()
             }
         }
+    }
+
+    /// Pads the image to a square (on the shorter axis) with black pixels, then resizes to target size.
+    func padAndResize(
+        _ cgImage: CGImage,
+        to size: CGSize,
+        context: CIContext = CIContext()
+    ) -> CGImage? {
+        let ciImage = CIImage(cgImage: cgImage)
+        let extent = ciImage.extent
+        let squareSize = max(extent.width, extent.height)
+
+        // Create black background filling the square
+        let squareRect = CGRect(x: 0, y: 0, width: squareSize, height: squareSize)
+        let background = CIImage(color: CIColor.black).cropped(to: squareRect)
+
+        // Center the original image over the black background
+        let offsetX = (squareSize - extent.width) / 2 - extent.origin.x
+        let offsetY = (squareSize - extent.height) / 2 - extent.origin.y
+        let centered = ciImage.transformed(
+            by: CGAffineTransform(translationX: offsetX, y: offsetY)
+        )
+        let padded = centered.composited(over: background)
+
+        // Resize to target size
+        let scaleX = size.width / squareSize
+        let scaleY = size.height / squareSize
+        let resized = padded.transformed(
+            by: CGAffineTransform(scaleX: scaleX, y: scaleY)
+        )
+
+        return context.createCGImage(
+            resized,
+            from: CGRect(origin: .zero, size: size)
+        )
+    }
+
+    /// Crops the generated square image back to the original aspect ratio, removing padding,
+    /// then resizes to the original dimensions.
+    func restoreAspectRatio(
+        _ cgImage: CGImage,
+        to originalSize: CGSize,
+        context: CIContext = CIContext()
+    ) -> CGImage? {
+        let ciImage = CIImage(cgImage: cgImage)
+        let extent = ciImage.extent
+        let originalAspect = originalSize.width / originalSize.height
+
+        // Calculate crop rect to remove padding and restore original aspect ratio
+        let cropRect: CGRect
+        if originalAspect > 1 {
+            // Landscape: crop top and bottom padding
+            let cropHeight = extent.width / originalAspect
+            let yOffset = (extent.height - cropHeight) / 2
+            cropRect = CGRect(
+                x: extent.origin.x,
+                y: extent.origin.y + yOffset,
+                width: extent.width,
+                height: cropHeight
+            )
+        } else if originalAspect < 1 {
+            // Portrait: crop left and right padding
+            let cropWidth = extent.height * originalAspect
+            let xOffset = (extent.width - cropWidth) / 2
+            cropRect = CGRect(
+                x: extent.origin.x + xOffset,
+                y: extent.origin.y,
+                width: cropWidth,
+                height: extent.height
+            )
+        } else {
+            // Square: no crop needed
+            cropRect = extent
+        }
+
+        let cropped = ciImage.cropped(to: cropRect)
+
+        // Resize back to original dimensions
+        let scaleX = originalSize.width / cropRect.width
+        let scaleY = originalSize.height / cropRect.height
+        let resized = cropped.transformed(
+            by: CGAffineTransform(scaleX: scaleX, y: scaleY)
+        )
+
+        return context.createCGImage(
+            resized,
+            from: CGRect(origin: .zero, size: originalSize)
+        )
+    }
+
+    func cgimageFromData(_ data: Data) -> CGImage? {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+            return nil
+        }
+        return CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
     }
 
     private static func pngData(from cgImage: CGImage) -> Data? {

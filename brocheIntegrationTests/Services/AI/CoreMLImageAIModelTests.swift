@@ -10,16 +10,7 @@ import Testing
 
 @testable import broche
 
-private let testModelID = "apple/coreml-stable-diffusion-2-1-base-palettized"
-private let testPath = "split_einsum_v2/compiled"
-private let testPatterns = [
-    "bin",
-    "json",
-    "mil",
-    "txt",
-].map {
-    "\(testPath)/*.\($0)"
-}
+private let testModelID = "mrzzy/coreml-sd-v1-5-controlnet"
 
 @Suite("CoreMLImageAIModel tests")
 @MainActor
@@ -46,16 +37,7 @@ struct CoreMLImageAIModelTests {
 
     @Test("Load and Edit returns non-empty image data")
     func loadAndEditReturnsImage() async throws {
-        let model = CoreMLImageAIModel(modelID: testModelID, patterns: testPatterns, path: testPath)
-
-        if let resourcePath = Bundle.main.resourcePath {
-            try print(
-                FileManager.default.contentsOfDirectory(
-                    atPath: resourcePath
-                )
-            )
-        }
-
+        // load starting sketch
         guard
             let url = Bundle.main.url(
                 forResource: "apple_sketch", withExtension: "png"
@@ -64,23 +46,24 @@ struct CoreMLImageAIModelTests {
             throw URLError(.fileDoesNotExist)
         }
 
+        // load image model
+        let model = CoreMLImageAIModel(
+            modelID: testModelID,
+            controlNets: ["LllyasvielSdControlnetScribble"]
+        )
+
         try await model.load()
 
-        let steps = 30
-        let documentsDir = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        )[0]
-
+        let steps = 50
         var imageData: Data?
         var progressCount = 0
         let stream = try model.edit(
             image: Data(contentsOf: url),
-            prompt: "Rerender in a style of a watercolor",
+            prompt:
+                "lines form shapes that should be colored in, watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique,  loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
             options: ImageAIOptions(
                 steps: steps,
                 guidance: 7.5,
-                strength: 0.8,
                 seed: 42
             )
         )
@@ -101,8 +84,12 @@ struct CoreMLImageAIModelTests {
         #expect(try !#require(imageData?.isEmpty))
 
         // write output to disk for visual verification
+        let documentsDir = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        )[0]
         let outputURL = documentsDir.appendingPathComponent(
-            "CoreMLImageAIModelTests_loadAndEditReturnsImage.5.png"
+            "CoreMLImageAIModelTests_loadAndEditReturnsImage.png"
         )
         try imageData?.write(to: outputURL)
         print("Saved generated image :", outputURL.path)
