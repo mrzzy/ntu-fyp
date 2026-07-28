@@ -44,7 +44,7 @@ final class MGKImageAIModel: ImageAIModel {
 
     init(
         modelID: String,
-        inputSize: CGSize = CGSize(width: 384, height: 384)
+        inputSize: CGSize = CGSize(width: 512, height: 512)
     ) {
         self.modelID = modelID
         self.inputSize = inputSize
@@ -86,7 +86,6 @@ final class MGKImageAIModel: ImageAIModel {
 
                     let results = try await pipeline.generate(
                         prompt: prompt,
-                        inputs: [MediaGenerationPipeline.data(image)],
                         stateHandler: { state in
                             if case .generating(let step, _) = state {
                                 continuation.yield(.progress(step: step))

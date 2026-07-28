@@ -51,7 +51,7 @@
 		47E36F733010F0AB00AC348D /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DF0B34592D7343BB12FF034 /* ImageAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = ImageAIModel.swift; sourceTree = "<group>"; };
 		A75ACF126DE85BAACAE9660B /* TextAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TextAIModel.swift; sourceTree = "<group>"; };
-		BFF7CCD21084C7504EC0F2CD /* MGKImageAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = MGKImageAIModel.swift; path = MGKImageAIModel.swift; sourceTree = "<group>"; };
+		BFF7CCD21084C7504EC0F2CD /* MGKImageAIModel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MGKImageAIModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */

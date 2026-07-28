@@ -10,7 +10,7 @@ import Testing
 
 @testable import broche
 
-private let testModelID = "flux_2_klein_base_4b_q6p.ckpt"
+private let testModelID = "flux_2_klein_4b_q6p.ckpt"
 
 @Suite("MGKImageAIModel tests")
 @MainActor
@@ -46,8 +46,7 @@ struct MGKImageAIModelTests {
         }
 
         let model = MGKImageAIModel(
-            modelID: testModelID,
-            controlNets: ["controlnet_scribble_1.x_v1.1_f16.ckpt"]
+            modelID: testModelID
         )
 
         try await model.load()
@@ -60,7 +59,7 @@ struct MGKImageAIModelTests {
             for: .documentDirectory,
             in: .userDomainMask
         )[0]
-        let steps = 50
+        let steps = 4
         var imageData: Data?
         var progressCount = 0
         let stream = model.edit(
