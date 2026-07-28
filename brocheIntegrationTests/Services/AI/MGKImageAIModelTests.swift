@@ -10,7 +10,7 @@ import Testing
 
 @testable import broche
 
-private let testModelID = "sd_v1.5_f16.ckpt"
+private let testModelID = "flux_2_klein_base_4b_q6p.ckpt"
 
 @Suite("MGKImageAIModel tests")
 @MainActor
