@@ -12,8 +12,6 @@ import LocalImageGenerator
 import MediaGenerationKit
 import UIKit
 import UniformTypeIdentifiers
-import ModelZoo
-import ControlNetZoo
 
 enum MGKImageAIError: Error, Equatable {
     case pipelineNotLoaded
@@ -46,7 +44,7 @@ final class MGKImageAIModel: ImageAIModel {
 
     init(
         modelID: String,
-        inputSize: CGSize = CGSize(width: 512, height: 512),
+        inputSize: CGSize = CGSize(width: 384, height: 384)
     ) {
         self.modelID = modelID
         self.inputSize = inputSize
@@ -131,12 +129,13 @@ final class MGKImageAIModel: ImageAIModel {
             by: CGAffineTransform(scaleX: scaleX, y: scaleY)
         )
         guard
-            let cgOutput = context.createCGImage(
-                resized,
-                from: CGRect(origin: .zero, size: size)
+            let png = context.pngRepresentation(
+                of: resized,
+                format: .RGBA8,
+                colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!
             )
         else { return nil }
-        return Self.pngData(from: cgOutput)
+        return png
     }
 
     func cgimageFromData(_ data: Data) -> CGImage? {
@@ -144,17 +143,5 @@ final class MGKImageAIModel: ImageAIModel {
             return nil
         }
         return CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
-    }
-
-    private static func pngData(from cgImage: CGImage) -> Data? {
-        let mutableData = NSMutableData()
-        guard
-            let destination = CGImageDestinationCreateWithData(
-                mutableData, "public.png" as CFString, 1, nil
-            )
-        else { return nil }
-        CGImageDestinationAddImage(destination, cgImage, nil)
-        guard CGImageDestinationFinalize(destination) else { return nil }
-        return mutableData as Data
     }
 }
