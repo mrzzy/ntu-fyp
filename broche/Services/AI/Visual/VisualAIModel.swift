@@ -46,4 +46,3 @@ protocol VisualAIModel: AIModel {
         options: VisualAIOptions
     ) -> AsyncThrowingStream<VisualAIOutput, Error>
 }
-
