@@ -103,7 +103,7 @@ final class MGKImageAIModel: ImageAIModel {
                     else {
                         throw MGKImageAIError.iamgeDecodeFailed
                     }
-                    continuation.yield(.image(restored))
+                    continuation.yield(.image(image: restored))
                     continuation.finish()
 
                 } catch {
