@@ -19,12 +19,18 @@ struct ImageAIOptions {
     var seed: UInt32 = 0
 }
 
+/// Metrics collected during
+struct ImageAIMetrics {
+    /// No. of samples generated
+    var nSamples: Int = 0
+}
+
 /// Output from an image AI model, either progress updates or the final image
 enum ImageAIOutput {
     /// Progress update during image generation
     case progress(step: Int)
-    /// Final edited image
-    case image(Data)
+    /// Final edited image with generation metrics
+    case image(image: Data, metrics: ImageAIMetrics? = nil)
 }
 
 /// Image Editing AI Model

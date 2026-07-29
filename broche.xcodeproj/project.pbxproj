@@ -750,8 +750,6 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.9.0;
 			};
-			traits = (
-			);
 		};
 		47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -760,8 +758,6 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.3.3;
 			};
-			traits = (
-			);
 		};
 		47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
 			isa = XCRemoteSwiftPackageReference;

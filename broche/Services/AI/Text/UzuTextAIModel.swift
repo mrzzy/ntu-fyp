@@ -9,7 +9,7 @@ import Foundation
 import Uzu
 
 /// Errors specific to ``UzuTextAIModel``.
-enum UzuError: Error, LocalizedError {
+enum UzuError: Error, LocalizedError, Equatable {
     /// ``generate(prompt:options:)`` was called before ``load()`` succeeded.
     case engineNotInitialized
     /// The model identifier was not found in the Uzu model registry.
@@ -65,6 +65,7 @@ final class UzuTextAIModel: TextAIModel {
     ) -> AsyncThrowingStream<TextAIOutput, Error> {
         return AsyncThrowingStream { continuation in
             Task {
+                
                 do {
                     guard let engine, let model else {
                         throw UzuError.engineNotInitialized
