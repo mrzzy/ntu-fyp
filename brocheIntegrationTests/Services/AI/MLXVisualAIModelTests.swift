@@ -34,43 +34,22 @@ struct MLXVisualAIModelTests {
 
     @Test("Generate returns streaming response with metrics")
     func generateReturnsStreamingResponse() async throws {
-        // Load test image from test bundle.
-        let url = try #require(Bundle.main.url(
-            forResource: "apple_sketch",
-            withExtension: "png"
-        ))
-
-        let imageData = try Data(contentsOf: url)
-
         let model = MLXVisualAIModel(
             modelID: testModelID,
             maxTokens: 1024
         )
-        try await model.load()
+        let benchmark = VisualAIBenchmark<MLXVisualAIModel>()
+        let result = try await benchmark.evaluate(model)
 
-        let stream = model.generate(
-            prompt: "Describe what the user is drawing in this sketch.",
-            images: [imageData],
-            options: VisualAIOptions()
-        )
-
-        var response = ""
-        var metrics: TextAIMetrics?
-
-        for try await output in stream {
-            switch output {
-            case .chunk(let text):
-                response += text
-
-            case .complete(let m):
-                metrics = m
-            }
+        print("Benchmark result: \(result)")
+        #expect(result.loadSecs > 0)
+        #expect(result.generateSecs > 0)
+        guard case .visual(let metrics) = result.metrics else {
+            Issue.record("Expected visual metrics, got \(result.metrics)")
+            return
         }
+        #expect(metrics.nGenerationTokens > 0)
 
-        #expect(!response.isEmpty)
-        #expect(metrics != nil)
-
-        print(response)
-        print(metrics!)
+        print("Response: \(benchmark.response)")
     }
 }
