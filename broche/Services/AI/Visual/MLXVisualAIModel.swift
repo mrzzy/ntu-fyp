@@ -7,28 +7,28 @@
 
 import CoreImage
 import Foundation
+import HuggingFace
 import MLXHuggingFace
 import MLXLMCommon
 import MLXVLM
 import Tokenizers
-import HuggingFace
 
 final class MLXVisualAIModel: VisualAIModel {
     let modelID: String
     let maxTokens: Int
-    private var chat: ChatSession?
+    var model: ModelContext?
+
     init(modelID: String, maxTokens: Int = 2048) {
         self.modelID = modelID
         self.maxTokens = maxTokens
     }
 
     func load() async throws {
-        let model = try await loadModel(
+        model = try await loadModel(
             from: #hubDownloader(),
             using: #huggingFaceTokenizerLoader(),
             id: modelID
         )
-        chat = ChatSession(model)
     }
 
     func generate(
@@ -36,24 +36,23 @@ final class MLXVisualAIModel: VisualAIModel {
         images: [Data],
         options: VisualAIOptions
     ) -> AsyncThrowingStream<VisualAIOutput, Error> {
-        guard let chat else {
-            return AsyncThrowingStream { continuation in
-                continuation.finish(throwing: VisualAIError.modelNotLoaded)
-            }
-        }
-
-        chat.generateParameters = GenerateParameters(
-            maxTokens: maxTokens,
-            temperature: options.temperature,
-            topP: options.topP
-        )
-        if options.seed != 0 {
-            chat.generateParameters.seed = UInt64(options.seed)
-        }
-
         return AsyncThrowingStream { continuation in
             Task {
                 do {
+                    guard let model else {
+                        throw VisualAIError.modelNotLoaded
+                    }
+
+                    let chat = ChatSession(model)
+                    chat.generateParameters = GenerateParameters(
+                        maxTokens: maxTokens,
+                        temperature: options.temperature,
+                        topP: options.topP
+                    )
+                    if options.seed != 0 {
+                        chat.generateParameters.seed = UInt64(options.seed)
+                    }
+
                     // convert input images to core image
                     let imageInputs = try images.compactMap { data in
                         guard let ciImage = CIImage(data: data) else {
