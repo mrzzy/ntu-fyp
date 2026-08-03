@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		475E76DA30201EB5007198F0 /* Replicate in Frameworks */ = {isa = PBXBuildFile; productRef = 475E76DB30201EB5007198F1 /* Replicate */; };
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
 		47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3541D301820BC00CF5413 /* HuggingFace */; };
 		47B35423301820D600CF5413 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 47B35422301820D600CF5413 /* Tokenizers */; };
@@ -84,6 +85,7 @@
 				47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */,
 				47B35423301820D600CF5413 /* Tokenizers in Frameworks */,
 				47B3542A3018217B00CF5413 /* MLXHuggingFace in Frameworks */,
+				475E76DA30201EB5007198F0 /* Replicate in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +155,7 @@
 				47B354293018217B00CF5413 /* MLXHuggingFace */,
 				47B3542B3018217B00CF5413 /* MLXLMCommon */,
 				47B3542D3018217B00CF5413 /* MLXVLM */,
+				475E76DB30201EB5007198F1 /* Replicate */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -269,6 +272,7 @@
 				47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 				47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				475E76D830201EB50007198F /* XCRemoteSwiftPackageReference "replicate-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -490,6 +494,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = broche/broche.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7K6ZTDFM48;
@@ -735,6 +740,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		475E76D830201EB50007198F /* XCRemoteSwiftPackageReference "replicate-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/replicate/replicate-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.24.0;
+			};
+		};
 		47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mrzzy/exyte-Chat.git";
@@ -778,6 +791,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		475E76DB30201EB5007198F1 /* Replicate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 475E76D830201EB50007198F /* XCRemoteSwiftPackageReference "replicate-swift" */;
+			productName = Replicate;
+		};
 		47859C6B300DBAB200C137AD /* ExyteChat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */;

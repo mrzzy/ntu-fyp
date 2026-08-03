@@ -44,3 +44,42 @@ protocol ImageAIModel: AIModel {
         options: ImageAIOptions
     ) -> AsyncThrowingStream<ImageAIOutput, Error>
 }
+
+/// Benchmarks an ``ImageAIModel`` by editing a fixed test image with a fixed prompt
+/// and collecting model-reported metrics.
+///
+/// Conforms to ``AIBenchmark``. Use ``evaluate(_:)`` to load the model,
+/// run editing, and collect timings and memory usage.
+class ImageAIBenchmark<Model: ImageAIModel>: AIBenchmark {
+    /// Edited image produced during the benchmark.
+    var outputImage: Data?
+
+    func generate(_ model: Model) async throws -> AIMetrics {
+        outputImage = nil
+
+        // load test imag
+        let url = Bundle.main.url(
+            forResource: "apple_sketch",
+            withExtension: "png"
+        )!
+        let imageData = try Data(contentsOf: url)
+
+        let stream = model.edit(
+            image: imageData,
+            prompt: "Render apple, plate & cup in a watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique, loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
+            options: ImageAIOptions(seed: 42)
+        )
+        for try await output in stream {
+            switch output {
+            case .progress:
+                break
+            case .image(let data, let metrics):
+                outputImage = data
+                if let metrics {
+                    return .image(metrics)
+                }
+            }
+        }
+        throw AIBenchmarkError.NoMetricsReported
+    }
+}

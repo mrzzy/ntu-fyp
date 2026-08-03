@@ -1,5 +1,5 @@
 {
-  "originHash" : "9a907adc199a0dc4ce3de74420d57846f95e9323167739a2b26bdad0caec824f",
+  "originHash" : "f9ea2a77ae27ea4b18d4aa0ce3b4273d0fef6ed64dd1381f75424704da408660",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -89,6 +89,15 @@
       "state" : {
         "revision" : "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
         "version" : "3.31.4"
+      }
+    },
+    {
+      "identity" : "replicate-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/replicate/replicate-swift",
+      "state" : {
+        "revision" : "efd033f4e421112b70e82221c813417e164aab7a",
+        "version" : "0.24.0"
       }
     },
     {

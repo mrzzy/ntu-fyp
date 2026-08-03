@@ -26,7 +26,9 @@ class Repository {
 
     private init() {
         do {
-            modelContainer = try ModelContainer(for: schema)
+            // disable swiftdata integration persistence in cloudkit
+            let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+            modelContainer = try ModelContainer(for: schema, configurations: [config])
         } catch {
             fatalError("Failed to initialize ModelContainer: \(error)")
         }
