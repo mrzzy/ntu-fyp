@@ -47,6 +47,9 @@ final class MLXVisualAIModel: VisualAIModel {
             temperature: options.temperature,
             topP: options.topP
         )
+        if options.seed != 0 {
+            chat.generateParameters.seed = UInt64(options.seed)
+        }
 
         return AsyncThrowingStream { continuation in
             Task {

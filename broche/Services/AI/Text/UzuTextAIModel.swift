@@ -19,7 +19,7 @@ enum UzuError: Error, LocalizedError, Equatable {
         switch self {
         case .engineNotInitialized:
             "Engine has not been initialized. Call load() first."
-        case .modelNotFound(let id):
+        case let .modelNotFound(id):
             "Model '\(id)' not found in the Uzu model registry"
         }
     }
@@ -65,32 +65,35 @@ final class UzuTextAIModel: TextAIModel {
     ) -> AsyncThrowingStream<TextAIOutput, Error> {
         return AsyncThrowingStream { continuation in
             Task {
-                
                 do {
                     guard let engine, let model else {
                         throw UzuError.engineNotInitialized
                     }
                     // create new chat session if none has been created
                     if session == nil {
-                        session = try await engine.chat(
-                            model: model,
-                            config: .create().withSamplingSeed(
+                        var config = ChatConfig.create()
+                        if options.seed != 0 {
+                            config = config.withSamplingSeed(
                                 samplingSeed: .custom(seed: Int64(options.seed))
                             )
+                        }
+                        session = try await engine.chat(
+                            model: model,
+                            config: config
                         )
                     }
 
                     let messages = [ChatMessage.user().withText(text: prompt)]
                     let replyConfig =
                         (ChatReplyConfig.create()
-                            .withTokenLimit(tokenLimit: UInt32(maxTokens))
-                            .withSamplingMethod(
-                                samplingMethod: .stochastic(
-                                    temperature: Double(options.temperature),
-                                    topK: Int64(options.topK),
-                                    topP: Double(options.topP), minP: nil
-                                )
-                            ))
+                                .withTokenLimit(tokenLimit: UInt32(maxTokens))
+                                .withSamplingMethod(
+                                    samplingMethod: .stochastic(
+                                        temperature: Double(options.temperature),
+                                        topK: Int64(options.topK),
+                                        topP: Double(options.topP), minP: nil
+                                    )
+                                ))
                     let stream = await session!.replyWithStream(
                         input: messages, config: replyConfig
                     )
@@ -100,7 +103,7 @@ final class UzuTextAIModel: TextAIModel {
 
                     for try await update in stream.iterator() {
                         switch update {
-                        case .replies(let replies):
+                        case let .replies(replies):
                             if let reply = replies.last {
                                 lastReply = reply
                                 let text = reply.message.text() ?? ""
@@ -113,7 +116,7 @@ final class UzuTextAIModel: TextAIModel {
                                     previousLength = text.count
                                 }
                             }
-                        case .error(let error):
+                        case let .error(error):
                             continuation.finish(throwing: error)
                             return
                         }
