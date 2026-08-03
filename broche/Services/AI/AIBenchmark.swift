@@ -65,7 +65,7 @@ extension AIBenchmarkResult: CustomStringConvertible {
         case .image(let m):
             lines.append("Samples:         \(m.nSamples)")
         }
-        let memoryUsedMB = Double(memoryLoaded) - Double(memoryUnloaded) / 1024 / 1024
+        let memoryUsedMB = (Double(memoryLoaded) - Double(memoryUnloaded)) / 1024 / 1024
         lines.append("Memory Used:     \(String(format: "%.1f", memoryUsedMB)) MB")
         let memoryPeakMB = Double(memoryGenerate) / 1024 / 1024
         lines.append("Memory Peak:     \(String(format: "%.1f", memoryPeakMB)) MB")
