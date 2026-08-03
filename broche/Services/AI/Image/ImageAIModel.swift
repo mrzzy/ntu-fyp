@@ -9,13 +9,7 @@ import Foundation
 
 /// Image Editing AI Models
 struct ImageAIOptions {
-    /// The number of steps to perform during the editing process. More iterations may yield better results but take longer.
-    var steps: Int = 8
-    /// The scale factor for prompt guidance during the editing process. Higher values may produce more pronounced edits.
-    var guidance: Float = 7.5
-    /// The strength of the editing effect. A value of 0.0 means no change from original image, while 1.0 means full application of the edits.
-    var strength: Float = 0.8
-    /// Seed for random number generation to ensure reproducibility.
+    /// Seed for random number generation to ensure reproducibility. 0 disables seed.
     var seed: UInt32 = 0
 }
 
@@ -23,6 +17,8 @@ struct ImageAIOptions {
 struct ImageAIMetrics {
     /// No. of samples generated
     var nSamples: Int = 0
+    /// No. of image generation steps run.
+    var nSteps: Int = 0
 }
 
 /// Output from an image AI model, either progress updates or the final image
