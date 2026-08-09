@@ -11,6 +11,10 @@ import Foundation
 struct ImageAIOptions {
     /// Seed for random number generation to ensure reproducibility. 0 disables seed.
     var seed: UInt32 = 0
+    /// Number of image generation steps. 0 uses the provider default.
+    var steps: Int = 0
+    /// Guidance scale controlling prompt adherence. 0 uses the provider default.
+    var guidance: Double = 0
 }
 
 /// Metrics collected during
