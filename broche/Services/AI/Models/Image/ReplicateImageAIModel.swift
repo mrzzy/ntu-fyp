@@ -66,6 +66,7 @@ final class ReplicateImageAIModel: ImageAIModel {
                         throw ReplicateImageAIError.invalidModelID(modelID: modelID)
                     }
 
+                    // convert input image to jpeg as replicate does not support png input
                     // 1MB size limit
                     let jpegData = UIImage(data: image)!.jpegData(compressionQuality: 1)!
                     var input: [String: Value] = [

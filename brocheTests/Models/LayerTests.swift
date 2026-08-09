@@ -12,15 +12,6 @@ import UIKit
 
 @Suite("Layer rendering tests")
 struct LayerTests {
-    @Test("Drawing layer renders as PNG data")
-    func drawingLayerRendersAsPNGData() throws {
-        let drawing = PKDrawing()
-        let layer = Layer.drawing(drawing: drawing)
-
-        #expect(throws: LayerError.self) {
-            try layer.render()
-        }
-    }
 
     @Test("Image layer returns original data")
     func imageLayerReturnsOriginalData() throws {
@@ -34,12 +25,10 @@ struct LayerTests {
 
     @Test("Drawing layer with strokes renders successfully")
     func drawingLayerWithStrokesRendersSuccessfully() throws {
-        let drawing = PKDrawing()
+        let drawing = TestFixtures.drawing
         let layer = Layer.drawing(drawing: drawing)
 
-        #expect(throws: LayerError.self) {
-            try layer.render()
-        }
+        try layer.render()
     }
 
     @Test("Empty PNG data in image layer returns same data")
@@ -69,124 +58,6 @@ extension LayerTests {
         let renderer = UIGraphicsImageRenderer(size: size)
         let image = renderer.image { context in
             UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: size))
-        }
-        return try #require(image.pngData())
-    }
-}
-
-@Suite("Layer-Sketch integration tests")
-struct LayerSketchTests {
-    @Test("Sketch with no layers returns empty image")
-    func sketchWithNoLayersReturnsNilImage() {
-        let sketch = Sketch(title: "Empty", layers: [])
-
-        #expect(sketch.image.size.width == 0, "Empty sketch should return empty image")
-    }
-
-    @Test("Sketch with single drawing layer renders image")
-    func sketchWithSingleDrawingLayerRendersImage() {
-        let drawing = PKDrawing()
-        let sketch = Sketch(title: "Single Drawing", layers: [.drawing(drawing: drawing)])
-
-        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
-    }
-
-    @Test("Sketch with single image layer renders image")
-    func sketchWithSingleImageLayerRendersImage() throws {
-        let imageData = try createTestPNGImage(size: CGSize(width: 100, height: 100))
-        let sketch = Sketch(title: "Single Image", layers: [.image(data: imageData)])
-
-        let image = sketch.image
-        #expect(image.size.width > 0, "Sketch with image should render")
-    }
-
-    @Test("Sketch composites multiple layers correctly")
-    func sketchCompositesMultipleLayersCorrectly() throws {
-        let drawing1 = PKDrawing()
-        let drawing2 = PKDrawing()
-        let imageData = try createTestPNGImage(size: CGSize(width: 200, height: 200))
-
-        let sketch = Sketch(
-            title: "Multiple Layers",
-            layers: [
-                .image(data: imageData),
-                .drawing(drawing: drawing1),
-                .drawing(drawing: drawing2),
-            ]
-        )
-
-        let image = sketch.image
-        #expect(image.size.width > 0 && image.size.height > 0, "Multiple layers should composite")
-    }
-
-    @Test("Sketch skips layers that fail to render")
-    func sketchSkipsLayersThatFailToRender() throws {
-        let imageData = try createTestPNGImage(size: CGSize(width: 100, height: 100))
-        let drawing = PKDrawing()
-
-        let sketch = Sketch(
-            title: "Mixed Layers",
-            layers: [
-                .image(data: imageData),
-                .drawing(drawing: drawing),
-                .image(data: Data()),
-            ]
-        )
-
-        let image = sketch.image
-        #expect(image.size.width > 0, "Should render despite invalid layer")
-    }
-
-    @Test("Sketch with only invalid layers returns empty image")
-    func sketchWithOnlyInvalidLayersReturnsNil() {
-        let sketch = Sketch(
-            title: "Invalid Only",
-            layers: [
-                .image(data: Data()),
-                .image(data: Data([0x00])),
-            ]
-        )
-
-        #expect(sketch.image.size.width == 0, "Sketch with only invalid layers should return empty image")
-    }
-
-    @Test("Sketch composites in layer order")
-    func sketchCompositesInLayerOrder() throws {
-        let bottomLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100), color: .red
-        )
-        let topLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100), color: .blue
-        )
-
-        let sketch = Sketch(
-            title: "Layer Order",
-            layers: [
-                .image(data: bottomLayerData),
-                .image(data: topLayerData),
-            ]
-        )
-
-        let image = sketch.image
-        #expect(image.size.width > 0, "Should composite layers in order")
-    }
-
-    @Test("Sketch handles complex drawing with multiple strokes")
-    func sketchHandlesComplexDrawingWithMultipleStrokes() {
-        let drawing = PKDrawing()
-
-        let sketch = Sketch(title: "Complex Drawing", layers: [.drawing(drawing: drawing)])
-
-        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
-    }
-}
-
-extension LayerSketchTests {
-    private func createTestPNGImage(size: CGSize, color: UIColor = .white) throws -> Data {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { context in
-            color.setFill()
             context.fill(CGRect(origin: .zero, size: size))
         }
         return try #require(image.pngData())

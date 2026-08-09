@@ -55,7 +55,7 @@ private struct ChatDetailView: View {
     }
 
     private var exyteMessages: [ExyteChat.Message] {
-        sketch?.messages.map {
+        sketch?.messages.compactMap {
             $0.toExyteChatMessage()
         } ?? []
     }
@@ -67,9 +67,7 @@ private struct ChatDetailView: View {
             .onAppear {
                 if sketch?.messages.isEmpty ?? true {
                     let welcomeMessage = Message(
-                        id: UUID().uuidString,
                         user: .ai,
-                        createdAt: Date(),
                         text: """
                             Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
@@ -143,9 +141,7 @@ private struct ChatDetailView: View {
         guard let sketch = sketch else { return }
 
         let userMessage = Message(
-            id: UUID().uuidString,
             user: .user,
-            createdAt: Date(),
             text: draft.text
         )
         sketch.messages.append(userMessage)
@@ -159,9 +155,7 @@ private struct ChatDetailView: View {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
 
             let llmResponse = Message(
-                id: UUID().uuidString,
                 user: .ai,
-                createdAt: Date(),
                 text: "This is a mock LLM response to: \"\(draft.text)\""
             )
             await MainActor.run {

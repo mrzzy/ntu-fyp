@@ -57,7 +57,7 @@ class ImageAIBenchmark<Model: ImageAIModel>: AIBenchmark {
     func generate(_ model: Model) async throws -> AIMetrics {
         outputImage = nil
 
-        // load test imag
+        // load test image
         let url = Bundle.main.url(
             forResource: "apple_sketch",
             withExtension: "png"

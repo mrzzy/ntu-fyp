@@ -1,9 +1,8 @@
+@testable import broche
 import Foundation
 import Testing
 
-@testable import broche
-
-private let testModelID = "RepublicOfKorokke/Qwen3.5-4B-mlx-vlm-mxfp4"
+private let testModelID = DefaultAIModelFactory.defaultVisualModelID
 
 @Suite("MLXVisualAIModel tests")
 @MainActor
@@ -44,7 +43,7 @@ struct MLXVisualAIModelTests {
         print("Benchmark result: \(result)")
         #expect(result.loadSecs > 0)
         #expect(result.generateSecs > 0)
-        guard case .visual(let metrics) = result.metrics else {
+        guard case let .visual(metrics) = result.metrics else {
             Issue.record("Expected visual metrics, got \(result.metrics)")
             return
         }

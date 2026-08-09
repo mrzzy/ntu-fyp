@@ -21,6 +21,7 @@ enum Layer: Codable {
     func render() throws -> Data {
         switch self {
         case .drawing(let drawing):
+            // assume that all drawing layers are initialised to same sketch size
             let size = drawing.bounds.size
             if let data = drawing.image(from: CGRect(origin: .zero, size: size), scale: 1.0)
                 .pngData()

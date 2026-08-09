@@ -10,11 +10,6 @@ import PencilKit
 import SwiftData
 import UIKit
 
-/// Defines a set of default layers a sketch starts with.
-let SketchDefaultLayers: [Layer] = [
-    .drawing(drawing: PKDrawing())
-]
-
 // Zoom
 struct Zoom: Codable {
     var scale: Double
@@ -29,9 +24,28 @@ struct Zoom: Codable {
     }
 }
 
+
+/// Defines a set of default layers a sketch starts with.
+let SketchDefaultLayers: [Layer] = [
+    .drawing(drawing: PKDrawing())
+]
+enum SketchError: Error, LocalizedError {
+    case noLayersToRender
+    case emptyRenderedImage
+
+    var errorDescription: String? {
+        switch self {
+        case .noLayersToRender:
+            return "No layers to render."
+        case .emptyRenderedImage:
+            return "Rendered image is empty."
+        }
+    }
+}
+
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch {
+class Sketch: CustomStringConvertible {
     var title: String
     var layers: [Layer]
     // dimensions of the sketch
@@ -53,6 +67,27 @@ class Sketch {
         CGSize(width: width, height: height)
     }
 
+    var description: String {
+        let layerDescriptions = layers.enumerated().map { index, layer in
+            let type: String
+            switch layer {
+            case .drawing:
+                type = "Drawing"
+            case .image:
+                type = "Image"
+            }
+            return "  [\(index)] \(type)"
+        }.joined(separator: "\n")
+
+        return """
+        Sketch: \(title) 
+        Dimensions (<width>x<height>): (\(Int(width))x\(Int(height)))
+        Total Layers: \(layers.count)
+        Layers: [<index>] <type>
+        \(layerDescriptions)
+        """
+    }
+
     init(
         title: String = "Untitled", layers: [Layer] = SketchDefaultLayers,
         size: CGSize = CGSize(width: 512, height: 512)
@@ -72,8 +107,7 @@ class Sketch {
     /// - Returns: A `UIImage` representing the flattened sketch or an empty image if
     ///   the sketch has no layers.
     var image: UIImage {
-        // image renders all layers
-        return renderLayers(indices: 0..<layers.count)
+        get throws { try renderLayers(indices: 0..<layers.count) }
     }
 
     /// Returns a cached image of the sketch, rendering it if the cache has expired.
@@ -81,51 +115,40 @@ class Sketch {
     /// The cached image is valid for 5 seconds after the last render. If the cache
     /// has expired, the sketch is re-rendered and the cache is updated.
     var cachedImage: UIImage {
-        let now = Date()
-        // return cached image if still fresh
-        if cacheImageTTL >= now {
-            return _cachedImage
-        }
+        get throws {
+            let now = Date()
+            if cacheImageTTL >= now {
+                return _cachedImage
+            }
 
-        // composite all layers into a single image and cache it
-        let renderedImage = renderLayers(indices: 0..<layers.count)
-        _cachedImage = renderedImage
-        cacheImageTTL = now.addingTimeInterval(5)
-        return renderedImage
+            let renderedImage = try renderLayers(indices: 0..<layers.count)
+            _cachedImage = renderedImage
+            cacheImageTTL = now.addingTimeInterval(5)
+            return renderedImage
+        }
     }
 
-    /// Renders only the selected layers
-    /// indices: Range<Int> - the range of layer indices to render
-    ///
-    /// Layers are drawn sequentially, with each subsequent layer composited on
-    /// top of the previous ones. If the sketch contains no layers an empty image is returned.
-    ///
-    /// - Returns: A `UIImage` representing the flattened sketch or an empty image if the sketch has no layers.
-    func renderLayers(indices: Range<Int>) -> UIImage {
+    func renderLayers(indices: Range<Int>) throws -> UIImage {
         let selectedLayers = layers[indices]
 
-        guard
-            !selectedLayers.isEmpty,
-            let firstLayer = selectedLayers.first,
-            let firstData = try? firstLayer.render(),
-            let firstImage = UIImage(data: firstData)
-        else {
-            return UIImage()
+        guard let _ = selectedLayers.first else {
+            throw SketchError.noLayersToRender
+        }
+
+        var images: [UIImage] = []
+        for layer in selectedLayers {
+            let data = try layer.render()
+            guard let image = UIImage(data: data) else {
+                throw SketchError.emptyRenderedImage
+            }
+            images.append(image)
         }
 
         let size = CGSize(width: width, height: height)
         let renderer = UIGraphicsImageRenderer(size: size)
 
         return renderer.image { _ in
-            firstImage.draw(in: CGRect(origin: .zero, size: size))
-
-            for layer in selectedLayers.dropFirst() {
-                guard
-                    let data = try? layer.render(),
-                    let image = UIImage(data: data)
-                else {
-                    continue
-                }
+            for image in images {
                 image.draw(in: CGRect(origin: .zero, size: size))
             }
         }

@@ -12,71 +12,97 @@ import UIKit
 
 @Suite("Sketch image generation tests")
 struct SketchTests {
-    @Test("Sketch with no layers returns empty image")
-    func sketchWithNoLayersReturnsNilImage() {
-        let sketch = Sketch(title: "Empty", layers: [], size: CGSize(width: 512, height: 512))
+    @Test("Sketch with no layers throws noLayersToRender")
+    func sketchWithNoLayersThrowsNoLayersToRender() {
+        let sketch = Sketch(
+            title: "Empty",
+            layers: [],
+            size: CGSize(width: 512, height: 512)
+        )
 
-        #expect(sketch.image.size.width == 0, "Empty sketch should return empty image")
+        #expect(throws: SketchError.noLayersToRender) {
+            try sketch.image
+        }
     }
 
-    @Test("Sketch with single drawing layer renders image")
-    func sketchWithSingleDrawingLayerRendersImage() {
-        let drawing = PKDrawing()
-        let sketch = Sketch(title: "Single Drawing", layers: [.drawing(drawing: drawing)], size: CGSize(width: 512, height: 512))
+    @Test("Sketch with single empty drawing layer renders successfully")
+    func sketchWithSingleDrawingLayerRendersImage() throws {
+        let drawing = TestFixtures.drawing
+        let sketch = Sketch(
+            title: "Single Drawing",
+            layers: [.drawing(drawing: drawing)],
+            size: CGSize(width: 512, height: 512)
+        )
 
-        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
+        let image = try sketch.image
+
+        #expect(image.size.width == 512)
+        #expect(image.size.height == 512)
     }
 
     @Test("Sketch with single image layer renders image")
     func sketchWithSingleImageLayerRendersImage() throws {
-        let imageData = try createTestPNGImage(size: CGSize(width: 100, height: 100))
-        let sketch = Sketch(title: "Single Image", layers: [.image(data: imageData)], size: CGSize(width: 512, height: 512))
+        let imageData = try createTestPNGImage(
+            size: CGSize(width: 100, height: 100)
+        )
 
-        let image = sketch.image
-        #expect(image.size.width > 0, "Sketch with image should render")
+        let sketch = Sketch(
+            title: "Single Image",
+            layers: [.image(data: imageData)],
+            size: CGSize(width: 512, height: 512)
+        )
+
+        let image = try sketch.image
+
+        #expect(image.size.width == 512)
+        #expect(image.size.height == 512)
     }
 
     @Test("Sketch composites multiple layers correctly")
     func sketchCompositesMultipleLayersCorrectly() throws {
-        let drawing1 = PKDrawing()
-        let drawing2 = PKDrawing()
-        let imageData = try createTestPNGImage(size: CGSize(width: 200, height: 200))
+        let imageData = try createTestPNGImage(
+            size: CGSize(width: 200, height: 200)
+        )
 
         let sketch = Sketch(
             title: "Multiple Layers",
             layers: [
                 .image(data: imageData),
-                .drawing(drawing: drawing1),
-                .drawing(drawing: drawing2),
+                .drawing(drawing: TestFixtures.drawing),
+                .drawing(drawing: TestFixtures.drawing),
             ],
             size: CGSize(width: 512, height: 512)
         )
 
-        let image = sketch.image
-        #expect(image.size.width > 0 && image.size.height > 0, "Multiple layers should composite")
+        let image = try sketch.image
+
+        #expect(image.size.width == 512)
+        #expect(image.size.height == 512)
     }
 
-    @Test("Sketch skips layers that fail to render")
-    func sketchSkipsLayersThatFailToRender() throws {
-        let imageData = try createTestPNGImage(size: CGSize(width: 100, height: 100))
-        let drawing = PKDrawing()
+    @Test("Sketch throws when a layer contains invalid image data")
+    func sketchThrowsWhenLayerFailsToDecode() throws {
+        let validImageData = try createTestPNGImage(
+            size: CGSize(width: 100, height: 100)
+        )
 
         let sketch = Sketch(
             title: "Mixed Layers",
             layers: [
-                .image(data: imageData),
-                .drawing(drawing: drawing),
+                .image(data: validImageData),
+                .drawing(drawing: TestFixtures.drawing),
                 .image(data: Data()),
             ],
             size: CGSize(width: 512, height: 512)
         )
 
-        let image = sketch.image
-        #expect(image.size.width > 0, "Should render despite invalid layer")
+        #expect(throws: SketchError.emptyRenderedImage) {
+            try sketch.image
+        }
     }
 
-    @Test("Sketch with only invalid layers returns empty image")
-    func sketchWithOnlyInvalidLayersReturnsNil() {
+    @Test("Sketch with only invalid image layers throws emptyRenderedImage")
+    func sketchWithOnlyInvalidLayersThrowsEmptyRenderedImage() {
         let sketch = Sketch(
             title: "Invalid Only",
             layers: [
@@ -86,16 +112,21 @@ struct SketchTests {
             size: CGSize(width: 512, height: 512)
         )
 
-        #expect(sketch.image.size.width == 0, "Sketch with only invalid layers should return empty image")
+        #expect(throws: SketchError.emptyRenderedImage) {
+            try sketch.image
+        }
     }
 
-    @Test("Sketch composites in layer order")
+    @Test("Sketch composites layers in order")
     func sketchCompositesInLayerOrder() throws {
         let bottomLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100), color: .red
+            size: CGSize(width: 100, height: 100),
+            color: .red
         )
+
         let topLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100), color: .blue
+            size: CGSize(width: 100, height: 100),
+            color: .blue
         )
 
         let sketch = Sketch(
@@ -107,35 +138,55 @@ struct SketchTests {
             size: CGSize(width: 512, height: 512)
         )
 
-        let image = sketch.image
-        #expect(image.size.width > 0, "Should composite layers in order")
+        let image = try sketch.image
+
+        #expect(image.size.width == 512)
+        #expect(image.size.height == 512)
     }
 
-    @Test("Sketch handles complex drawing with multiple strokes")
-    func sketchHandlesComplexDrawingWithMultipleStrokes() {
-        let drawing = PKDrawing()
+    @Test("Sketch with empty drawing layer renders successfully")
+    func sketchHandlesEmptyDrawing() throws {
+        let drawing = TestFixtures.drawing
 
-        let sketch = Sketch(title: "Complex Drawing", layers: [.drawing(drawing: drawing)], size: CGSize(width: 512, height: 512))
+        let sketch = Sketch(
+            title: "Empty Drawing",
+            layers: [.drawing(drawing: drawing)],
+            size: CGSize(width: 512, height: 512)
+        )
 
-        #expect(sketch.image.size.width == 0, "Empty drawing should render empty image")
+        let image = try sketch.image
+
+        #expect(image.size.width == 512)
+        #expect(image.size.height == 512)
     }
 
     @Test("Sketch maintains correct size")
     func sketchMaintainsCorrectSize() {
         let testSize = CGSize(width: 768, height: 1024)
-        let sketch = Sketch(title: "Sized Sketch", size: testSize)
 
-        #expect(sketch.size == testSize, "Sketch should maintain the specified size")
+        let sketch = Sketch(
+            title: "Sized Sketch",
+            size: testSize
+        )
+
+        #expect(sketch.size == testSize)
     }
 }
 
 extension SketchTests {
-    private func createTestPNGImage(size: CGSize, color: UIColor = .white) throws -> Data {
+    private func createTestPNGImage(
+        size: CGSize,
+        color: UIColor = .white
+    ) throws -> Data {
         let renderer = UIGraphicsImageRenderer(size: size)
+
         let image = renderer.image { context in
             color.setFill()
-            context.fill(CGRect(origin: .zero, size: size))
+            context.fill(
+                CGRect(origin: .zero, size: size)
+            )
         }
+
         return try #require(image.pngData())
     }
 }

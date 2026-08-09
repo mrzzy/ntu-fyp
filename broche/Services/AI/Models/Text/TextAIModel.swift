@@ -4,7 +4,9 @@
 //
 //  Created by Zhu Zhanyan on 2026-07-23.
 //
+
 import Foundation
+
 
 /// Text Generation AI models aka Language Models (LLMs)
 /// Options that control text generation.
@@ -17,6 +19,9 @@ struct TextAIOptions {
     var topK: Int = 40
     /// Sets the generation seed for reproducibility. If set to 0, a random seed will be used.
     var seed: Int = 42
+    /// A list of specifications of tools that the model can use to perform tasks.
+    /// The model can issue tool calls during generation.
+    var tools: [AIToolSpec] = []
 }
 
 /// Metrics collected during text generation.
@@ -31,6 +36,10 @@ struct TextAIMetrics {
 enum TextAIOutput: Error {
     /// Indicates that a chunk of text has been generated.
     case chunk(text: String)
+    /// Indicates that the model has issued a tool call.
+    /// Caller should evaluate the selected tool and pass the results back to
+    /// the caller as a message with the 'tool' role.
+    case call(call: AIToolCall)
     /// Indicates that the generation is complete and provides metrics.
     case complete(metrics: TextAIMetrics)
 }
@@ -39,12 +48,12 @@ protocol TextAIModel: AIModel {
     /// Generates text for the given prompt.
     ///
     /// - Parameters:
-    ///   - prompt: The input prompt to generate a completion for.
+    ///   - messages: The input messages to generate a completion for.
     ///   - options: Configuration controlling text generation.
     /// - Returns: An asynchronous stream of generated text chunks.
     /// - Throws: An error if generation fails or the model has not been loaded.
     func generate(
-        prompt: String,
+        messages: [Message],
         options: TextAIOptions
     ) -> AsyncThrowingStream<TextAIOutput, Error>
 }
@@ -61,13 +70,18 @@ class TextAIBenchmark<Model: TextAIModel>: AIBenchmark {
     func generate(_ model: Model) async throws -> AIMetrics {
         response = ""
         let stream = model.generate(
-            prompt: "Explain how to paint a watercolor, step by step",
+            messages: [
+                Message(user: .system, text: "You are a helpful assistant."),
+                Message(user: .user, text: "Explain how to paint a watercolor, step by step"),
+            ],
             options: TextAIOptions(temperature: 1.0, topP: 1.0, topK: 40, seed: 42)
         )
         for try await output in stream {
             switch output {
             case .chunk(let text):
                 response += text
+            case .call(let call):
+                print("Tool call in benchmark: \(call)")
             case .complete(let metrics):
                 return .text(metrics)
             }

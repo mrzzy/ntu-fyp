@@ -15,7 +15,6 @@
 		47B3542A3018217B00CF5413 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47B354293018217B00CF5413 /* MLXHuggingFace */; };
 		47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542B3018217B00CF5413 /* MLXLMCommon */; };
 		47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542D3018217B00CF5413 /* MLXVLM */; };
-		47D8349F3011FD21005AF28C /* Uzu in Frameworks */ = {isa = PBXBuildFile; productRef = 47D8349E3011FD21005AF28C /* Uzu */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,7 +79,6 @@
 				47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */,
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
 				47B354283018217B00CF5413 /* BenchmarkHelpers in Frameworks */,
-				47D8349F3011FD21005AF28C /* Uzu in Frameworks */,
 				47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */,
 				47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */,
 				47B35423301820D600CF5413 /* Tokenizers in Frameworks */,
@@ -148,7 +146,6 @@
 			name = broche;
 			packageProductDependencies = (
 				47859C6B300DBAB200C137AD /* ExyteChat */,
-				47D8349E3011FD21005AF28C /* Uzu */,
 				47B3541D301820BC00CF5413 /* HuggingFace */,
 				47B35422301820D600CF5413 /* Tokenizers */,
 				47B354273018217B00CF5413 /* BenchmarkHelpers */,
@@ -268,7 +265,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
-				47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */,
 				47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 				47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
@@ -763,6 +759,8 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.9.0;
 			};
+			traits = (
+			);
 		};
 		47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -771,6 +769,8 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.3.3;
 			};
+			traits = (
+			);
 		};
 		47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -778,14 +778,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.31.4;
-			};
-		};
-		47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/trymirai/uzu.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.5.12;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -830,11 +822,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
 			productName = MLXVLM;
-		};
-		47D8349E3011FD21005AF28C /* Uzu */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47D8349D3011FD21005AF28C /* XCRemoteSwiftPackageReference "uzu" */;
-			productName = Uzu;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

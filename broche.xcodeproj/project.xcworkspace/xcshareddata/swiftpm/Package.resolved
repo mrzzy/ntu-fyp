@@ -1,5 +1,5 @@
 {
-  "originHash" : "f9ea2a77ae27ea4b18d4aa0ce3b4273d0fef6ed64dd1381f75424704da408660",
+  "originHash" : "f0ee80b30577d6a3c6329e98717089cf331b7e9a3137257b99e9177a3406004e",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -206,15 +206,6 @@
       "state" : {
         "revision" : "2fa33e1f5e7131a7fc64c28e6d161dcec0d24820",
         "version" : "1.3.3"
-      }
-    },
-    {
-      "identity" : "uzu",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/trymirai/uzu.git",
-      "state" : {
-        "revision" : "0ebcf227869684dcf6928c47d282da35c116d396",
-        "version" : "0.5.12"
       }
     },
     {

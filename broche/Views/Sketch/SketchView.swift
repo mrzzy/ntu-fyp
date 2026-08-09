@@ -24,7 +24,7 @@ struct SketchView: View {
             NavigationSplitView {
                 List(sketches, selection: $sketchId) { sketch in
                     HStack {
-                        Image(uiImage: sketch.cachedImage)
+                        Image(uiImage: (try? sketch.cachedImage) ?? UIImage())
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 60, height: 60)

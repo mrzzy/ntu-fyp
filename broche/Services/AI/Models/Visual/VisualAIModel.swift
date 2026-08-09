@@ -75,6 +75,8 @@ class VisualAIBenchmark<Model: VisualAIModel>: AIBenchmark {
             switch output {
             case .chunk(let text):
                 response += text
+            case .call(let call):
+                print("Ignored tool call in benchmark: \(call)")
             case .complete(let metrics):
                 return .visual(metrics)
             }

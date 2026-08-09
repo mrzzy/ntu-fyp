@@ -11,9 +11,12 @@ import SwiftData
 import SwiftUI
 
 /// Represents the type of user who sent a message - either a regular user or AI
-enum User: Codable {
+/// System messages are are hidden from the user and only show to the AI.
+enum User: String, Codable {
+    case system
     case user
     case ai
+    case tool
 }
 
 extension User {
@@ -26,7 +29,7 @@ extension User {
         }
     }
 
-    func toExyteChatUser() -> ExyteChat.User {
+    func toExyteChatUser() -> ExyteChat.User? {
         switch self {
         case .user:
             return ExyteChat.User(
@@ -42,6 +45,15 @@ extension User {
                 avatarURL: nil,
                 isCurrentUser: false
             )
+        case .tool:
+            return ExyteChat.User(
+                id: "tool",
+                name: "Tool",
+                avatarURL: nil,
+                isCurrentUser: false
+            )
+        case .system:
+            return nil
         }
     }
 }
@@ -50,8 +62,6 @@ extension User {
 enum AttachmentType: Codable {
     case image
     case video
-    case audio
-    case file
 }
 
 extension AttachmentType {
@@ -128,10 +138,10 @@ final class Message {
     var replyMessage: Message?
 
     init(
-        id: String,
         user: User,
+        text: String,
+        id: String = UUID().uuidString,
         createdAt: Date = Date(),
-        text: String = "",
         attachments: [Attachment] = [],
         replyMessage: Message? = nil
     ) {
@@ -147,33 +157,37 @@ final class Message {
     convenience init(fromExyteChat exyteMessage: ExyteChat.Message) {
         let reply: Message? = exyteMessage.replyMessage.map { replyMsg in
             Message(
-                id: replyMsg.id,
                 user: User(fromExyteChat: replyMsg.user),
-                createdAt: replyMsg.createdAt,
                 text: replyMsg.text,
+                id: replyMsg.id,
+                createdAt: replyMsg.createdAt,
                 attachments: replyMsg.attachments.map { Attachment(fromExyteChat: $0) }
             )
         }
 
         self.init(
-            id: exyteMessage.id,
             user: User(fromExyteChat: exyteMessage.user),
-            createdAt: exyteMessage.createdAt,
             text: exyteMessage.text,
+            id: exyteMessage.id,
+            createdAt: exyteMessage.createdAt,
             attachments: exyteMessage.attachments.map { Attachment(fromExyteChat: $0) },
             replyMessage: reply
         )
     }
 
     /// Converts this SwiftData Message to an ExyteChat Message for display in the chat interface
+    /// Disregards system messages, which are not displayed in the chat UI by returning nil
     func toExyteChatMessage()
-        -> ExyteChat.Message
+        -> ExyteChat.Message?
     {
-        let exyteAttachments = attachments.map(\.toExyteChat)
+        guard let exyteUser = user.toExyteChatUser() else {
+            return nil
+        }
 
+        let exyteAttachments = attachments.map(\.toExyteChat)
         return ExyteChat.Message(
             id: id,
-            user: user.toExyteChatUser(),
+            user: exyteUser,
             createdAt: createdAt,
             text: text,
             attachments: exyteAttachments,
@@ -182,14 +196,7 @@ final class Message {
     }
 
     /// Converts this message to a ReplyMessage for ExyteChat
-    func toReplyMessage() -> ExyteChat.ReplyMessage {
-        return ExyteChat.ReplyMessage(
-            id: id,
-            user: user.toExyteChatUser(),
-            createdAt: createdAt,
-            text: text,
-            attachments: [],
-            recording: nil
-        )
+    func toReplyMessage() -> ExyteChat.ReplyMessage? {
+        return toExyteChatMessage()?.toReplyMessage() ?? nil
     }
 }

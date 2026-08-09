@@ -3,7 +3,7 @@ import Testing
 
 @testable import broche
 
-private let testModelID = "black-forest-labs/flux-2-klein-4b"
+private let testModelID = DefaultAIModelFactory.defaultImageModelID
 
 @Suite("ReplicateImageAIModel tests")
 @MainActor

@@ -27,7 +27,7 @@ struct SketchDetailView: View {
             // composite all layers except last layer in 1 image
             let backgroundLayers =
                 if nLayers > 1 {
-                    sketch.renderLayers(indices: 0 ..< sketch.layers.count - 1)
+                    (try? sketch.renderLayers(indices: 0 ..< sketch.layers.count - 1)) ?? UIImage()
                 } else {
                     UIImage()
                 }

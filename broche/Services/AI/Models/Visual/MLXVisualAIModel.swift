@@ -65,7 +65,16 @@ final class MLXVisualAIModel: VisualAIModel {
                         case .chunk(let text):
                             continuation.yield(.chunk(text: text))
                         case .toolCall(let call):
-                            print("Tool call: \(call)")
+                            let args = call.function.arguments.mapValues { $0.anyValue }
+                            let argsJSON = String(
+                                data: try JSONSerialization.data(
+                                    withJSONObject: args, options: [.sortedKeys]
+                                ),
+                                encoding: .utf8
+                            )!
+                            continuation.yield(
+                                .call(call: AIToolCall(name: call.function.name, argsJSON: argsJSON))
+                            )
                         // completion info at the end of generation
                         case .info(let info):
                             let metrics = TextAIMetrics(

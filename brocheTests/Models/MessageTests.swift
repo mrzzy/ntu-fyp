@@ -5,12 +5,12 @@
 //  Created by Zhu Zhanyan on 7/10/26.
 //
 
-@testable import broche
-
+import ExyteChat
 import PencilKit
 import Testing
 import UIKit
-import ExyteChat
+
+@testable import broche
 
 @Suite("Message model tests")
 struct MessageTests {
@@ -18,10 +18,10 @@ struct MessageTests {
     func messageConversion() throws {
         // Create a test message with attachments and reactions
         let message = Message(
-            id: "test-message-1",
             user: .user,
-            createdAt: Date(),
             text: "Hello, this is a test message!",
+            id: "test-message-1",
+            createdAt: Date(),
             replyMessage: nil
         )
 
@@ -35,9 +35,7 @@ struct MessageTests {
         message.attachments.append(attachment)
 
         // Test conversion
-        let exyteChatMessage = message.toExyteChatMessage()
-
-
+        let exyteChatMessage = try #require(message.toExyteChatMessage())
         // Verify basic properties
         assert(exyteChatMessage.id == "test-message-1", "Message ID mismatch")
         assert(exyteChatMessage.text == "Hello, this is a test message!", "Message text mismatch")
@@ -88,7 +86,7 @@ struct MessageTests {
                     thumbnail: thumbURL,
                     full: fullURL,
                     type: ExyteChat.AttachmentType.image
-                ),
+                )
             ],
             replyMessage: replyMessage
         )
@@ -134,8 +132,8 @@ struct MessageTests {
 
     @Test("AttachmentType converts to and from ExyteChat.AttachmentType")
     func attachmentTypeConversion() {
-        #expect(AttachmentType(fromExyteChat:  .image) == .image)
-        #expect(AttachmentType(fromExyteChat:  .video) == .video)
+        #expect(AttachmentType(fromExyteChat: .image) == .image)
+        #expect(AttachmentType(fromExyteChat: .video) == .video)
         #expect(AttachmentType.image.toExyteChat == .image)
         #expect(AttachmentType.video.toExyteChat == .video)
     }
