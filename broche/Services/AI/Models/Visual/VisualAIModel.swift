@@ -5,7 +5,7 @@
 //  Created by Zhu Zhanyan on 2026-07-28
 //
 
-import Foundation
+import UIKit
 
 /// Visual Language Generation AI models aka (VLMs)
 /// Options that control visual text generation.
@@ -58,17 +58,9 @@ class VisualAIBenchmark<Model: VisualAIModel>: AIBenchmark {
 
     func generate(_ model: Model) async throws -> AIMetrics {
         response = ""
-
-        // Load test image from test bundle.
-        let url = Bundle.main.url(
-            forResource: "apple_sketch",
-            withExtension: "png"
-        )!
-        let imageData = try Data(contentsOf: url)
-
         let stream = model.generate(
             prompt: "Describe what you see in this image in detail",
-            images: [imageData],
+            images: [TestFixtures.appleSketchData],
             options: VisualAIOptions(temperature: 1.0, topP: 1.0, topK: 40, seed: 42)
         )
         for try await output in stream {

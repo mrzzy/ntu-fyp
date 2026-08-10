@@ -60,17 +60,10 @@ class ImageAIBenchmark<Model: ImageAIModel>: AIBenchmark {
 
     func generate(_ model: Model) async throws -> AIMetrics {
         outputImage = nil
-
-        // load test image
-        let url = Bundle.main.url(
-            forResource: "apple_sketch",
-            withExtension: "png"
-        )!
-        let imageData = try Data(contentsOf: url)
-
         let stream = model.edit(
-            image: imageData,
-            prompt: "Render apple, plate & cup in a watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique, loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
+            image: TestFixtures.appleSketchData,
+            prompt:
+                "Render apple, plate & cup in a watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique, loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
             options: ImageAIOptions(seed: 42)
         )
         for try await output in stream {

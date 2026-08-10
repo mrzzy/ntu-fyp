@@ -6,7 +6,7 @@
 //
 import PencilKit
 
-/// Test Fixtures 
+/// Test Fixtures
 enum TestFixtures {
     /// A simple drawing with a single stroke from (100, 100) to (400, 400).
     static let drawing: PKDrawing = {
@@ -28,7 +28,7 @@ enum TestFixtures {
                 force: 1,
                 azimuth: 0,
                 altitude: .pi / 2
-            )
+            ),
         ]
 
         let path = PKStrokePath(
@@ -44,20 +44,23 @@ enum TestFixtures {
         ])
     }()
 
-    static let sketch: Sketch = {
-        let appleSketchURL = Bundle.main.url(
+    static let appleSketchData: Data = {
+        let url = Bundle.main.url(
             forResource: "apple_sketch",
             withExtension: "png"
         )!
-        let appleSketchData = try! Data(contentsOf: appleSketchURL)
 
-        return Sketch(
-            title: "Apple Sketch",
-            layers: [
-                .image(data: appleSketchData),
-                .drawing(drawing: TestFixtures.drawing),
-            ],
-            size: CGSize(width: 512, height: 512)
-        )
+        // use UIKit to load image as loading the contents of the PNG file
+        // directly causes issues with some models
+        return UIImage(contentsOfFile: url.path())!.pngData()!
     }()
+
+    static let sketch: Sketch = .init(
+        title: "Apple Sketch",
+        layers: [
+            .image(data: TestFixtures.appleSketchData),
+            .drawing(drawing: TestFixtures.drawing),
+        ],
+        size: CGSize(width: 512, height: 512)
+    )
 }
