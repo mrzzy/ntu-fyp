@@ -52,7 +52,7 @@ struct CaptionTool: AITool {
     nonisolated static let NAME = "caption_sketch"
     let name = Self.NAME
     let description = """
-        Use this tool to describe and understand what the user has drawn in their sketch, including the subjects, composition, spatial relationships, and key visual elements. 
+        Use this tool when you need to understand what the user has currently drawn in their sketch. It examines the visible sketch and returns a detailed description of its visual content. Use the returned description to reason about the user's drawing, answer questions about what is shown, or perform tasks that require understanding the sketch. The description is based only on what is visually present. Do not assume or infer details that cannot be reliably determined from the drawing.
         """
 
     let sketch: Sketch
@@ -84,6 +84,12 @@ struct CaptionTool: AITool {
         guard let imageData = image.pngData() else {
             throw CaptionToolError.imageRenderFailed
         }
+        let documentsDir = FileManager.default.urls(
+            for: .documentDirectory, in: .userDomainMask
+        )[0]
+        let outputURL = documentsDir.appendingPathComponent("CaptionTool_render.png")
+        try imageData.write(to: outputURL)
+        print("  Saved render: \(outputURL.path)")
 
         var description = ""
         let stream = visualModel.generate(
