@@ -113,8 +113,6 @@ struct SketchDetailView: View {
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)
-                    // force redraw view on sketch change
-                    .id(sketch.id)
                 }
             }
         }
