@@ -23,7 +23,7 @@ class AIAgent {
         model: TextAIModel,
         tools: [any AITool] = [],
         messages: [Message] = []
-    ) throws {
+    ) {
         self.model = model
         _messages = messages
         self.tools = AIToolRegistry(tools)

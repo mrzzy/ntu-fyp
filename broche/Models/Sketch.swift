@@ -10,20 +10,20 @@ import PencilKit
 import SwiftData
 import UIKit
 
-// Zoom
+/// Zoom
 struct Zoom: Codable {
     var scale: Double
     var offsetX: Double
     var offsetY: Double
     var rotation: Double
-    init(scale: Double = 1.0, offsetX: Double = 0.0, offsetY: Double = 0.0, rotation: Double = 0.0) {
+    init(scale: Double = 1.0, offsetX: Double = 0.0, offsetY: Double = 0.0, rotation: Double = 0.0)
+    {
         self.scale = scale
         self.offsetX = offsetX
         self.offsetY = offsetY
         self.rotation = rotation
     }
 }
-
 
 /// Defines a set of default layers a sketch starts with.
 let SketchDefaultLayers: [Layer] = [
@@ -54,10 +54,10 @@ class Sketch: CustomStringConvertible {
 
     /// AI assistant conversation messages
     @Relationship(deleteRule: .cascade)
-    var messages: [Message] = []
+    var messages: [Message]
 
-    // Zoom view zoom/pan/rotation state
-    var zoom: Zoom = Zoom()
+    /// Zoom view zoom/pan/rotation state
+    var zoom: Zoom
 
     // cached compsited image version of the sketch
     @Transient private var _cachedImage: UIImage = UIImage()
@@ -80,22 +80,26 @@ class Sketch: CustomStringConvertible {
         }.joined(separator: "\n")
 
         return """
-        Sketch: \(title) 
-        Dimensions (<width>x<height>): (\(Int(width))x\(Int(height)))
-        Total Layers: \(layers.count)
-        Layers: [<index>] <type>
-        \(layerDescriptions)
-        """
+            Sketch: \(title) 
+            Dimensions (<width>x<height>): (\(Int(width))x\(Int(height)))
+            Total Layers: \(layers.count)
+            Layers: [<index>] <type>
+            \(layerDescriptions)
+            """
     }
 
     init(
         title: String = "Untitled", layers: [Layer] = SketchDefaultLayers,
-        size: CGSize = CGSize(width: 512, height: 512)
+        size: CGSize = CGSize(width: 512, height: 512),
+        messages: [Message] = []
+
     ) {
         self.title = title
         self.layers = layers
+        self.messages = messages
         width = size.width
         height = size.height
+        zoom = Zoom()
     }
 
     /// Renders the sketch into a single flattened image by compositing all
@@ -131,7 +135,7 @@ class Sketch: CustomStringConvertible {
     func renderLayers(indices: Range<Int>) throws -> UIImage {
         let selectedLayers = layers[indices]
 
-        guard let _ = selectedLayers.first else {
+        guard selectedLayers.first != nil else {
             throw SketchError.noLayersToRender
         }
 

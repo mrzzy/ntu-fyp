@@ -49,10 +49,10 @@ struct CaptionOutput: Codable, Sendable {
 
 /// A tool that generates a caption for a sketch or a specified range of layers within the sketch.
 struct CaptionTool: AITool {
-    static let NAME = "caption_sketch"
-    let name = NAME
+    nonisolated static let NAME = "caption_sketch"
+    let name = Self.NAME
     let description = """
-        Describe the user's sketch in detail, including the subjects, composition, spatial relationships, and key visual elements. Use this tool to understand the sketch before generating an image.
+        Use this tool to describe and understand what the user has drawn in their sketch, including the subjects, composition, spatial relationships, and key visual elements. 
         """
 
     let sketch: Sketch

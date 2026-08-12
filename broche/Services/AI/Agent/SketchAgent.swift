@@ -11,12 +11,17 @@ enum SketchAgentError: LocalizedError {
     /// A system message was provided in the initial messages, which is not allowed.
     /// The system message is injected automatically by the agent.
     case systemMessageProvided
+    /// The AI models have not been loaded before initializing the agent.
+    case modelsNotLoaded
 
     var errorDescription: String? {
         switch self {
         case .systemMessageProvided:
             return
                 "System messages must not be provided to SketchAgent. The system message is injected automatically."
+        case .modelsNotLoaded:
+            return
+                "AI models have not been loaded. Call load() on the AIRepository before initializing SketchAgent."
         }
     }
 }
@@ -25,14 +30,17 @@ enum SketchAgentError: LocalizedError {
 /// to caption and render the sketch using specified AI models.
 ///
 /// Unlike ``AIAgent``, ``SketchAgent`` injects its own system message automatically
-/// and does not accept system messages in the initial `messages` parameter.
-/// Providing a system message will result in a ``SketchAgentError/systemMessageProvided`` error.
+/// and uses the sketch's existing conversation history (``Sketch/messages``)
+/// instead of accepting messages as a parameter.
+/// Providing a system message in ``Sketch/messages`` will result in a
+/// ``SketchAgentError/systemMessageProvided`` error.
 ///
 /// The injected system message instructs the model to act as a helpful sketch assistant
 /// focused on rendering, composition enhancement, and visual guidance.
 class SketchAgent: AIAgent {
     /// The sketch this agent operates on.
     let sketch: Sketch
+    let models: AIRepository
 
     /// The system message injected automatically for all sketch agent conversations.
     private static let systemMessage = Message(
@@ -46,45 +54,70 @@ class SketchAgent: AIAgent {
             """
     )
 
+    /// The welcome message inserted on the first ``instruct`` call.
+    static let welcomeMessage = Message(
+        user: .ai,
+        text: """
+            Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+
+            You can ask me to:
+            • Modify, refine, or enhance parts of your sketch
+            • Colorize and experiment with different styles
+            • Render your ideas into more polished artwork
+            • Discuss creative changes and improvements
+            """
+    )
+
     /// Creates a new sketch agent for the given sketch with the specified AI models.
     ///
     /// A system message is injected automatically as the first message.
-    /// Any system messages included in `messages` will cause a
+    /// Any system messages present in ``Sketch/messages`` will cause a
     /// ``SketchAgentError/systemMessageProvided`` error.
     ///
     /// - Parameters:
-    ///   - sketch: The sketch this agent will operate on.
-    ///   - modelFactory: The factory used to create AI models for text, visual, and image tasks.
-    ///   - messages: Optional conversation history. Must not contain any system messages.
-    /// - Throws: ``SketchAgentError/systemMessageProvided`` if a system message is found,
-    ///   or any error propagated from ``AIAgent/init(model:tools:messages:)``.
+    ///   - sketch: The sketch this agent will operate on. Its `messages` are used
+    ///     as the conversation history.
+    ///   - models: The AI models to use for text, visual, and image tasks.
+    /// - Throws: ``SketchAgentError/systemMessageProvided`` if a system message is found
+    ///   in the sketch's messages, ``SketchAgentError/modelsNotLoaded`` if the models
+    ///   have not been loaded, or any error propagated from ``AIAgent/init(model:tools:messages:)``.
     init(
         sketch: Sketch,
-        modelFactory: any AIModelFactory,
-        messages: [Message] = []
-    ) async throws {
-        guard !messages.contains(where: { $0.user == .system }) else {
+        models: AIRepository
+    ) throws {
+        guard !sketch.messages.contains(where: { $0.user == .system }) else {
             throw SketchAgentError.systemMessageProvided
+        }
+        guard models.isLoaded else {
+            throw SketchAgentError.modelsNotLoaded
         }
 
         self.sketch = sketch
+        self.models = models
 
-        // create & load models asynchronously
-        let textModel = modelFactory.makeTextModel()
-        async let textLoad = textModel.load()
-        let visualModel = modelFactory.makeVisualModel()
-        async let visualLoad = visualModel.load()
-        let imageModel = modelFactory.makeImageModel()
-        async let imageLoad = imageModel.load()
-        _ = try await (textLoad, visualLoad, imageLoad)
-
-        try super.init(
-            model: textModel,
+        super.init(
+            model: models.textModel,
             tools: [
-                CaptionTool(sketch: sketch, visualModel: visualModel),
-                RenderTool(sketch: sketch, imageModel: imageModel),
+                CaptionTool(sketch: sketch, visualModel: models.visualModel),
+                RenderTool(sketch: sketch, imageModel: models.imageModel),
             ],
-            messages: [Self.systemMessage] + messages
+            messages: [Self.systemMessage] + sketch.messages
         )
+    }
+
+    override func instruct(prompt: String) -> AsyncThrowingStream<[Message], Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                do {
+                    for try await messages in super.instruct(prompt: prompt) {
+                        sketch.messages = messages
+                        continuation.yield(messages)
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
     }
 }

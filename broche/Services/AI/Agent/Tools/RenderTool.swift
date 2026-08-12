@@ -61,8 +61,8 @@ struct RenderOutput: Codable, Sendable {
 }
 
 struct RenderTool: AITool {
-    static let NAME = "render_sketch"
-    let name = NAME
+    nonisolated static let NAME = "render_sketch"
+    let name = Self.NAME
     let description =
         """
         Render the specified sketch layers into a polished final image using AI image generation.

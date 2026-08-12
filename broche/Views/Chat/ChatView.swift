@@ -10,17 +10,17 @@ import SwiftData
 import SwiftUI
 
 struct ChatView: View {
-    @Binding var sketchId: Sketch.ID?
-
-    let repo: Repository = .shared
+    let sketchId: Sketch.ID?
+    let repo = Repository.shared
 
     var body: some View {
         if let id = sketchId {
+            let sketch = repo.fetchSketch(id: id)
             NavigationSplitView {
-                ChatDetailView(sketchId: $sketchId)
+                ChatDetailView(sketch: sketch)
                     .navigationTitle("AI Assistant")
             } detail: {
-                SketchDetailView(sketch: repo.fetchSketch(id: id), isEnabled: false)
+                SketchDetailView(sketch: sketch, isEnabled: false)
                     .navigationTitle("AI")
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
@@ -35,7 +35,7 @@ struct ChatView: View {
             }
         } else {
             ContentUnavailableView(
-                "Pick a sketch to start asking AI for help.",
+                "Select a sketch to ask for assistant from AI.",
                 systemImage: ChatIcon
             )
         }
@@ -43,134 +43,107 @@ struct ChatView: View {
 }
 
 private struct ChatDetailView: View {
-    @Binding var sketchId: Sketch.ID?
-    @Environment(\.modelContext) private var modelContext
-    let repo: Repository = .shared
-
-    var sketch: Sketch? {
-        if let id = sketchId {
-            return repo.fetchSketch(id: id)
-        }
-        return nil
-    }
-
-    private var exyteMessages: [ExyteChat.Message] {
-        sketch?.messages.compactMap {
-            $0.toExyteChatMessage()
-        } ?? []
+    @Environment(\.aiModelsState) var aiModelsState
+    let repo = Repository.shared
+    let sketch: Sketch?
+    /// disabled if sketch is not selected or AI models are not loaded
+    var isDisabled: Bool {
+        // aiModelsState != .loaded || sketch == nil
+        false
     }
 
     var body: some View {
-        ExyteChat.ChatView(messages: exyteMessages, didSendMessage: handleSendMessage)
+        if let sketch = sketch {
+            let exyteMessages = sketch.messages.compactMap { $0.toExyteChatMessage() }
+
+            ExyteChat.ChatView(
+                messages: exyteMessages,
+                didSendMessage: handleSendMessage
+            )
             // Disable attachments for now (deferred feature)
             .setAvailableInputs([.text])
             .onAppear {
-                if sketch?.messages.isEmpty ?? true {
-                    let welcomeMessage = Message(
-                        user: .ai,
-                        text: """
-                            Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
-
-                            You can ask me to:
-                            • Modify, refine, or enhance parts of your sketch
-                            • Colorize and experiment with different styles
-                            • Render your ideas into more polished artwork
-                            • Discuss creative changes and improvements
-                            """
-                    )
-                    sketch?.messages.append(welcomeMessage)
+                if sketch.messages.isEmpty {
+                    // display a welcome message to the user
+                    sketch.messages.append(SketchAgent.welcomeMessage)
                     repo.save()
                 }
             }
+            .disabled(isDisabled)
+        } else {
+            ContentUnavailableView(
+                "Sketch not found.",
+                systemImage: "questionmark"
+            )
+        }
     }
 
-    /// Creates sample messages for testing the chat interface.
-    ///
-    /// Returns a realistic conversation between user and assistant
-    /// to demonstrate the chat UI functionality.
-    ///
-    /// - Returns: Array of sample ExyteChat.Message objects
-    ///
-    /// TODO: Remove this function when actual conversation history is implemented
-    private func createSampleMessages() -> [ExyteChat.Message] {
-        // Create user greeting message
-        let greetingMessage = ExyteChat.Message(
-            id: UUID().uuidString,
-            user: ExyteChat.User(
-                id: "user",
-                name: "User",
-                avatarURL: nil,
-                isCurrentUser: true
-            ),
-            createdAt: Date().addingTimeInterval(-300),  // 5 minutes ago
-            text: "Hello! Can you help me with my sketch?"
-        )
-
-        // Create assistant response
-        let assistantResponse = ExyteChat.Message(
-            id: UUID().uuidString,
-            user: ExyteChat.User(
-                id: "llm",
-                name: "Assistant",
-                avatarURL: nil,
-                isCurrentUser: false
-            ),
-            createdAt: Date().addingTimeInterval(-290),  // 4:50 minutes ago
-            text:
-                "Of course! I can help you with your sketch. What would you like to work on? I can provide suggestions for improvements, help with composition, or offer creative ideas for your design."
-        )
-
-        // Create user follow-up
-        let followUpMessage = ExyteChat.Message(
-            id: UUID().uuidString,
-            user: ExyteChat.User(
-                id: "user",
-                name: "User",
-                avatarURL: nil,
-                isCurrentUser: true
-            ),
-            createdAt: Date().addingTimeInterval(-180),  // 3 minutes ago
-            text:
-                "I'd like some suggestions for adding more depth to my landscape sketch. Any ideas?"
-        )
-
-        return [greetingMessage, assistantResponse, followUpMessage]
-    }
-
-    private func handleSendMessage(_ draft: ExyteChat.DraftMessage) {
+    private func handleSendMessage(_ message: ExyteChat.DraftMessage) {
         guard let sketch = sketch else { return }
 
-        let userMessage = Message(
-            user: .user,
-            text: draft.text
-        )
-        sketch.messages.append(userMessage)
-        do {
-            try modelContext.save()
-        } catch {
-            print("Warning: Failed to save message: \(error)")
-        }
-
         Task {
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            do {
+                let agent = try SketchAgent(sketch: sketch, models: AIRepository.shared)
+                for try await messages in agent.instruct(prompt: message.text) {
+                    // needed? await MainActor.run {
+                    sketch.messages = messages
 
-            let llmResponse = Message(
-                user: .ai,
-                text: "This is a mock LLM response to: \"\(draft.text)\""
-            )
-            await MainActor.run {
-                sketch.messages.append(llmResponse)
-                do {
-                    try modelContext.save()
-                } catch {
-                    print("Warning: Failed to save LLM response: \(error)")
+                    try repo.modelContext.save()
                 }
+            } catch let error as SketchAgentError {
+                print("Error: Failed to create SketchAgent: \(error)")
+                return
+            } catch {
+                print("Error: Failed to instruct SketchAgent: \(error)")
             }
         }
     }
 }
 
 #Preview {
-    ChatView(sketchId: .constant(nil))
-        .modelContainer(for: Sketch.self, inMemory: true)
+    let container = try! ModelContainer(
+        for: Sketch.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+    )
+
+    let welcome = Message(
+        user: .ai,
+        text: """
+            Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+
+            You can ask me to:
+            • Modify, refine, or enhance parts of your sketch
+            • Colorize and experiment with different styles
+            • Render your ideas into more polished artwork
+            • Discuss creative changes and improvements
+            """
+    )
+    let userMsg = Message(
+        user: .user,
+        text: "Can you add some soft shading to the background?"
+    )
+    let aiReply = Message(
+        user: .ai,
+        text:
+            "Sure! I'll add some gentle gradient shading to the background to give it more depth. Let me process that for you — this will create a subtle radial gradient from light blue to white behind the main subject.",
+        replyMessage: userMsg
+    )
+    let userMsg2 = Message(
+        user: .user,
+        text: "That looks great! Now can you make the outlines slightly thicker?"
+    )
+    let aiReply2 = Message(
+        user: .ai,
+        text:
+            "Done! I've increased the stroke width on the main outlines. The thicker lines should give the sketch a bolder, more defined look while keeping the overall style consistent.",
+        replyMessage: userMsg2
+    )
+    let sketch = Sketch(
+        title: "Sample Sketch", size: CGSize(width: 400, height: 400),
+        messages: [welcome, userMsg, aiReply, userMsg2, aiReply2]
+    )
+    container.mainContext.insert(sketch)
+
+    return ChatView(sketchId: sketch.persistentModelID)
+        .modelContainer(container)
 }

@@ -69,7 +69,10 @@ struct SketchDetailView: View {
             // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
             .id(sketch.id)
         } else {
-            Text("Sketch not found")
+            ContentUnavailableView(
+                "Sketch not found",
+                systemImage: "questionmark",
+            )
         }
     }
 

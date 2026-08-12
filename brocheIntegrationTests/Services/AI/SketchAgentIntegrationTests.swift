@@ -8,9 +8,10 @@ struct SketchAgentIntegrationTests {
     @Test("Renders apple sketch as watercolour painting")
     func rendersAppleSketchAsWatercolour() async throws {
         let sketch = TestFixtures.sketch
-        let agent = try await SketchAgent(
+        try await AIRepository.shared.load()
+        let agent = try SketchAgent(
             sketch: sketch,
-            modelFactory: DefaultAIModelFactory.shared
+            models: AIRepository.shared,
         )
 
         var finalMessages: [Message]?
@@ -37,6 +38,34 @@ struct SketchAgentIntegrationTests {
         #expect(sketch.layers.count > 1,
                 "A new image layer should have been appended to the sketch")
 
+        #expect(
+            !sketch.messages.contains(where: { $0.user == .system }),
+            "Sketch messages should never contain system messages"
+        )
+        let sketchToolMessages = sketch.messages.filter { $0.user == .tool }
+        #expect(
+            sketchToolMessages.contains { $0.text.contains(CaptionTool.NAME) },
+            "Sketch messages should contain caption tool result"
+        )
+        #expect(
+            sketchToolMessages.contains { $0.text.contains(RenderTool.NAME) },
+            "Sketch messages should contain render tool result"
+        )
+        #expect(
+            sketch.messages.contains { $0.user == .ai },
+            "Sketch messages should contain the final AI response"
+        )
+        #expect(
+            sketch.messages.contains { $0.user == .user && $0.text.contains("watercolour") },
+            "Sketch messages should contain the user prompt"
+        )
+
+        #expect(
+            sketch.messages.first?.user == .ai
+                && sketch.messages.first?.text.contains("AI art assistant") == true,
+            "Sketch messages should start with the welcome message"
+        )
+
         print("Final layers: \(sketch.layers.count)")
         for (i, msg) in messages.enumerated() {
             print("--- Message \(i) [\(msg.user.rawValue)] ---")
@@ -44,13 +73,15 @@ struct SketchAgentIntegrationTests {
         }
     }
 
-    @Test("Throws error when system message is provided in messages")
+    @Test("Throws error when system message is present in sketch messages")
     func throwsWhenSystemMessageProvided() async throws {
+        let sketch = Sketch()
+        sketch.messages.append(Message(user: .system, text: "should not be here"))
+
         do {
             _ = try await SketchAgent(
-                sketch: Sketch(),
-                modelFactory: DefaultAIModelFactory.shared,
-                messages: [Message(user: .system, text: "should not be here")]
+                sketch: sketch,
+                models: AIRepository.shared
             )
             Issue.record("Expected SketchAgentError.systemMessageProvided to be thrown")
         } catch is SketchAgentError {
