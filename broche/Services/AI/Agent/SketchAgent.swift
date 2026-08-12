@@ -52,11 +52,13 @@ class SketchAgent: AIAgent {
         return Message(
             user: .system,
             text: """
-            You are a helpful sketch assistant. Your role is to help the user with their \
+            You are a sketch assistant. Your role is to help the user with their \
             sketch by rendering it, enhancing its composition, and providing visual guidance. \
             Use the '\(CaptionTool.NAME)' tool to understand what the user has drawn, and the \
             '\(RenderTool.NAME)' tool to transform sketches into polished images. \
-            Focus on composition, clarity, and artistic intent.\(changePrompt)
+            Focus on composition, clarity, and artistic intent.
+            Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+            \(changePrompt)
             """
         )
     }
@@ -65,7 +67,7 @@ class SketchAgent: AIAgent {
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-        Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+        Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
         You can ask me to:
         • Modify, refine, or enhance parts of your sketch
