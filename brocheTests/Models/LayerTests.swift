@@ -18,7 +18,7 @@ struct LayerTests {
         let originalData = Data([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
         let layer = Layer.image(data: originalData)
 
-        let result = try layer.render()
+        let result = try layer.render(size: CGSize(width: 100, height: 100))
 
         #expect(result == originalData, "Image layer should return original data")
     }
@@ -28,7 +28,7 @@ struct LayerTests {
         let drawing = TestFixtures.drawing
         let layer = Layer.drawing(drawing: drawing)
 
-        try layer.render()
+        try layer.render(size: CGSize(width: 100, height: 100))
     }
 
     @Test("Empty PNG data in image layer returns same data")
@@ -36,7 +36,7 @@ struct LayerTests {
         let emptyData = Data()
         let layer = Layer.image(data: emptyData)
 
-        let result = try layer.render()
+        let result = try layer.render(size: CGSize(width: 100, height: 100))
 
         #expect(result.isEmpty, "Empty data should be returned as-is")
         #expect(result == emptyData)
@@ -47,7 +47,7 @@ struct LayerTests {
         let pngData = try createTestPNGImage(size: CGSize(width: 100, height: 100))
         let layer = Layer.image(data: pngData)
 
-        let result = try layer.render()
+        let result = try layer.render(size: CGSize(width: 100, height: 100))
 
         #expect(result.count > 0, "Valid PNG data should return non-empty result")
     }

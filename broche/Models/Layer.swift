@@ -18,14 +18,12 @@ enum Layer: Codable {
     case image(data: Data)
 
     /// Render this layer of this sketch as a image encoded as binary data.
-    func render() throws -> Data {
+    func render(size: CGSize) throws -> Data {
         switch self {
         case .drawing(let drawing):
-            // assume that all drawing layers are initialised to same sketch size
-            let size = drawing.bounds.size
             if let data = drawing.image(from: CGRect(origin: .zero, size: size), scale: 1.0)
                 .pngData()
-            {
+            {   
                 return data
             }
             throw LayerError.renderError(reason: "Failed to render PKDrawing as PNG image data.")

@@ -45,7 +45,7 @@ enum SketchError: Error, LocalizedError {
 
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch: CustomStringConvertible {
+class Sketch: CustomStringConvertible, Sendable {
     var title: String
     var layers: [Layer]
     // dimensions of the sketch
@@ -141,7 +141,7 @@ class Sketch: CustomStringConvertible {
 
         var images: [UIImage] = []
         for layer in selectedLayers {
-            let data = try layer.render()
+            let data = try layer.render(size: size)
             guard let image = UIImage(data: data) else {
                 throw SketchError.emptyRenderedImage
             }
