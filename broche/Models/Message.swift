@@ -45,13 +45,9 @@ extension User {
                 avatarURL: nil,
                 isCurrentUser: false
             )
+        // system & tool messages should not be shown in exyteChat
         case .tool:
-            return ExyteChat.User(
-                id: "tool",
-                name: "Tool",
-                avatarURL: nil,
-                isCurrentUser: false
-            )
+            return nil
         case .system:
             return nil
         }
