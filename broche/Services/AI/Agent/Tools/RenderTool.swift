@@ -65,11 +65,7 @@ struct RenderTool: AITool {
     let name = Self.NAME
     let description =
         """
-        Render the specified sketch layers into a polished final image using AI image generation.
-
-        Use this tool when the user wants to transform their sketch into a generated image. Before calling this tool, call `\(CaptionTool.NAME)` to analyze the sketch and describe its visual content. Use the resulting description to create an appropriate rendering prompt.
-
-        Do not call this tool without first analyzing the sketch with `\(CaptionTool.NAME)`.
+        Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image. Before calling this tool, first call `\(CaptionTool.NAME)` to understand the sketch and its visual content. Use the returned description to inform the rendering prompt and preserve the important elements and relationships in the user's drawing. Do not call this tool until the sketch has been analyzed with `\(CaptionTool.NAME)`.
         """
 
     let sketch: Sketch

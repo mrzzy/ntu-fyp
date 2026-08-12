@@ -52,7 +52,13 @@ struct CaptionTool: AITool {
     nonisolated static let NAME = "caption_sketch"
     let name = Self.NAME
     let description = """
-        Use this tool when you need to understand what the user has currently drawn in their sketch. It examines the visible sketch and returns a detailed description of its visual content. Use the returned description to reason about the user's drawing, answer questions about what is shown, or perform tasks that require understanding the sketch. The description is based only on what is visually present. Do not assume or infer details that cannot be reliably determined from the drawing.
+        Use this tool when you need to understand what the user has currently drawn in their sketch.
+
+        It analyzes the visible sketch and returns a detailed description of its visual content. Use this description to reason about the drawing, answer questions about what is shown, or perform tasks that require understanding the sketch.
+
+        Base your reasoning only on information that is visually present and reliably discernible based on the output of this caption tool. Do not assume, infer, or invent details that cannot be determined from the drawing.
+
+        You may also use this tool to detect and understand changes the user has made to the sketch since it was previously inspected.
         """
 
     let sketch: Sketch
@@ -93,9 +99,13 @@ struct CaptionTool: AITool {
 
                 \(sketch.description)
 
-                Describe the sketch image in detail based only on what is visually present. Identify the main subjects, objects, shapes, colors, positions, relative sizes, spatial relationships, composition, and any other notable visual details.
+                Describe what the user appears to be trying to sketch based only on the visual content. Identify the most likely recognizable subject, object, symbol, or scene (for example, a plane, house, tree, person, or car) when the sketch provides enough visual evidence to support that interpretation.
 
-                Be precise and concrete. Preserve important visual relationships and distinguish clearly between elements that are visible and details that are uncertain or ambiguous. Do not infer information that cannot be supported by the image.
+                Start with the most likely intended subject in plain language, then briefly describe the visual evidence supporting it. If the sketch is ambiguous, incomplete, abstract, or too rough to identify confidently, say what it most resembles and indicate the uncertainty rather than inventing details.
+
+                Also describe important visible characteristics such as shapes, colors, positions, relative sizes, spatial relationships, composition, and distinctive features. Focus on what the user appears to be drawing rather than merely listing individual strokes or geometric primitives.
+
+                Do not infer details that are not visually supported by the sketch. Distinguish clearly between confident identification and uncertain interpretation.
                 """,
             images: [imageData],
             options: VisualAIOptions()
