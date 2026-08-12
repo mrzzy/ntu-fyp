@@ -39,8 +39,8 @@ struct SketchAgentTests {
         let factory = MockAIModelFactory(
             mockTextResponse: "I've rendered your sketch into a watercolour painting.",
             mockTextToolCalls: [
-                AIToolCall(name: CaptionTool.NAME, argsJSON: captionArgs),
-                AIToolCall(name: RenderTool.NAME, argsJSON: renderArgs),
+                AIToolCall(id: "call_caption", name: CaptionTool.NAME, argsJSON: captionArgs),
+                AIToolCall(id: "call_render", name: RenderTool.NAME, argsJSON: renderArgs),
             ],
             mockVisualCaption:
                 "A sketch of an apple sliced on a plate with a cup at the side."

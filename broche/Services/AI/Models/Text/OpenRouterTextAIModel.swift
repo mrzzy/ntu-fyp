@@ -134,6 +134,7 @@ final class OpenRouterTextAIModel: TextAIModel {
                                         continuation.yield(
                                             .call(
                                                 call: AIToolCall(
+                                                    id: tc.id,
                                                     name: tc.name,
                                                     argsJSON: tc.args
                                                 )

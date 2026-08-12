@@ -8,7 +8,6 @@
 import Foundation
 import FoundationModels
 
-
 typealias AIToolSpec = [String: any Sendable]
 
 /// Defines a tool that can be used by an AI agent
@@ -49,14 +48,16 @@ extension AITool {
 }
 
 /// Represents a call to an AI tool with the tool name and arguments in JSON format.
-struct AIToolCall: CustomStringConvertible {
+struct AIToolCall: CustomStringConvertible, Hashable, Equatable {
+    /// A unique identifier for this tool call, assigned by the AI model.
+    let id: String
     /// The name of the tool to be called.
     let name: String
     /// The arguments for the tool call in JSON string format.
     let argsJSON: String
 
     var description: String {
-        "AIToolCall(name: \(name), argsJSON: \(argsJSON))"
+        "AIToolCall(id: \(id), name: \(name), argsJSON: \(argsJSON))"
     }
 }
 
