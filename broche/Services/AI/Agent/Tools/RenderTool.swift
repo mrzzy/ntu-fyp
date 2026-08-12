@@ -16,7 +16,7 @@ enum RenderToolError: Error, LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case let .invalidLayerIndices(start, end, layerCount):
+        case .invalidLayerIndices(let start, let end, let layerCount):
             return
                 "Invalid layer indices: range \(start)..<\(end) is out of bounds for \(layerCount) layers."
         case .imageRenderFailed:
@@ -31,22 +31,22 @@ enum RenderToolError: Error, LocalizedError {
 struct RenderArguments: Codable, Sendable {
     @Guide(
         description:
-        "Start index (inclusive) of the layer range to render. Omit to render all layers."
+            "Start index (inclusive) of the layer range to render. Omit to render all layers."
     )
     let layerStart: Int?
 
     @Guide(
         description:
-        "End index (exclusive) of the layer range to render. Omit to render all layers."
+            "End index (exclusive) of the layer range to render. Omit to render all layers."
     )
     let layerEnd: Int?
 
     @Guide(
         description:
-        """
-        A text prompt describing the desired rendering style, medium, or edits to apply to the sketch image.
-        You should use the '\(CaptionTool.NAME)' tool to describe what the user has already sketched in generating the prompt.
-        """
+            """
+            A text prompt describing the desired rendering style, medium, or edits to apply to the sketch image.
+            You should use the '\(CaptionTool.NAME)' tool to describe what the user has already sketched in generating the prompt.
+            """
     )
     let prompt: String
 }
@@ -55,7 +55,7 @@ struct RenderArguments: Codable, Sendable {
 struct RenderOutput: Codable, Sendable {
     @Guide(
         description:
-        "Confirmation that the sketch layers have been rendered into an image layer appended to the sketch."
+            "Confirmation that the sketch layers have been rendered into an image layer appended to the sketch."
     )
     let message: String
 }
@@ -65,11 +65,12 @@ struct RenderTool: AITool {
     let name = Self.NAME
     let description =
         """
-        Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image.
+                Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image.
 
-        Before calling this tool, first call `\(CaptionTool.NAME)` to understand the sketch and its visual content. Use the returned description to inform the rendering prompt and preserve the important elements and relationships in the user's drawing. Do not call this tool until the sketch has been analyzed with `\(CaptionTool.NAME)`.
+                Before calling this tool, first call `\(CaptionTool.NAME)` to understand the sketch and its visual content. Use the returned description to inform the rendering prompt and preserve the important elements and relationships in the user's drawing. Do not call this tool until the sketch has been analyzed with `\(CaptionTool.NAME)`.
 
-        IMPORTANT: Image rendering is costly, so do not make multiple rendering calls within the same turn, even if additional rendering attempts might improve the result. Analyze the sketch and construct the best possible rendering prompt before making the single call. """
+                IMPORTANT: Image rendering is costly, so do not make multiple rendering calls within the same turn, even if additional rendering attempts might improve the result. Analyze the sketch and construct the best possible rendering prompt before making the single call. 
+        """
 
     let sketch: Sketch
     let imageModel: ImageAIModel
@@ -77,9 +78,9 @@ struct RenderTool: AITool {
     func call(arguments: RenderArguments) async throws -> RenderOutput {
         let indices: Range<Int>
         if let start = arguments.layerStart, let end = arguments.layerEnd {
-            let range = start ..< end
+            let range = start..<end
             guard range.lowerBound >= 0, range.upperBound <= sketch.layers.count,
-                  !range.isEmpty
+                !range.isEmpty
             else {
                 throw RenderToolError.invalidLayerIndices(
                     start: start, end: end, layerCount: sketch.layers.count
@@ -87,7 +88,7 @@ struct RenderTool: AITool {
             }
             indices = range
         } else {
-            indices = 0 ..< sketch.layers.count
+            indices = 0..<sketch.layers.count
         }
 
         let image = try sketch.renderLayers(indices: indices)
@@ -95,37 +96,40 @@ struct RenderTool: AITool {
             throw RenderToolError.imageRenderFailed
         }
 
+        // render the image using the image generation model
         var resultImageData: Data?
         let stream = imageModel.edit(
             image: imageData,
             prompt:
-            """
-            Current Sketch description:
-            \(sketch.description)
+                """
+                Current Sketch description:
+                \(sketch.description)
 
-            Create a polished image based on the user's sketch and the provided rendering prompt.
-            Preserve the important elements, composition, spatial relationships, and overall intent of the sketch while transforming it into a coherent, refined image.
-            Generate only the image content described by the rendering prompt. Do not add unrelated objects or alter the core composition unless necessary to produce a coherent result.
+                Create a polished image based on the user's sketch and the provided rendering prompt.
+                Preserve the important elements, composition, spatial relationships, and overall intent of the sketch while transforming it into a coherent, refined image.
+                Generate only the image content described by the rendering prompt. Do not add unrelated objects or text or alter the core composition unless necessary to produce a coherent result.
 
-            Rendering prompt:
-            \(arguments.prompt)
-            """,
+                Rendering prompt:
+                \(arguments.prompt)
+                """,
             options: ImageAIOptions()
         )
         for try await output in stream {
             switch output {
             case .progress:
                 break
-            case let .image(data, _):
+            case .image(let data, _):
                 resultImageData = data
             }
         }
-
         guard let resultImageData else {
             throw RenderToolError.imageEditFailed
         }
 
+        // append the rendered image as a new layer in the sketch
         sketch.layers.append(.image(data: resultImageData))
+        // append a sketchable layer on top of the rendered image layer for further sketching
+        sketch.layers.append(.drawing())
 
         return RenderOutput(
             message: "Rendered layers \(indices) into a new image layer appended to the sketch."
