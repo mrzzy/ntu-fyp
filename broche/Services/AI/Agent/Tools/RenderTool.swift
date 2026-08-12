@@ -69,7 +69,7 @@ struct RenderTool: AITool {
 
         Before calling this tool, first call `\(CaptionTool.NAME)` to understand the sketch and its visual content. Use the returned description to inform the rendering prompt and preserve the important elements and relationships in the user's drawing. Do not call this tool until the sketch has been analyzed with `\(CaptionTool.NAME)`.
 
-        IMPORTANT: Call this image rendering tool at most once per user turn (i.e. once per user prompt/message). Image rendering is costly, so do not make multiple rendering calls within the same turn, even if additional rendering attempts might improve the result. Analyze the sketch and construct the best possible rendering prompt before making the single call. """
+        IMPORTANT: Image rendering is costly, so do not make multiple rendering calls within the same turn, even if additional rendering attempts might improve the result. Analyze the sketch and construct the best possible rendering prompt before making the single call. """
 
     let sketch: Sketch
     let imageModel: ImageAIModel
