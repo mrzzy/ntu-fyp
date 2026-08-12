@@ -23,12 +23,26 @@ struct ChatView: View {
                 SketchDetailView(sketch: sketch, isEnabled: false)
                     .navigationTitle("AI")
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                let sketch = repo.fetchSketch(id: id)
-                                sketch?.zoom = Zoom()
-                            } label: {
-                                Label("Reset Zoom", systemImage: "arrow.counterclockwise")
+                        if let id = sketchId,
+                            let sketch = repo.fetchSketch(id: id)
+                        {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button {
+                                    sketch.zoom = Zoom()
+                                } label: {
+                                    Label("Reset Zoom", systemImage: "arrow.counterclockwise")
+                                }
+                                .disabled(sketchId == nil)
+                            }
+                            if let shareable = try? ShareableSketch(sketch: sketch) {
+                                ToolbarItem(placement: .primaryAction) {
+                                    ShareLink(
+                                        item: shareable,
+                                        preview: SharePreview(
+                                            shareable.title, image: Image(uiImage: shareable.image)
+                                        )
+                                    )
+                                }
                             }
                         }
                     }

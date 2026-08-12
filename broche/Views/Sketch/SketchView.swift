@@ -7,6 +7,26 @@
 
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
+
+/// Wrapper for Sketch that can be shared via ShareLink
+struct ShareableSketch: Transferable {
+    let image: UIImage
+    let title: String
+
+    init(sketch: Sketch) throws {
+        title = sketch.title
+        image = try sketch.image
+    }
+
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(exportedContentType: .png) {
+            $0.image.pngData() ?? Data()
+        }.suggestedFileName {
+            $0.title
+        }
+    }
+}
 
 struct SketchView: View {
     /// currently selected sketch id
@@ -63,7 +83,11 @@ struct SketchView: View {
                     "Edit Title",
                     isPresented: Binding(
                         get: { editingSketch != nil },
-                        set: { if !$0 { resetEditTitle() } }
+                        set: {
+                            if !$0 {
+                                resetEditTitle()
+                            }
+                        }
                     )
                 ) {
                     TextField("Title", text: $editedTitle)
@@ -116,15 +140,26 @@ struct SketchView: View {
                 }
                 .navigationTitle("Sketch")
                 .toolbar {
-                    if let id = sketchId {
+                    if let id = sketchId,
+                       let sketch = repo.fetchSketch(id: id)
+                    {
                         ToolbarItem(placement: .primaryAction) {
                             Button {
-                                let sketch = repo.fetchSketch(id: id)
-                                sketch?.zoom = Zoom()
+                                sketch.zoom = Zoom()
                             } label: {
                                 Label("Reset Zoom", systemImage: "arrow.counterclockwise")
                             }
                             .disabled(sketchId == nil)
+                        }
+                        if let shareable = try? ShareableSketch(sketch: sketch) {
+                            ToolbarItem(placement: .primaryAction) {
+                                ShareLink(
+                                    item: shareable,
+                                    preview: SharePreview(
+                                        shareable.title, image: Image(uiImage: shareable.image)
+                                    )
+                                )
+                            }
                         }
                     }
                 }
