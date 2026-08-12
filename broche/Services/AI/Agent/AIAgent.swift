@@ -57,14 +57,15 @@ class AIAgent {
                         toolCallsFound = false
 
                         var response = ""
-                        var pendingToolCalls: [AIToolCall] = []
+                        // deduplicate tool calls from agent using set
+                        var pendingToolCalls: Set<AIToolCall> = []
 
                         for try await out in model.generate(messages: _messages, options: options) {
                             switch out {
                             case .chunk(let text):
                                 response += text
                             case .call(let call):
-                                pendingToolCalls.append(call)
+                                pendingToolCalls.insert(call)
                             case .complete:
                                 break
                             }
