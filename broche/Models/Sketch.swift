@@ -45,7 +45,7 @@ enum SketchError: Error, LocalizedError {
 
 /// Defines a sketch composed of a series of layers
 @Model
-class Sketch: CustomStringConvertible, Sendable {
+final class Sketch: CustomStringConvertible {
     var title: String
     var layers: [Layer]
     // dimensions of the sketch
@@ -61,7 +61,7 @@ class Sketch: CustomStringConvertible, Sendable {
 
     // cached compsited image version of the sketch
     @Transient private var _cachedImage: UIImage = UIImage()
-    @Transient private var cacheImageTTL: Date = Date.distantPast
+    @Transient private var _cachedImageAt: ContinuousClock.Instant? = nil
 
     var size: CGSize {
         CGSize(width: width, height: height)
@@ -120,14 +120,15 @@ class Sketch: CustomStringConvertible, Sendable {
     /// has expired, the sketch is re-rendered and the cache is updated.
     var cachedImage: UIImage {
         get throws {
-            let now = Date()
-            if cacheImageTTL >= now {
+            if let cachedAt = _cachedImageAt,
+                ContinuousClock.now - cachedAt < Duration.seconds(5)
+            {
                 return _cachedImage
             }
 
             let renderedImage = try renderLayers(indices: 0..<layers.count)
             _cachedImage = renderedImage
-            cacheImageTTL = now.addingTimeInterval(5)
+            _cachedImageAt = ContinuousClock.now
             return renderedImage
         }
     }
