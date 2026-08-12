@@ -11,7 +11,7 @@ import SwiftUI
 
 /// Presents the sketch to the user with a DrawView overlaid to capture user's drawing strokes
 struct SketchDetailView: View {
-    let sketch: Sketch?
+    var sketch: Sketch?
     let isEnabled: Bool
 
     @Environment(\.modelContext) private var modelContext
@@ -40,7 +40,10 @@ struct SketchDetailView: View {
                 ),
                 offset: Binding(
                     get: { CGPoint(x: sketch.zoom.offsetX, y: sketch.zoom.offsetY) },
-                    set: { sketch.zoom.offsetX = $0.x; sketch.zoom.offsetY = $0.y }
+                    set: {
+                        sketch.zoom.offsetX = $0.x
+                        sketch.zoom.offsetY = $0.y
+                    }
                 ),
                 rotation: Binding(
                     get: { .radians(sketch.zoom.rotation) },
@@ -71,7 +74,7 @@ struct SketchDetailView: View {
         } else {
             ContentUnavailableView(
                 "Sketch not found",
-                systemImage: "questionmark",
+                systemImage: "questionmark"
             )
         }
     }
@@ -102,7 +105,11 @@ struct SketchDetailView: View {
                             }
                         ),
                         isEnabled: isEnabled,
-                        size: sketch.size
+                        size: sketch.size,
+                        hasChanges: Binding(
+                            get: { sketch.hasChanges },
+                            set: { sketch.hasChanges = $0 }
+                        )
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)
@@ -128,6 +135,6 @@ struct SketchDetailView: View {
         ]
     )
     container.mainContext.insert(sketch)
-    return SketchDetailView(sketch: sketch) 
+    return SketchDetailView(sketch: sketch)
         .modelContainer(container)
 }

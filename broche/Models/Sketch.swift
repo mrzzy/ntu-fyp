@@ -63,6 +63,9 @@ final class Sketch: CustomStringConvertible {
     @Transient private var _cachedImage: UIImage = UIImage()
     @Transient private var _cachedImageAt: ContinuousClock.Instant? = nil
 
+    // whether the sketch has unseen changes
+    @Transient var hasChanges: Bool = false
+
     var size: CGSize {
         CGSize(width: width, height: height)
     }

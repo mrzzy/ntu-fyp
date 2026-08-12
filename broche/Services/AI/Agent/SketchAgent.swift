@@ -43,29 +43,36 @@ class SketchAgent: AIAgent {
     let models: AIRepository
 
     /// The system message injected automatically for all sketch agent conversations.
-    private static let systemMessage = Message(
-        user: .system,
-        text: """
+    private static func makeSystemMessage(hasChanges: Bool) -> Message {
+        let changePrompt = if hasChanges {
+            "The user has made new changes to the sketch since your last response. You must use the '\(CaptionTool.NAME)' tool first to update your understanding of the current sketch before providing further guidance."
+        } else {
+            ""
+        }
+        return Message(
+            user: .system,
+            text: """
             You are a helpful sketch assistant. Your role is to help the user with their \
             sketch by rendering it, enhancing its composition, and providing visual guidance. \
             Use the '\(CaptionTool.NAME)' tool to understand what the user has drawn, and the \
             '\(RenderTool.NAME)' tool to transform sketches into polished images. \
-            Focus on composition, clarity, and artistic intent.
+            Focus on composition, clarity, and artistic intent.\(changePrompt)
             """
-    )
+        )
+    }
 
     /// The welcome message inserted on the first ``instruct`` call.
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-            Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+        Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-            You can ask me to:
-            • Modify, refine, or enhance parts of your sketch
-            • Colorize and experiment with different styles
-            • Render your ideas into more polished artwork
-            • Discuss creative changes and improvements
-            """
+        You can ask me to:
+        • Modify, refine, or enhance parts of your sketch
+        • Colorize and experiment with different styles
+        • Render your ideas into more polished artwork
+        • Discuss creative changes and improvements
+        """
     )
 
     /// Creates a new sketch agent for the given sketch with the specified AI models.
@@ -101,7 +108,7 @@ class SketchAgent: AIAgent {
                 CaptionTool(sketch: sketch, visualModel: models.visualModel),
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
             ],
-            messages: [Self.systemMessage] + sketch.messages
+            messages: [Self.makeSystemMessage(hasChanges: sketch.hasChanges)] + sketch.messages
         )
     }
 
@@ -113,6 +120,8 @@ class SketchAgent: AIAgent {
                         sketch.messages = messages
                         continuation.yield(messages)
                     }
+                    // mark sketch as having no unseen changes after the agent has processed the prompt
+                    sketch.hasChanges = false
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
