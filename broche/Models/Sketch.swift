@@ -151,7 +151,9 @@ class Sketch: CustomStringConvertible {
         let size = CGSize(width: width, height: height)
         let renderer = UIGraphicsImageRenderer(size: size)
 
-        return renderer.image { _ in
+        return renderer.image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
             for image in images {
                 image.draw(in: CGRect(origin: .zero, size: size))
             }

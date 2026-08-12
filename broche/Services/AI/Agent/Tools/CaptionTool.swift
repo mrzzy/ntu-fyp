@@ -84,12 +84,6 @@ struct CaptionTool: AITool {
         guard let imageData = image.pngData() else {
             throw CaptionToolError.imageRenderFailed
         }
-        let documentsDir = FileManager.default.urls(
-            for: .documentDirectory, in: .userDomainMask
-        )[0]
-        let outputURL = documentsDir.appendingPathComponent("CaptionTool_render.png")
-        try imageData.write(to: outputURL)
-        print("  Saved render: \(outputURL.path)")
 
         var description = ""
         let stream = visualModel.generate(
