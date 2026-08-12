@@ -7,9 +7,9 @@
 
 import Foundation
 import FoundationModels
-import MLXLMCommon
 
-typealias AIToolSpec = ToolSpec
+
+typealias AIToolSpec = [String: any Sendable]
 
 /// Defines a tool that can be used by an AI agent
 /// within & a Generable input Argument and output Output types conforms to `Generable`.
@@ -24,7 +24,7 @@ extension AITool {
     }
 
     /// Tool specification in a dictionary format
-    var spec: ToolSpec {
+    var spec: AIToolSpec {
         let paramsData = Data(parameters.debugDescription.utf8)
         let paramsDict =
             (try! JSONSerialization.jsonObject(with: paramsData)) as? [String: any Sendable]
@@ -81,11 +81,11 @@ class AIToolRegistry {
     }
 
     /// Tool specifications of available tools in this registry
-    var specs: [ToolSpec] {
+    var specs: [AIToolSpec] {
         tools.values.map { $0.spec }
     }
 
-    /// Invokes a tool by name with the provided arguments in JSON format.
+    /// Invokes a tool by name with the provided ar guments in JSON format.
     func invoke(_ toolCall: AIToolCall) async throws -> String {
         guard let tool = tools[toolCall.name] else {
             throw AIToolRegistryError.toolNotFound(name: toolCall.name)

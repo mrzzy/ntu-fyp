@@ -86,7 +86,7 @@ extension AIBenchmark {
     /// Evaluates a ``AI Model`` by loading it, text, and collecting performance metrics
     ///
     /// - Parameters:
-    ///   - model: Any conformer to ``TextAIModel`` (e.g. ``MLXTextAIModel``).
+    ///   - model: Any conformer to ``TextAIModel``.
     /// - Returns: A ``AIBenchmarkResult`` containing timings, metrics, memory usage, and the response.
     /// - Throws: Any error from model loading or text generation.
     func evaluate(_ model: Model) async throws -> AIBenchmarkResult {

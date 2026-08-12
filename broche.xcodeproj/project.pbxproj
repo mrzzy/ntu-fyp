@@ -10,12 +10,6 @@
 		475E76DA30201EB5007198F0 /* Replicate in Frameworks */ = {isa = PBXBuildFile; productRef = 475E76DB30201EB5007198F1 /* Replicate */; };
 		475E76DC30201EB60007198F /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 475E76DD30201EB60007198F /* OpenAI */; };
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
-		47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3541D301820BC00CF5413 /* HuggingFace */; };
-		47B35423301820D600CF5413 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 47B35422301820D600CF5413 /* Tokenizers */; };
-		47B354283018217B00CF5413 /* BenchmarkHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 47B354273018217B00CF5413 /* BenchmarkHelpers */; };
-		47B3542A3018217B00CF5413 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 47B354293018217B00CF5413 /* MLXHuggingFace */; };
-		47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542B3018217B00CF5413 /* MLXLMCommon */; };
-		47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 47B3542D3018217B00CF5413 /* MLXVLM */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,13 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47B3542E3018217B00CF5413 /* MLXVLM in Frameworks */,
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
-				47B354283018217B00CF5413 /* BenchmarkHelpers in Frameworks */,
-				47B3542C3018217B00CF5413 /* MLXLMCommon in Frameworks */,
-				47B3541E301820BC00CF5413 /* HuggingFace in Frameworks */,
-				47B35423301820D600CF5413 /* Tokenizers in Frameworks */,
-				47B3542A3018217B00CF5413 /* MLXHuggingFace in Frameworks */,
 				475E76DA30201EB5007198F0 /* Replicate in Frameworks */,
 				475E76DC30201EB60007198F /* OpenAI in Frameworks */,
 			);
@@ -148,12 +136,6 @@
 			name = broche;
 			packageProductDependencies = (
 				47859C6B300DBAB200C137AD /* ExyteChat */,
-				47B3541D301820BC00CF5413 /* HuggingFace */,
-				47B35422301820D600CF5413 /* Tokenizers */,
-				47B354273018217B00CF5413 /* BenchmarkHelpers */,
-				47B354293018217B00CF5413 /* MLXHuggingFace */,
-				47B3542B3018217B00CF5413 /* MLXLMCommon */,
-				47B3542D3018217B00CF5413 /* MLXVLM */,
 				475E76DB30201EB5007198F1 /* Replicate */,
 				475E76DD30201EB60007198F /* OpenAI */,
 			);
@@ -268,9 +250,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
-				47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
-				47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */,
-				47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
 				475E76D830201EB50007198F /* XCRemoteSwiftPackageReference "replicate-swift" */,
 				475E76E030201EB70007198F /* XCRemoteSwiftPackageReference "OpenAI" */,
 			);
@@ -764,34 +743,6 @@
 				kind = branch;
 			};
 		};
-		47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/huggingface/swift-huggingface";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.0;
-			};
-			traits = (
-			);
-		};
-		47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/huggingface/swift-transformers";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.3;
-			};
-			traits = (
-			);
-		};
-		47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.31.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -809,36 +760,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */;
 			productName = ExyteChat;
-		};
-		47B3541D301820BC00CF5413 /* HuggingFace */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B3541C301820BC00CF5413 /* XCRemoteSwiftPackageReference "swift-huggingface" */;
-			productName = HuggingFace;
-		};
-		47B35422301820D600CF5413 /* Tokenizers */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B3541F301820D600CF5413 /* XCRemoteSwiftPackageReference "swift-transformers" */;
-			productName = Tokenizers;
-		};
-		47B354273018217B00CF5413 /* BenchmarkHelpers */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
-			productName = BenchmarkHelpers;
-		};
-		47B354293018217B00CF5413 /* MLXHuggingFace */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
-			productName = MLXHuggingFace;
-		};
-		47B3542B3018217B00CF5413 /* MLXLMCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
-			productName = MLXLMCommon;
-		};
-		47B3542D3018217B00CF5413 /* MLXVLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 47B354263018217B00CF5413 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
-			productName = MLXVLM;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

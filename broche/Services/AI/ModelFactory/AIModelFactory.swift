@@ -8,8 +8,7 @@ import Foundation
 /// A factory that creates AI model instances for text, visual, and image tasks.
 ///
 /// Conform to this protocol to provide custom or mock model implementations.
-/// See ``AIModelFactory`` for the default production implementation backed by
-/// MLX and Replicate models.
+/// See ``DefaultAIModelFactory`` for the default production implementation.
 protocol AIModelFactory {
     /// Creates a text generation model (LLM).
     func makeTextModel() -> TextAIModel
@@ -27,7 +26,7 @@ class DefaultAIModelFactory: AIModelFactory {
     // MARK: - Default Model IDs
 
     /// Default model ID used for text generation.
-    static let defaultTextModelID = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+    static let defaultTextModelID = "qwen/qwen3-30b-a3b-instruct-2507"
 
     /// Default model ID used for visual text generation.
     static let defaultVisualModelID = "openai/gpt-5-nano"
@@ -41,13 +40,12 @@ class DefaultAIModelFactory: AIModelFactory {
 
     func makeTextModel(
         modelID: String = defaultTextModelID,
-        maxTokens: Int = 80000
     ) -> TextAIModel {
-        MLXTextAIModel(modelID: modelID, maxTokens: maxTokens)
+        OpenRouterTextAIModel(modelID: modelID)
     }
 
     func makeTextModel() -> TextAIModel {
-        makeTextModel(modelID: Self.defaultTextModelID, maxTokens: 80000)
+        makeTextModel(modelID: Self.defaultTextModelID)
     }
 
     // MARK: - Visual Model
