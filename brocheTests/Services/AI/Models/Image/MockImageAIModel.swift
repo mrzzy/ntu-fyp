@@ -9,7 +9,7 @@ struct MockImageAIModel: ImageAIModel {
     func load() async throws {}
 
     func edit(
-        image: Data,
+        images: [Data],
         prompt: String,
         options: ImageAIOptions
     ) -> AsyncThrowingStream<ImageAIOutput, Error> {

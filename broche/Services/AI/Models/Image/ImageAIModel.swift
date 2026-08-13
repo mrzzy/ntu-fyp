@@ -43,7 +43,7 @@ protocol ImageAIModel: AIModel, Sendable {
     ///   - options: Configuration controlling the editing process.
     /// - Returns: An async throwing stream of output updates (progress or final image).
     func edit(
-        image: Data,
+        images: [Data],
         prompt: String,
         options: ImageAIOptions
     ) -> AsyncThrowingStream<ImageAIOutput, Error>
@@ -61,7 +61,7 @@ class ImageAIBenchmark<Model: ImageAIModel>: AIBenchmark {
     func generate(_ model: Model) async throws -> AIMetrics {
         outputImage = nil
         let stream = model.edit(
-            image: TestFixtures.appleSketchData,
+            images: [TestFixtures.appleSketchData],
             prompt:
                 "Render apple, plate & cup in a watercolor painting, transparent washes, pigment granulation, color bleeding, wet-on-wet technique, loose expressive brushstrokes, soft edges, subtle gradients, natural pigments",
             options: ImageAIOptions(seed: 42)

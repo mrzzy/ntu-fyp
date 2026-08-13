@@ -100,7 +100,8 @@ class SketchAgent: AIAgent {
         super.init(
             model: models.textModel,
             tools: [
-                RenderTool(sketch: sketch, imageModel: models.imageModel)
+                RenderTool(sketch: sketch, imageModel: models.imageModel),
+                EditTool(sketch: sketch, imageModel: models.imageModel),
             ],
             messages: [Self.systemMessage] + sketch.messages
         )

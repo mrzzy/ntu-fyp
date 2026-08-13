@@ -52,7 +52,7 @@ final class ReplicateImageAIModel: ImageAIModel {
     }
 
     func edit(
-        image: Data,
+        images: [Data],
         prompt: String,
         options: ImageAIOptions
     ) -> AsyncThrowingStream<ImageAIOutput, Swift.Error> {
@@ -66,13 +66,16 @@ final class ReplicateImageAIModel: ImageAIModel {
                         throw ReplicateImageAIError.invalidModelID(modelID: modelID)
                     }
 
-                    // convert input image to jpeg as replicate does not support png input
-                    // 1MB size limit
-                    let jpegData = UIImage(data: image)!.jpegData(compressionQuality: 1)!
+                    let jpegImages = images.compactMap { image -> Value? in
+                        guard let jpegData = UIImage(data: image)?.jpegData(
+                            compressionQuality: 1
+                        ) else { return nil }
+                        return .data(mimeType: "image/jpeg", jpegData)
+                    }
                     var input: [String: Value] = [
                         "prompt": .string(prompt),
                         "go_fast": .bool(false),
-                        "images": .array([.data(mimeType: "image/jpeg", jpegData)]),
+                        "images": .array(jpegImages),
                         "output_format": .string("png"),
                         "aspect_ratio": .string("match_input_image"),
                     ]

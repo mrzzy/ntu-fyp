@@ -44,7 +44,12 @@ struct RenderArguments: Codable, Sendable {
     @Guide(
         description:
             """
-            A comprehensive text prompt describing the desired rendering composition, style, medium, or edits to apply to the sketch image.
+            A text prompt describing only the desired rendering style to apply to the sketch. \
+            Focus on visual style, artistic medium, rendering technique, lighting, color palette, \
+            texture, level of detail, and overall finish. Do not describe, add, remove, or modify \
+            any subject, object, character, scene, or composition from the sketch. The generated \
+            image should preserve the sketch's existing content and composition while applying \
+            only the specified stylistic treatment.
             """
     )
     let prompt: String
@@ -64,7 +69,8 @@ struct RenderTool: AITool {
     let name = Self.NAME
     let description =
         """
-        Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image.
+        Generate a polished image from the user's sketch using AI image generation. 
+        Use this tool when the user wants their sketch rendered into a finished or more polished image.
         """
 
     let sketch: Sketch
@@ -94,7 +100,7 @@ struct RenderTool: AITool {
         // render the image using the image generation model
         var resultImageData: Data?
         let stream = imageModel.edit(
-            image: imageData,
+            images: [imageData],
             prompt:
                 """
                 Current Sketch description:

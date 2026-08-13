@@ -15,7 +15,7 @@ struct ReplicateImageAIModelTests {
 
         await #expect(throws: ReplicateImageAIError.self) {
             for try await _ in model.edit(
-                image: Data(), prompt: "a cat", options: ImageAIOptions()
+                images: [Data()], prompt: "a cat", options: ImageAIOptions()
             ) {}
         }
     }
