@@ -19,6 +19,8 @@ struct ChatView: View {
             NavigationSplitView {
                 ChatDetailView(sketch: sketch)
                     .navigationTitle("AI Assistant")
+                    // replace chat on switching of sketch
+                    .id(id)
             } detail: {
                 SketchDetailView(sketch: sketch, isEnabled: false)
                     .navigationTitle("AI")
