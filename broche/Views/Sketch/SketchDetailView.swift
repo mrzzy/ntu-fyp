@@ -61,7 +61,6 @@ struct SketchDetailView: View {
                     Image(uiImage: backgroundLayers)
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                     // render final layer
                     renderLayer(sketch, layer: sketch.layers.count - 1)
@@ -73,6 +72,8 @@ struct SketchDetailView: View {
             }
             // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
             .id(sketch.id)
+            // redraw when sketch layers change, avoid stale layer stack.
+            .id(sketch.layers.count)
         } else {
             ContentUnavailableView(
                 "Sketch not found",
