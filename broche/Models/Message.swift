@@ -12,11 +12,24 @@ import SwiftUI
 
 /// Represents the type of user who sent a message - either a regular user or AI
 /// System messages are are hidden from the user and only show to the AI.
-enum User: Codable {
+enum User: nonisolated Codable, CustomStringConvertible {
     case system
     case user
     case ai
     case tool
+    
+    var description: String {
+        switch self {
+        case .system:
+            return "System"
+        case .user:
+            return "User"
+        case .ai:
+            return "AI"
+        case .tool:
+            return "Tool"
+        }
+    }
 }
 
 extension User {

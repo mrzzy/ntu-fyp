@@ -91,7 +91,7 @@ struct RenderTool: AITool {
             indices = 0..<sketch.layers.count
         }
 
-        let image = try sketch.renderLayers(indices: indices)
+        let image = try sketch.render.renderLayers(indices: indices)
         guard let imageData = image.pngData() else {
             throw RenderToolError.imageRenderFailed
         }
@@ -127,9 +127,9 @@ struct RenderTool: AITool {
         }
 
         // append the rendered image as a new layer in the sketch
-        sketch.layers.append(.image(data: resultImageData))
+        sketch.addLayer(.image(data: resultImageData))
         // append a sketchable layer on top of the rendered image layer for further sketching
-        sketch.layers.append(.drawing())
+        sketch.addLayer(.drawing())
 
         return RenderOutput(
             message: "Rendered layers \(indices) into a new image layer appended to the sketch."

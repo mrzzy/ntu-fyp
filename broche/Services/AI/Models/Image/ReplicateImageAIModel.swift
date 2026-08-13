@@ -71,8 +71,7 @@ final class ReplicateImageAIModel: ImageAIModel {
                     let jpegData = UIImage(data: image)!.jpegData(compressionQuality: 1)!
                     var input: [String: Value] = [
                         "prompt": .string(prompt),
-                        // enable additional optimisations
-                        "go_fast": .bool(true),
+                        "go_fast": .bool(false),
                         "images": .array([.data(mimeType: "image/jpeg", jpegData)]),
                         "output_format": .string("png"),
                         "aspect_ratio": .string("match_input_image"),

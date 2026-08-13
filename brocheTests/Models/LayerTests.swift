@@ -5,14 +5,14 @@
 //  Created by Zhu Zhanyan on 7/10/26.
 //
 
-@testable import broche
 import PencilKit
 import Testing
 import UIKit
 
+@testable import broche
+
 @Suite("Layer rendering tests")
 struct LayerTests {
-
     @Test("Image layer returns original data")
     func imageLayerReturnsOriginalData() throws {
         let originalData = Data([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
@@ -28,7 +28,8 @@ struct LayerTests {
         let drawing = TestFixtures.drawing
         let layer = Layer.drawing(drawing: drawing)
 
-        try layer.render(size: CGSize(width: 100, height: 100))
+        let result = try layer.render(size: CGSize(width: 100, height: 100))
+        #expect(!result.isEmpty, "Render of drawing layer should not be empty")
     }
 
     @Test("Empty PNG data in image layer returns same data")

@@ -26,24 +26,7 @@ struct ChatView: View {
                         if let id = sketchId,
                             let sketch = repo.fetchSketch(id: id)
                         {
-                            ToolbarItem(placement: .primaryAction) {
-                                Button {
-                                    sketch.zoom = Zoom()
-                                } label: {
-                                    Label("Reset Zoom", systemImage: "arrow.counterclockwise")
-                                }
-                                .disabled(sketchId == nil)
-                            }
-                            if let shareable = try? ShareableSketch(sketch: sketch) {
-                                ToolbarItem(placement: .primaryAction) {
-                                    ShareLink(
-                                        item: shareable,
-                                        preview: SharePreview(
-                                            shareable.title, image: Image(uiImage: shareable.image)
-                                        )
-                                    )
-                                }
-                            }
+                            SketchToolbar(sketch: sketch)
                         }
                     }
             }
@@ -57,33 +40,48 @@ struct ChatView: View {
 }
 
 private struct ChatDetailView: View {
-    @Environment(\.aiModelsState) var aiModelsState
     let repo = Repository.shared
     let sketch: Sketch?
-    /// disabled if sketch is not selected or AI models are not loaded
-    var isDisabled: Bool {
-        // aiModelsState != .loaded || sketch == nil
-        false
-    }
+
+    @Environment(\.aiModelsState) var aiModelsState
+    @State var agent: SketchAgent?
 
     var body: some View {
         if let sketch = sketch {
-            let exyteMessages = sketch.messages.compactMap { $0.toExyteChatMessage() }
+            if agent != nil {
+                let exyteMessages = sketch.messages.compactMap { $0.toExyteChatMessage() }
 
-            ExyteChat.ChatView(
-                messages: exyteMessages,
-                didSendMessage: handleSendMessage
-            )
-            // Disable attachments for now (deferred feature)
-            .setAvailableInputs([.text])
-            .onAppear {
-                if sketch.messages.isEmpty {
-                    // display a welcome message to the user
-                    sketch.messages.append(SketchAgent.welcomeMessage)
-                    repo.save()
+                ExyteChat.ChatView(
+                    messages: exyteMessages,
+                    didSendMessage: handleSendMessage
+                )
+                // Disable attachments for now (deferred feature)
+                .setAvailableInputs([.text])
+                .onAppear {
+                    if sketch.messages.isEmpty {
+                        // display a welcome message to the user
+                        sketch.messages.append(SketchAgent.welcomeMessage)
+                        repo.save()
+                    }
+                }
+            } else {
+                switch aiModelsState {
+                case .unloaded:
+                    // wait for models to load
+                    ProgressView("Loading AI")
+                case .loaded:
+                    // wait for agent to load
+                    ProgressView("Loading AI")
+                        .onAppear {
+                            agent = try! SketchAgent(sketch: sketch, models: AIRepository.shared)
+                        }
+                case .error:
+                    ContentUnavailableView(
+                        "AI failed to Load. ",
+                        systemImage: "exclamationmark.triangle"
+                    )
                 }
             }
-            .disabled(isDisabled)
         } else {
             ContentUnavailableView(
                 "Sketch not found.",
@@ -93,15 +91,13 @@ private struct ChatDetailView: View {
     }
 
     private func handleSendMessage(_ message: ExyteChat.DraftMessage) {
-        guard let sketch = sketch else { return }
+        // ignore if either sketch or agent is not available
+        guard let sketch = sketch, let agent = agent else { return }
 
         Task {
             do {
-                let agent = try SketchAgent(sketch: sketch, models: AIRepository.shared)
                 for try await messages in agent.instruct(prompt: message.text) {
-                    // needed? await MainActor.run {
                     sketch.messages = messages
-
                     try repo.modelContext.save()
                 }
             } catch let error as SketchAgentError {

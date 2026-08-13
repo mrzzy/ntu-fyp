@@ -6,158 +6,21 @@
 //
 
 @testable import broche
-import PencilKit
 import Testing
 import UIKit
 
-@Suite("Sketch image generation tests")
+private let epsilon = 1e-10
+
+@Suite("Sketch model tests")
 struct SketchTests {
-    @Test("Sketch with no layers throws noLayersToRender")
-    func sketchWithNoLayersThrowsNoLayersToRender() {
-        let sketch = Sketch(
-            title: "Empty",
-            layers: [],
-            size: CGSize(width: 512, height: 512)
-        )
+    @Test("Sketch with default init has correct defaults")
+    func defaultInitHasCorrectDefaults() {
+        let sketch = Sketch()
 
-        #expect(throws: SketchError.noLayersToRender) {
-            try sketch.image
-        }
-    }
-
-    @Test("Sketch with single empty drawing layer renders successfully")
-    func sketchWithSingleDrawingLayerRendersImage() throws {
-        let drawing = TestFixtures.drawing
-        let sketch = Sketch(
-            title: "Single Drawing",
-            layers: [.drawing(drawing: drawing)],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        let image = try sketch.image
-
-        #expect(image.size.width == 512)
-        #expect(image.size.height == 512)
-    }
-
-    @Test("Sketch with single image layer renders image")
-    func sketchWithSingleImageLayerRendersImage() throws {
-        let imageData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100)
-        )
-
-        let sketch = Sketch(
-            title: "Single Image",
-            layers: [.image(data: imageData)],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        let image = try sketch.image
-
-        #expect(image.size.width == 512)
-        #expect(image.size.height == 512)
-    }
-
-    @Test("Sketch composites multiple layers correctly")
-    func sketchCompositesMultipleLayersCorrectly() throws {
-        let imageData = try createTestPNGImage(
-            size: CGSize(width: 200, height: 200)
-        )
-
-        let sketch = Sketch(
-            title: "Multiple Layers",
-            layers: [
-                .image(data: imageData),
-                .drawing(drawing: TestFixtures.drawing),
-                .drawing(drawing: TestFixtures.drawing),
-            ],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        let image = try sketch.image
-
-        #expect(image.size.width == 512)
-        #expect(image.size.height == 512)
-    }
-
-    @Test("Sketch throws when a layer contains invalid image data")
-    func sketchThrowsWhenLayerFailsToDecode() throws {
-        let validImageData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100)
-        )
-
-        let sketch = Sketch(
-            title: "Mixed Layers",
-            layers: [
-                .image(data: validImageData),
-                .drawing(drawing: TestFixtures.drawing),
-                .image(data: Data()),
-            ],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        #expect(throws: SketchError.emptyRenderedImage) {
-            try sketch.image
-        }
-    }
-
-    @Test("Sketch with only invalid image layers throws emptyRenderedImage")
-    func sketchWithOnlyInvalidLayersThrowsEmptyRenderedImage() {
-        let sketch = Sketch(
-            title: "Invalid Only",
-            layers: [
-                .image(data: Data()),
-                .image(data: Data([0x00])),
-            ],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        #expect(throws: SketchError.emptyRenderedImage) {
-            try sketch.image
-        }
-    }
-
-    @Test("Sketch composites layers in order")
-    func sketchCompositesInLayerOrder() throws {
-        let bottomLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100),
-            color: .red
-        )
-
-        let topLayerData = try createTestPNGImage(
-            size: CGSize(width: 100, height: 100),
-            color: .blue
-        )
-
-        let sketch = Sketch(
-            title: "Layer Order",
-            layers: [
-                .image(data: bottomLayerData),
-                .image(data: topLayerData),
-            ],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        let image = try sketch.image
-
-        #expect(image.size.width == 512)
-        #expect(image.size.height == 512)
-    }
-
-    @Test("Sketch with empty drawing layer renders successfully")
-    func sketchHandlesEmptyDrawing() throws {
-        let drawing = TestFixtures.drawing
-
-        let sketch = Sketch(
-            title: "Empty Drawing",
-            layers: [.drawing(drawing: drawing)],
-            size: CGSize(width: 512, height: 512)
-        )
-
-        let image = try sketch.image
-
-        #expect(image.size.width == 512)
-        #expect(image.size.height == 512)
+        #expect(sketch.title == "Untitled")
+        #expect(sketch.layers.count == 1)
+        #expect(sketch.size == CGSize(width: 512, height: 512))
+        #expect(abs(sketch.zoom.scale - 1.0) < epsilon)
     }
 
     @Test("Sketch maintains correct size")
@@ -170,23 +33,77 @@ struct SketchTests {
         )
 
         #expect(sketch.size == testSize)
+        #expect(abs(sketch.width - testSize.width) < epsilon)
+        #expect(abs(sketch.height - testSize.height) < epsilon)
     }
-}
 
-extension SketchTests {
-    private func createTestPNGImage(
-        size: CGSize,
-        color: UIColor = .white
-    ) throws -> Data {
-        let renderer = UIGraphicsImageRenderer(size: size)
+    @Test("Sketch description includes title and layer info")
+    func descriptionIncludesTitleAndLayers() {
+        let sketch = Sketch(
+            title: "Test Sketch",
+            layers: [.drawing(), .drawing()],
+            size: CGSize(width: 100, height: 200)
+        )
 
-        let image = renderer.image { context in
-            color.setFill()
-            context.fill(
-                CGRect(origin: .zero, size: size)
-            )
+        let desc = sketch.description
+
+        #expect(desc.contains("Test Sketch"))
+        #expect(desc.contains("100"))
+        #expect(desc.contains("200"))
+        #expect(desc.contains("2"))
+    }
+
+    @Test("Sketch with custom title stores title")
+    func customTitleStored() {
+        let sketch = Sketch(title: "My Art")
+
+        #expect(sketch.title == "My Art")
+    }
+
+    @Test("Sketch with custom layers stores layers")
+    func customLayersStored() {
+        let sketch = Sketch(layers: [])
+
+        #expect(sketch.layers.isEmpty)
+    }
+
+    @Test("Sketch zoom has default values")
+    func zoomHasDefaults() {
+        let sketch = Sketch()
+
+        #expect(abs(sketch.zoom.scale - 1.0) < epsilon)
+        #expect(abs(sketch.zoom.offsetX - 0.0) < epsilon)
+        #expect(abs(sketch.zoom.offsetY - 0.0) < epsilon)
+        #expect(abs(sketch.zoom.rotation - 0.0) < epsilon)
+    }
+
+    @Test("addLayer appends a layer")
+    func addLayerAppendsLayer() {
+        let sketch = Sketch(layers: [])
+
+        sketch.addLayer(.drawing())
+
+        #expect(sketch.layers.count == 1)
+    }
+
+    @Test("removeLayer removes layer at index")
+    func removeLayerRemovesAtIndex() {
+        let sketch = Sketch(layers: [.drawing(), .drawing()])
+
+        sketch.removeLayer(at: 0)
+
+        #expect(sketch.layers.count == 1)
+    }
+
+    @Test("updateLayer replaces layer at index")
+    func updateLayerReplacesAtIndex() {
+        let sketch = Sketch(layers: [.drawing()])
+
+        sketch.setLayer(at: 0, to: .image(data: Data()))
+
+        if case .image = sketch.layers[0] {
+        } else {
+            Issue.record("Expected image layer after update")
         }
-
-        return try #require(image.pngData())
     }
 }

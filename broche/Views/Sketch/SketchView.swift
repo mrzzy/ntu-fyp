@@ -7,26 +7,6 @@
 
 import SwiftData
 import SwiftUI
-import UniformTypeIdentifiers
-
-/// Wrapper for Sketch that can be shared via ShareLink
-struct ShareableSketch: Transferable {
-    let image: UIImage
-    let title: String
-
-    init(sketch: Sketch) throws {
-        title = sketch.title
-        image = try sketch.image
-    }
-
-    static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .png) {
-            $0.image.pngData() ?? Data()
-        }.suggestedFileName {
-            $0.title
-        }
-    }
-}
 
 struct SketchView: View {
     /// currently selected sketch id
@@ -44,7 +24,7 @@ struct SketchView: View {
             NavigationSplitView {
                 List(sketches, selection: $sketchId) { sketch in
                     HStack {
-                        Image(uiImage: (try? sketch.cachedImage) ?? UIImage())
+                        Image(uiImage: (try? sketch.render.cachedImage) ?? UIImage())
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 60, height: 60)
@@ -139,26 +119,9 @@ struct SketchView: View {
                 .navigationTitle("Sketch")
                 .toolbar {
                     if let id = sketchId,
-                       let sketch = repo.fetchSketch(id: id)
+                        let sketch = repo.fetchSketch(id: id)
                     {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                sketch.zoom = Zoom()
-                            } label: {
-                                Label("Reset Zoom", systemImage: "arrow.counterclockwise")
-                            }
-                            .disabled(sketchId == nil)
-                        }
-                        if let shareable = try? ShareableSketch(sketch: sketch) {
-                            ToolbarItem(placement: .primaryAction) {
-                                ShareLink(
-                                    item: shareable,
-                                    preview: SharePreview(
-                                        shareable.title, image: Image(uiImage: shareable.image)
-                                    )
-                                )
-                            }
-                        }
+                        SketchToolbar(sketch: sketch)
                     }
                 }
             }

@@ -31,7 +31,7 @@ enum VisualAIError: Error, LocalizedError {
 /// The output of a visual text generation model
 typealias VisualAIOutput = TextAIOutput
 
-protocol VisualAIModel: AIModel {
+protocol VisualAIModel: AIModel, Sendable {
     /// Generates text for the given prompt.
     ///
     /// - Parameters:

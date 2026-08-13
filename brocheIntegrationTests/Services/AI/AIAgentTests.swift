@@ -66,7 +66,7 @@ struct AIAgentTests {
         let model = DefaultAIModelFactory.shared.makeTextModel()
         // Ensure the model is loaded before using it
         try await model.load()
-        let agent = try AIAgent(
+        let agent = AIAgent(
             model: model,
             tools: [GetCurrentLocationTool(), GetWeatherTool()],
             messages: [
@@ -109,7 +109,7 @@ struct AIAgentTests {
         for (i, snapshot) in allSnapshots.enumerated() {
             print("--- Snapshot \(i) ---")
             for msg in snapshot {
-                print("  [\(msg.user.rawValue)] \(msg.text)")
+                print("  [\(msg.user)] \(msg.text)")
             }
         }
     }

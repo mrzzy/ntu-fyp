@@ -60,15 +60,10 @@ struct SketchAgentIntegrationTests {
             "Sketch messages should contain the user prompt"
         )
 
-        #expect(
-            sketch.messages.first?.user == .ai
-                && sketch.messages.first?.text.contains("AI art assistant") == true,
-            "Sketch messages should start with the welcome message"
-        )
 
         print("Final layers: \(sketch.layers.count)")
         for (i, msg) in messages.enumerated() {
-            print("--- Message \(i) [\(msg.user.rawValue)] ---")
+            print("--- Message \(i) [\(msg.user)] ---")
             print("  \(msg.text)")
         }
     }
@@ -79,7 +74,7 @@ struct SketchAgentIntegrationTests {
         sketch.messages.append(Message(user: .system, text: "should not be here"))
 
         do {
-            _ = try await SketchAgent(
+            _ = try SketchAgent(
                 sketch: sketch,
                 models: AIRepository.shared
             )

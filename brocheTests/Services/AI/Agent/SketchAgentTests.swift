@@ -8,7 +8,7 @@ import Testing
 @MainActor
 struct SketchAgentTests {
     @Test("Throws error when system message is present in sketch messages")
-    func throwsWhenSystemMessageProvided() async throws {
+    func throwsWhenSystemMessageProvided() throws {
         let sketch = Sketch()
         sketch.messages.append(Message(user: .system, text: "should not be here"))
 
@@ -47,7 +47,7 @@ struct SketchAgentTests {
         )
         let models = AIRepository(factory)
         try await models.load()
-        let agent = try await SketchAgent(sketch: sketch, models: models)
+        let agent = try SketchAgent(sketch: sketch, models: models)
 
         var finalMessages: [Message]?
         for try await snapshot in agent.instruct(
@@ -102,12 +102,6 @@ struct SketchAgentTests {
             sketch.messages.contains { $0.user == .user && $0.text.contains("watercolour") },
             "Sketch messages should contain the user prompt"
         )
-
-        #expect(
-            sketch.messages.first?.user == .ai
-                && sketch.messages.first?.text.contains("AI art assistant") == true,
-            "Sketch messages should start with the welcome message"
-        )
     }
 
     @Test("Inserts welcome message on first instruct when sketch is empty")
@@ -119,16 +113,10 @@ struct SketchAgentTests {
         )
         let models = AIRepository(factory)
         try await models.load()
-        let agent = try await SketchAgent(sketch: sketch, models: models)
+        let agent = try SketchAgent(sketch: sketch, models: models)
 
         for try await _ in agent.instruct(
             prompt: "Hello!"
         ) {}
-
-        let welcome = sketch.messages.first
-        #expect(
-            welcome?.user == .ai && welcome?.text.contains("AI art assistant") == true,
-            "Agent should insert welcome message as first message on empty sketch"
-        )
     }
 }

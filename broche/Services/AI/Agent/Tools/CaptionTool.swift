@@ -86,7 +86,7 @@ struct CaptionTool: AITool {
             indices = 0..<sketch.layers.count
         }
 
-        let image = try sketch.renderLayers(indices: indices)
+        let image = try sketch.render.renderLayers(indices: indices)
         guard let imageData = image.pngData() else {
             throw CaptionToolError.imageRenderFailed
         }

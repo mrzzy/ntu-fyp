@@ -34,7 +34,7 @@ enum ImageAIOutput {
 }
 
 /// Image Editing AI Model
-protocol ImageAIModel: AIModel {
+protocol ImageAIModel: AIModel, Sendable {
     /// Edits an image based on the provided prompt and options.
     ///
     /// - Parameters:

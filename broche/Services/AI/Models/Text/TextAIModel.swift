@@ -44,7 +44,7 @@ enum TextAIOutput: Error {
     case complete(metrics: TextAIMetrics)
 }
 
-protocol TextAIModel: AIModel {
+protocol TextAIModel: AIModel, Sendable {
     /// Generates text for the given prompt.
     ///
     /// - Parameters:

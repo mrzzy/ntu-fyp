@@ -8,7 +8,6 @@
 import Foundation
 import PencilKit
 import SwiftData
-import UIKit
 
 /// Zoom
 struct Zoom: Codable {
@@ -29,25 +28,14 @@ struct Zoom: Codable {
 let SketchDefaultLayers: [Layer] = [
     .drawing(drawing: PKDrawing())
 ]
-enum SketchError: Error, LocalizedError {
-    case noLayersToRender
-    case emptyRenderedImage
-
-    var errorDescription: String? {
-        switch self {
-        case .noLayersToRender:
-            return "No layers to render."
-        case .emptyRenderedImage:
-            return "Rendered image is empty."
-        }
-    }
-}
 
 /// Defines a sketch composed of a series of layers
 @Model
-final class Sketch: CustomStringConvertible {
+final class Sketch: CustomStringConvertible  {
     var title: String
-    var layers: [Layer]
+
+    @Attribute(originalName: "layers")
+    private var _layers: [Layer]
     // dimensions of the sketch
     private(set) var width: Double
     private(set) var height: Double
@@ -55,16 +43,31 @@ final class Sketch: CustomStringConvertible {
     /// AI assistant conversation messages
     @Relationship(deleteRule: .cascade)
     var messages: [Message]
-
     /// Zoom view zoom/pan/rotation state
-    var zoom: Zoom
+    var zoom: Zoom = Zoom()
 
-    // cached compsited image version of the sketch
-    @Transient private var _cachedImage: UIImage = UIImage()
-    @Transient private var _cachedImageAt: ContinuousClock.Instant? = nil
+    var layers: [Layer] {
+        _layers
+    }
 
-    // whether the sketch has unseen changes
-    @Transient var hasChanges: Bool = false
+    @Transient private var _renderer: SketchRender?
+    var render: SketchRender {
+        // create renderer on first access
+        guard let r = _renderer else {
+            let r = SketchRender(sketch: self)
+            _renderer = r
+            return r
+        }
+        return r
+    }
+
+    /// When the sketch was last modified
+    private var layersModifiedOn: Date = Date.distantPast
+
+    var modifiedOn: Date {
+        // max modified timestamp of all layers + layers array itself
+        max(layers.map { $0.modifiedOn }.max() ?? .distantPast, layersModifiedOn)
+    }
 
     var size: CGSize {
         CGSize(width: width, height: height)
@@ -72,21 +75,14 @@ final class Sketch: CustomStringConvertible {
 
     var description: String {
         let layerDescriptions = layers.enumerated().map { index, layer in
-            let type: String
-            switch layer {
-            case .drawing:
-                type = "Drawing"
-            case .image:
-                type = "Image"
-            }
-            return "  [\(index)] \(type)"
+            "  [\(index)] \(layer.description)"
         }.joined(separator: "\n")
 
         return """
             Sketch: \(title) 
-            Dimensions (<width>x<height>): (\(Int(width))x\(Int(height)))
+            Dimensions: (\(Int(width))x\(Int(height)))
             Total Layers: \(layers.count)
-            Layers: [<index>] <type>
+            Layers:
             \(layerDescriptions)
             """
     }
@@ -95,72 +91,26 @@ final class Sketch: CustomStringConvertible {
         title: String = "Untitled", layers: [Layer] = SketchDefaultLayers,
         size: CGSize = CGSize(width: 512, height: 512),
         messages: [Message] = []
-
     ) {
         self.title = title
-        self.layers = layers
+        _layers = layers
         self.messages = messages
         width = size.width
         height = size.height
-        zoom = Zoom()
     }
 
-    /// Renders the sketch into a single flattened image by compositing all
-    /// layers in order.
-    ///
-    /// Layers are drawn sequentially, with each subsequent layer composited on
-    /// top of the previous ones. If the sketch contains no layers, an entirely transparent image is returned.
-    ///
-    /// - Returns: A `UIImage` representing the flattened sketch or an empty image if
-    ///   the sketch has no layers.
-    var image: UIImage {
-        get throws { try renderLayers(indices: 0..<layers.count) }
+    /// Layer modification methods
+    func addLayer(_ layer: Layer) {
+        _layers.append(layer)
+        layersModifiedOn = Date.now
     }
 
-    /// Returns a cached image of the sketch, rendering it if the cache has expired.
-    ///
-    /// The cached image is valid for 5 seconds after the last render. If the cache
-    /// has expired, the sketch is re-rendered and the cache is updated.
-    var cachedImage: UIImage {
-        get throws {
-            if let cachedAt = _cachedImageAt,
-                ContinuousClock.now - cachedAt < Duration.seconds(5)
-            {
-                return _cachedImage
-            }
-
-            let renderedImage = try renderLayers(indices: 0..<layers.count)
-            _cachedImage = renderedImage
-            _cachedImageAt = ContinuousClock.now
-            return renderedImage
-        }
+    func removeLayer(at index: Int) {
+        _layers.remove(at: index)
+        layersModifiedOn = Date.now
     }
 
-    func renderLayers(indices: Range<Int>) throws -> UIImage {
-        let selectedLayers = layers[indices]
-
-        guard selectedLayers.first != nil else {
-            throw SketchError.noLayersToRender
-        }
-
-        var images: [UIImage] = []
-        for layer in selectedLayers {
-            let data = try layer.render(size: size)
-            guard let image = UIImage(data: data) else {
-                throw SketchError.emptyRenderedImage
-            }
-            images.append(image)
-        }
-
-        let size = CGSize(width: width, height: height)
-        let renderer = UIGraphicsImageRenderer(size: size)
-
-        return renderer.image { context in
-            UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: size))
-            for image in images {
-                image.draw(in: CGRect(origin: .zero, size: size))
-            }
-        }
+    func setLayer(at index: Int, to layer: Layer) {
+        _layers[index] = layer
     }
 }

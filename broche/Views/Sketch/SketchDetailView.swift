@@ -27,7 +27,9 @@ struct SketchDetailView: View {
             // composite all layers except last layer in 1 image
             let backgroundLayers =
                 if nLayers > 1 {
-                    (try? sketch.renderLayers(indices: 0 ..< sketch.layers.count - 1)) ?? UIImage()
+                    // hot should be cached
+                    (try? sketch.render.renderLayers(indices: 0..<sketch.layers.count - 1))
+                        ?? UIImage()
                 } else {
                     UIImage()
                 }
@@ -82,34 +84,31 @@ struct SketchDetailView: View {
     private func renderLayer(_ sketch: Sketch, layer: Int) -> some View {
         Group {
             switch sketch.layers[layer] {
-            case let .image(data):
+            case .image(let data, _):
                 if let image = UIImage(data: data) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                 }
-            case let .drawing(drawing):
+            case .drawing(let drawing, _):
                 GeometryReader { proxy in
                     DrawingCanvasView(
                         drawing:
-                        Binding(
-                            get: { drawing },
-                            set: { newDrawing in
-                                // sync drawing changes back to model
-                                sketch.layers[layer] = .drawing(drawing: newDrawing)
-                                do {
-                                    try modelContext.save()
-                                } catch {
-                                    print("Warning: Failed to save drawing changes")
+                            Binding(
+                                get: { drawing },
+                                set: { newDrawing in
+                                    // sync drawing changes back to model
+                                    sketch.setLayer(at: layer, to: .drawing(
+                                        drawing: newDrawing, modifiedOn: .now))
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        print("Warning: Failed to save drawing changes")
+                                    }
                                 }
-                            }
-                        ),
+                            ),
                         isEnabled: isEnabled,
-                        size: sketch.size,
-                        hasChanges: Binding(
-                            get: { sketch.hasChanges },
-                            set: { sketch.hasChanges = $0 }
-                        )
+                        size: sketch.size
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)

@@ -44,21 +44,22 @@ class SketchAgent: AIAgent {
 
     /// The system message injected automatically for all sketch agent conversations.
     private static func makeSystemMessage(hasChanges: Bool) -> Message {
-        let changePrompt = if hasChanges {
-            "The user has made new changes to the sketch since your last response. You must use the '\(CaptionTool.NAME)' tool first to update your understanding of the current sketch before providing further guidance."
-        } else {
-            ""
-        }
+        let changePrompt =
+            if hasChanges {
+                "The user has made new changes to the sketch since your last response. You must use the '\(CaptionTool.NAME)' tool first to update your understanding of the current sketch before providing further guidance."
+            } else {
+                ""
+            }
         return Message(
             user: .system,
             text: """
-            You are a sketch assistant. Your role is to help the user with their \
-            sketch by rendering it, enhancing its composition, and providing visual guidance. \
-            All tools should be called only once per turn and only when necessary.
-            Focus on composition, clarity, and artistic intent.
-            Do not be overly encouraging or verbose. Provide concise, actionable guidance.
-            \(changePrompt)
-            """
+                You are a sketch assistant. Your role is to help the user with their \
+                sketch by rendering it, enhancing its composition, and providing visual guidance. \
+                All tools should be called only once per turn and only when necessary.
+                Focus on composition, clarity, and artistic intent.
+                Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+                \(changePrompt)
+                """
         )
     }
 
@@ -66,14 +67,14 @@ class SketchAgent: AIAgent {
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-        Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+            Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-        You can ask me to:
-        • Modify, refine, or enhance parts of your sketch
-        • Colorize and experiment with different styles
-        • Render your ideas into more polished artwork
-        • Discuss creative changes and improvements
-        """
+            You can ask me to:
+            • Modify, refine, or enhance parts of your sketch
+            • Colorize and experiment with different styles
+            • Render your ideas into more polished artwork
+            • Discuss creative changes and improvements
+            """
     )
 
     /// Creates a new sketch agent for the given sketch with the specified AI models.
@@ -109,7 +110,7 @@ class SketchAgent: AIAgent {
                 CaptionTool(sketch: sketch, visualModel: models.visualModel),
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
             ],
-            messages: [Self.makeSystemMessage(hasChanges: sketch.hasChanges)] + sketch.messages
+            messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )
     }
 
@@ -117,12 +118,17 @@ class SketchAgent: AIAgent {
         AsyncThrowingStream { continuation in
             Task {
                 do {
+                    // instruct model to pick up new changes if last caption call did not pick up new changes
+                    let captionedOn = tools.invokedOn(forTool: CaptionTool.NAME) ?? .distantPast
+                    self._messages[0] = Self.makeSystemMessage(
+                        hasChanges: captionedOn < sketch.modifiedOn
+                    )
+
                     for try await messages in super.instruct(prompt: prompt) {
                         sketch.messages = messages
                         continuation.yield(messages)
                     }
-                    // mark sketch as having no unseen changes after the agent has processed the prompt
-                    sketch.hasChanges = false
+
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)

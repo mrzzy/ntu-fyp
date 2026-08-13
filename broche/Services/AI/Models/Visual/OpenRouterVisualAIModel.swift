@@ -94,7 +94,7 @@ final class OpenRouterVisualAIModel: VisualAIModel {
                                 .init(
                                     imageUrl: .init(
                                         url: "data:image/png;base64,\(base64)",
-                                        detail: .auto
+                                        detail: .high
                                     )
                                 )
                             )

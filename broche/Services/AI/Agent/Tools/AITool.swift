@@ -76,6 +76,7 @@ enum AIToolRegistryError: LocalizedError {
 /// allowing for tool calls and access to tool specifications.
 class AIToolRegistry {
     let tools: [String: any AITool]
+    private var invokedOn: [String: Date] = [:]
 
     init(_ tools: [any AITool] = []) {
         self.tools = Dictionary(uniqueKeysWithValues: tools.map { ($0.name, $0) })
@@ -91,6 +92,12 @@ class AIToolRegistry {
         guard let tool = tools[toolCall.name] else {
             throw AIToolRegistryError.toolNotFound(name: toolCall.name)
         }
+        invokedOn[toolCall.name] = Date()
         return try await tool.callJSON(argsJSON: toolCall.argsJSON)
+    }
+
+    /// Returns the last invocation date of the tool with the given name, or `nil` if never invoked.
+    func invokedOn(forTool name: String) -> Date? {
+        invokedOn[name]
     }
 }

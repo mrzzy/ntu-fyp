@@ -15,7 +15,6 @@ struct DrawingCanvasView: UIViewRepresentable {
     // Whether drawing on the canvas view is enabled
     let isEnabled: Bool
     let size: CGSize
-    @Binding var hasChanges: Bool
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
@@ -65,9 +64,8 @@ struct DrawingCanvasView: UIViewRepresentable {
         }
 
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+            // propagate drawing changes via binding
             parent.drawing = canvasView.drawing
-            // propogate that the drawing has changed
-            parent.hasChanges = true
         }
     }
 }
