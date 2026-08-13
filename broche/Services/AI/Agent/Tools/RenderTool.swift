@@ -46,10 +46,7 @@ struct RenderArguments: Codable, Sendable {
             """
             A text prompt describing only the desired rendering style to apply to the sketch. \
             Focus on visual style, artistic medium, rendering technique, lighting, color palette, \
-            texture, level of detail, and overall finish. Do not describe, add, remove, or modify \
-            any subject, object, character, scene, or composition from the sketch. The generated \
-            image should preserve the sketch's existing content and composition while applying \
-            only the specified stylistic treatment.
+            A text prompt describing the desired rendering style, medium, or edits to apply to the sketch image.
             """
     )
     let prompt: String

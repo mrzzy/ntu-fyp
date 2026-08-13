@@ -27,7 +27,7 @@ enum SketchAgentError: LocalizedError {
 }
 
 /// A specialized AI agent that interacts with a sketch, providing capabilities
-/// to render the sketch using specified AI models.
+/// to caption and render the sketch using specified AI models.
 ///
 /// Unlike ``AIAgent``, ``SketchAgent`` injects its own system message automatically
 /// and uses the sketch's existing conversation history (``Sketch/messages``)
@@ -43,8 +43,14 @@ class SketchAgent: AIAgent {
     let models: AIRepository
 
     /// The system message injected automatically for all sketch agent conversations.
-    private static var systemMessage: Message {
-        Message(
+    private static func makeSystemMessage(hasChanges: Bool) -> Message {
+        let changePrompt =
+            if hasChanges {
+                "The user has made new changes to the sketch since your last response. You must use the '\(CaptionTool.NAME)' tool first to update your understanding of the current sketch before providing further guidance."
+            } else {
+                ""
+            }
+        return Message(
             user: .system,
             text: """
                 You are a sketch assistant. Your role is to help the user with their \
@@ -52,6 +58,7 @@ class SketchAgent: AIAgent {
                 All tools should be called only once per turn and only when necessary.
                 Focus on composition, clarity, and artistic intent.
                 Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+                \(changePrompt)
                 """
         )
     }
@@ -102,8 +109,9 @@ class SketchAgent: AIAgent {
             tools: [
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
                 EditTool(sketch: sketch, imageModel: models.imageModel),
+                CaptionTool(sketch: sketch, visualModel: models.visualModel),
             ],
-            messages: [Self.systemMessage] + sketch.messages
+            messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )
     }
 
@@ -111,6 +119,12 @@ class SketchAgent: AIAgent {
         AsyncThrowingStream { continuation in
             Task {
                 do {
+                    // instruct model to pick up new changes if last caption call did not pick up new changes
+                    let captionedOn = tools.invokedOn(forTool: CaptionTool.NAME) ?? .distantPast
+                    self._messages[0] = Self.makeSystemMessage(
+                        hasChanges: captionedOn < sketch.modifiedOn
+                    )
+
                     for try await messages in super.instruct(prompt: prompt) {
                         sketch.messages = messages
                         continuation.yield(messages)
