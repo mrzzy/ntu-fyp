@@ -24,12 +24,10 @@ struct SketchAgentTests {
         }
     }
 
-    @Test("Agent calls caption and render tools then produces final AI response")
-    func agentCallsCaptionAndRenderTools() async throws {
+    @Test("Agent calls render tool then produces final AI response")
+    func agentCallsRenderTool() async throws {
         let sketch = TestFixtures.sketch
 
-        let captionArgs = CaptionArguments(layerStart: nil, layerEnd: nil)
-            .generatedContent.jsonString
         let renderArgs = RenderArguments(
             layerStart: nil,
             layerEnd: nil,
@@ -39,11 +37,8 @@ struct SketchAgentTests {
         let factory = MockAIModelFactory(
             mockTextResponse: "I've rendered your sketch into a watercolour painting.",
             mockTextToolCalls: [
-                AIToolCall(id: "call_caption", name: CaptionTool.NAME, argsJSON: captionArgs),
                 AIToolCall(id: "call_render", name: RenderTool.NAME, argsJSON: renderArgs),
-            ],
-            mockVisualCaption:
-                "A sketch of an apple sliced on a plate with a cup at the side."
+            ]
         )
         let models = AIRepository(factory)
         try await models.load()
@@ -62,12 +57,7 @@ struct SketchAgentTests {
         }
 
         let toolMessages = messages.filter { $0.user == .tool }
-        let captionUsed = toolMessages.contains { $0.text.contains(CaptionTool.NAME) }
         let renderUsed = toolMessages.contains { $0.text.contains(RenderTool.NAME) }
-        #expect(
-            captionUsed,
-            "Agent should have called caption_sketch to understand the sketch"
-        )
         #expect(
             renderUsed,
             "Agent should have called render_sketch to produce the watercolour image"
@@ -86,10 +76,6 @@ struct SketchAgentTests {
             "Sketch messages should never contain system messages"
         )
         let sketchToolMessages = sketch.messages.filter { $0.user == .tool }
-        #expect(
-            sketchToolMessages.contains { $0.text.contains(CaptionTool.NAME) },
-            "Sketch messages should contain caption tool result"
-        )
         #expect(
             sketchToolMessages.contains { $0.text.contains(RenderTool.NAME) },
             "Sketch messages should contain render tool result"

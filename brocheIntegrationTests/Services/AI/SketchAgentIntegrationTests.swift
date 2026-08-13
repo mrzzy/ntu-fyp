@@ -27,9 +27,7 @@ struct SketchAgentIntegrationTests {
         }
 
         let toolMessages = messages.filter { $0.user == .tool }.map { $0.text }
-        let captionUsed = toolMessages.contains { $0.contains(CaptionTool.NAME) }
         let renderUsed = toolMessages.contains { $0.contains(RenderTool.NAME) }
-        #expect(captionUsed, "Agent should have called caption_sketch to understand the sketch")
         #expect(renderUsed, "Agent should have called render_sketch to produce the watercolour image")
 
         let hasAI = messages.contains { $0.user == .ai }
@@ -43,10 +41,6 @@ struct SketchAgentIntegrationTests {
             "Sketch messages should never contain system messages"
         )
         let sketchToolMessages = sketch.messages.filter { $0.user == .tool }
-        #expect(
-            sketchToolMessages.contains { $0.text.contains(CaptionTool.NAME) },
-            "Sketch messages should contain caption tool result"
-        )
         #expect(
             sketchToolMessages.contains { $0.text.contains(RenderTool.NAME) },
             "Sketch messages should contain render tool result"

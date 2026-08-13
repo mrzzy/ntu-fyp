@@ -44,8 +44,7 @@ struct RenderArguments: Codable, Sendable {
     @Guide(
         description:
             """
-            A text prompt describing the desired rendering style, medium, or edits to apply to the sketch image.
-            You should use the '\(CaptionTool.NAME)' tool to describe what the user has already sketched in generating the prompt.
+            A comprehensive text prompt describing the desired rendering composition, style, medium, or edits to apply to the sketch image.
             """
     )
     let prompt: String
@@ -65,11 +64,7 @@ struct RenderTool: AITool {
     let name = Self.NAME
     let description =
         """
-                Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image.
-
-                Before calling this tool, first call `\(CaptionTool.NAME)` to understand the sketch and its visual content. Use the returned description to inform the rendering prompt and preserve the important elements and relationships in the user's drawing. Do not call this tool until the sketch has been analyzed with `\(CaptionTool.NAME)`.
-
-                IMPORTANT: Image rendering is costly, so do not make multiple rendering calls within the same turn, even if additional rendering attempts might improve the result. Analyze the sketch and construct the best possible rendering prompt before making the single call. 
+        Generate a polished image from the user's sketch using AI image generation. Use this tool when the user wants their sketch turned into a finished or more polished image.
         """
 
     let sketch: Sketch
