@@ -14,11 +14,9 @@ struct DrawingCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
     // Whether drawing on the canvas view is enabled
     let isEnabled: Bool
-    let size: CGSize
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
-        canvasView.contentSize = size
         canvasView.drawing = drawing
         canvasView.delegate = context.coordinator
         canvasView.backgroundColor = .clear

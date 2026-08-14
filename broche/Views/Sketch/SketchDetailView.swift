@@ -99,8 +99,11 @@ struct SketchDetailView: View {
                                 get: { drawing },
                                 set: { newDrawing in
                                     // sync drawing changes back to model
-                                    sketch.setLayer(at: layer, to: .drawing(
-                                        drawing: newDrawing, modifiedOn: .now))
+                                    sketch.setLayer(
+                                        at: layer,
+                                        to: .drawing(
+                                            drawing: newDrawing, modifiedOn: .now
+                                        ))
                                     do {
                                         try modelContext.save()
                                     } catch {
@@ -108,9 +111,7 @@ struct SketchDetailView: View {
                                     }
                                 }
                             ),
-                        isEnabled: isEnabled,
-                        size: sketch.size,
-        
+                        isEnabled: isEnabled
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)
