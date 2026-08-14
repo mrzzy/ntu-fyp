@@ -28,11 +28,9 @@ struct SketchAgentTests {
     func agentCallsCaptionAndRenderTools() async throws {
         let sketch = TestFixtures.sketch
 
-        let captionArgs = CaptionArguments(layerStart: nil, layerEnd: nil)
+        let captionArgs = CaptionArguments(hint: "Identify the main subject.")
             .generatedContent.jsonString
         let renderArgs = RenderArguments(
-            layerStart: nil,
-            layerEnd: nil,
             prompt: "Render the sketch in the style of a watercolour painting."
         ).generatedContent.jsonString
 

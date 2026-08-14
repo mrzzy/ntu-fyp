@@ -10,15 +10,15 @@ import FoundationModels
 import UIKit
 
 enum RenderToolError: Error, LocalizedError {
-    case invalidLayerIndices(start: Int, end: Int, layerCount: Int)
+    case notEnoughLayers(layerCount: Int)
     case imageRenderFailed
     case imageEditFailed
 
     var errorDescription: String? {
         switch self {
-        case .invalidLayerIndices(let start, let end, let layerCount):
+        case .notEnoughLayers(let count):
             return
-                "Invalid layer indices: range \(start)..<\(end) is out of bounds for \(layerCount) layers."
+                "Not enough layers to render. Need at least 1 layer, got \(count)."
         case .imageRenderFailed:
             return "Failed to render sketch layers into an image."
         case .imageEditFailed:
@@ -29,18 +29,6 @@ enum RenderToolError: Error, LocalizedError {
 
 @Generable
 struct RenderArguments: Codable, Sendable {
-    @Guide(
-        description:
-            "Start index (inclusive) of the layer range to render. Omit to render all layers."
-    )
-    let layerStart: Int?
-
-    @Guide(
-        description:
-            "End index (exclusive) of the layer range to render. Omit to render all layers."
-    )
-    let layerEnd: Int?
-
     @Guide(
         description:
             """
@@ -74,20 +62,12 @@ struct RenderTool: AITool {
     let imageModel: ImageAIModel
 
     func call(arguments: RenderArguments) async throws -> RenderOutput {
-        let indices: Range<Int>
-        if let start = arguments.layerStart, let end = arguments.layerEnd {
-            let range = start..<end
-            guard range.lowerBound >= 0, range.upperBound <= sketch.layers.count,
-                !range.isEmpty
-            else {
-                throw RenderToolError.invalidLayerIndices(
-                    start: start, end: end, layerCount: sketch.layers.count
-                )
-            }
-            indices = range
-        } else {
-            indices = 0..<sketch.layers.count
+        let layers = sketch.layers
+        guard !layers.isEmpty else {
+            throw RenderToolError.notEnoughLayers(layerCount: 0)
         }
+
+        let indices = 0..<layers.count
 
         let image = try sketch.render.renderLayers(indices: indices)
         guard let imageData = image.pngData() else {

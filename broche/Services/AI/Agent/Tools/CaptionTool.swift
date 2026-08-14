@@ -10,14 +10,14 @@ import FoundationModels
 import UIKit
 
 enum CaptionToolError: Error, LocalizedError {
-    case invalidLayerIndices(start: Int, end: Int, layerCount: Int)
+    case notEnoughLayers(layerCount: Int)
     case imageRenderFailed
 
     var errorDescription: String? {
         switch self {
-        case .invalidLayerIndices(let start, let end, let layerCount):
+        case .notEnoughLayers(let count):
             return
-                "Invalid layer indices: range \(start)..<\(end) is out of bounds for \(layerCount) layers."
+                "Not enough layers to caption. Need at least 1 layer, got \(count)."
         case .imageRenderFailed:
             return "Failed to render sketch layers into an image for captioning."
         }
@@ -28,19 +28,7 @@ enum CaptionToolError: Error, LocalizedError {
 struct CaptionArguments: Codable, Sendable {
     @Guide(
         description:
-            "Start index (inclusive) of the layer range to caption. Omit to caption all layers."
-    )
-    let layerStart: Int?
-
-    @Guide(
-        description:
-            "End index (exclusive) of the layer range to caption. Omit to caption all layers."
-    )
-    let layerEnd: Int?
-
-    @Guide(
-        description:
-            "An optional task-specific hint that tells the captioning model what to focus on when describing the sketch. Use this argument when the user’s request requires attention to particular visual details, objects, regions, layers, or relationships."
+            "An optional task-specific hint that tells the captioning model what to focus on when describing the sketch. Use this argument when the user's request requires attention to particular visual details, objects, regions, layers, or relationships."
     )
     let hint: String
 }
@@ -75,20 +63,12 @@ struct CaptionTool: AITool {
     }
 
     func call(arguments: CaptionArguments) async throws -> CaptionOutput {
-        let indices: Range<Int>
-        if let start = arguments.layerStart, let end = arguments.layerEnd {
-            let range = start..<end
-            guard range.lowerBound >= 0, range.upperBound <= sketch.layers.count,
-                !range.isEmpty
-            else {
-                throw CaptionToolError.invalidLayerIndices(
-                    start: start, end: end, layerCount: sketch.layers.count
-                )
-            }
-            indices = range
-        } else {
-            indices = 0..<sketch.layers.count
+        let layers = sketch.layers
+        guard !layers.isEmpty else {
+            throw CaptionToolError.notEnoughLayers(layerCount: 0)
         }
+
+        let indices = 0..<layers.count
 
         let image = try sketch.render.renderLayers(indices: indices)
         guard let imageData = image.pngData() else {
