@@ -1,7 +1,5 @@
 import Foundation
-import Testing
 
-@testable import broche
 
 class MockTextAIModel: nonisolated TextAIModel {
     let modelID: String = "mock-text-model"

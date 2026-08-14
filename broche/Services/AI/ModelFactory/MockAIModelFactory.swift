@@ -1,12 +1,11 @@
 import Foundation
-import Testing
-
-@testable import broche
 
 struct MockAIModelFactory: AIModelFactory {
     let mockTextResponse: String
     let mockTextToolCalls: [AIToolCall]
     let mockVisualCaption: String
+
+    static let shared = MockAIModelFactory()
 
     init(
         mockTextResponse: String = "This is a mock text response.",

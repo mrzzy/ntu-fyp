@@ -1,7 +1,5 @@
 import Foundation
-import Testing
 
-@testable import broche
 
 struct MockImageAIModel: nonisolated ImageAIModel {
     let modelID: String = "mock-image-model"

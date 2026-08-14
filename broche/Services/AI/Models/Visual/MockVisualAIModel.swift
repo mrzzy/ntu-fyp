@@ -1,7 +1,5 @@
 import Foundation
-import Testing
 
-@testable import broche
 
 struct MockVisualAIModel: nonisolated VisualAIModel {
     let modelID: String = "mock-visual-model"
