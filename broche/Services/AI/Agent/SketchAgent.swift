@@ -110,6 +110,7 @@ class SketchAgent: AIAgent {
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
                 EditTool(sketch: sketch, imageModel: models.imageModel),
                 CaptionTool(sketch: sketch, visualModel: models.visualModel),
+                ExplainEditTool(sketch: sketch, visualModel: models.visualModel),
             ],
             messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )
