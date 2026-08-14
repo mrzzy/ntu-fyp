@@ -18,10 +18,11 @@ struct SketchView: View {
     @State private var editedTitle: String = ""
     @State private var viewportSize: CGSize?
     @State private var showingSizePicker = false
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
         GeometryReader { proxy in
-            NavigationSplitView {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
                 List(sketches, selection: $sketchId) { sketch in
                     HStack {
                         Image(uiImage: (try? sketch.render.cachedImage) ?? UIImage())
@@ -109,7 +110,10 @@ struct SketchView: View {
             } detail: {
                 Group {
                     if let id = sketchId {
-                        SketchDetailView(sketch: repo.fetchSketch(id: id))
+                        SketchDetailView(
+                            sketch: repo.fetchSketch(id: id),
+                            isEnabled: columnVisibility == .detailOnly
+                        )
                     } else {
                         ContentUnavailableView(
                             "Create or Select a Sketch", systemImage: SketchIcon
