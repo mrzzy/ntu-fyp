@@ -32,13 +32,12 @@ struct EditArguments: Codable, Sendable {
     @Guide(
         description:
             """
-            A text prompt describing the desired edit to apply to the top layer. \
+            A prompt describing the desired edit to apply to image 1. \
             Be specific about what to add, remove, or change, and describe how \
-            referenced images should be used. When referring to provided images, \
-            explicitly identify them by image number (for example, "use the wood \
-            from image 5"). Include the placement, materials, objects, and visual \
-            style needed to achieve the edit. Describe the requested change clearly \
-            rather than restating the entire existing composition.
+            image 2's edits should be applied to image 1. 
+            Include the placement, materials, objects, and visual \
+            style needed to achieve the edit. 
+            If the generated image is likely contain visible text, transcribe the exact text verbatim in quotation marks, e.g. "Hello World".
             """
     )
     let prompt: String
@@ -59,7 +58,7 @@ struct EditTool: AITool {
     let description =
         """
         Apply an incremental edit to the sketch. \
-        The image 1 is the previous sketch; the image 1 is the new edit layer drawn by the user.
+        The image 1 is the previous sketch, image 2 is the new edit layer drawn by the user.
         Use this tool when the user wants to add, remove, correct, or refine something
         in the existing sketch. Treat the 2 image as a change to apply to the first.
         """
@@ -95,8 +94,8 @@ struct EditTool: AITool {
                 Apply the requested edit in Image 2 to Image 1 as an incremental change, while style consistent with Image 1.
 
                 Preserve elements from Image 1 that are not part of the requested edit. 
-
-                Use additional reference images only for the elements explicitly requested, and integrate them naturally into the existing sketch.
+                Do not add unrelated objects or alter the core composition.
+                Do not add text unless explicit quoted below in the rendering prompt.
 
                 \(arguments.prompt)
                 """,

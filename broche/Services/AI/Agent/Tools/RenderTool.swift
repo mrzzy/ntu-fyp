@@ -35,6 +35,7 @@ struct RenderArguments: Codable, Sendable {
             A text prompt describing only the desired rendering style to apply to the sketch. \
             Focus on visual style, artistic medium, rendering technique, lighting, color palette, \
             A text prompt describing the desired rendering style, medium, or edits to apply to the sketch image.
+            If the generated image is likely contain visible text, transcribe the exact text verbatim in quotation marks, e.g. "Hello World".
             """
     )
     let prompt: String
@@ -85,7 +86,9 @@ struct RenderTool: AITool {
 
                 Create a polished image based on the user's sketch and the provided rendering prompt.
                 Preserve the important elements, composition, spatial relationships, and overall intent of the sketch while transforming it into a coherent, refined image.
-                Generate only the image content described by the rendering prompt. Do not add unrelated objects or text or alter the core composition unless necessary to produce a coherent result.
+                Generate only the image content described by the rendering prompt. 
+                Do not add unrelated objects or alter the core composition.
+                Do not add text unless explicit quoted below in the rendering prompt.
 
                 Rendering prompt:
                 \(arguments.prompt)
