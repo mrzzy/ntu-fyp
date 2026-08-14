@@ -37,6 +37,12 @@ struct CaptionArguments: Codable, Sendable {
             "End index (exclusive) of the layer range to caption. Omit to caption all layers."
     )
     let layerEnd: Int?
+
+    @Guide(
+        description:
+            "An optional task-specific hint that tells the captioning model what to focus on when describing the sketch. Use this argument when the user’s request requires attention to particular visual details, objects, regions, layers, or relationships."
+    )
+    let hint: String
 }
 
 @Generable
@@ -57,8 +63,6 @@ struct CaptionTool: AITool {
         It analyzes the visible sketch and returns a detailed description of its visual content. Use this description to reason about the drawing, answer questions about what is shown, or perform tasks that require understanding the sketch.
 
         Base your reasoning only on information that is visually present and reliably discernible based on the output of this caption tool. Do not assume, infer, or invent details that cannot be determined from the drawing.
-
-        You may also use this tool to detect and understand changes the user has made to the sketch since it was previously inspected.
         """
 
     let sketch: Sketch
@@ -103,9 +107,13 @@ struct CaptionTool: AITool {
 
                 Start with the most likely intended subject in plain language, then briefly describe the visual evidence supporting it. If the sketch is ambiguous, incomplete, abstract, or too rough to identify confidently, say what it most resembles and indicate the uncertainty rather than inventing details.
 
-                Also describe important visible characteristics such as shapes, colors, positions, relative sizes, spatial relationships, composition, and distinctive features. Focus on what the user appears to be drawing rather than merely listing individual strokes or geometric primitives.
+                Focus on what the user appears to be drawing rather than merely listing individual strokes or geometric primitives.
 
                 Do not infer details that are not visually supported by the sketch. Distinguish clearly between confident identification and uncertain interpretation.
+                Captioning hint:
+                \(arguments.hint)
+
+                Use this hint to prioritize relevant visual features and tailor the description to the user's task.
                 """,
             images: [imageData],
             options: VisualAIOptions()
