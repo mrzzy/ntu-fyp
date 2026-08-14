@@ -44,16 +44,9 @@ enum TestFixtures {
         ])
     }()
 
-    static let appleSketchData: Data = {
-        let url = Bundle.main.url(
-            forResource: "apple_sketch",
-            withExtension: "png"
-        )!
-
-        // use UIKit to load image as loading the contents of the PNG file
-        // directly causes issues with some models
-        return UIImage(contentsOfFile: url.path())!.pngData()!
-    }()
+    static let appleSketchData: Data = loadBundlePNG("apple_sketch")
+    static let appleAIOil: Data = loadBundlePNG("apple_ai_oil")
+    static let appleAIOilEdit: Data = loadBundlePNG("apple_ai_oil_edit")
 
     static let sketch: Sketch = .init(
         title: "Apple Sketch",
@@ -63,4 +56,9 @@ enum TestFixtures {
         ],
         size: CGSize(width: 512, height: 512)
     )
+
+    private static func loadBundlePNG(_ path: String) -> Data {
+        let url = Bundle.main.url(forResource: path, withExtension: "png")!
+        return UIImage(contentsOfFile: url.path())!.pngData()!
+    }
 }

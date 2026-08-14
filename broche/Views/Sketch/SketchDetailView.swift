@@ -69,11 +69,11 @@ struct SketchDetailView: View {
                 .rotationEffect(rotation)
                 // bound sketch by preset sketch size
                 .frame(width: sketch.size.width, height: sketch.size.height)
+                // redraw when sketch layers change, avoid stale layer stack.
+                .id(sketch.layers.count)
             }
             // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
             .id(sketch.id)
-            // redraw when sketch layers change, avoid stale layer stack.
-            .id(sketch.layers.count)
         } else {
             ContentUnavailableView(
                 "Sketch not found",
@@ -109,7 +109,8 @@ struct SketchDetailView: View {
                                 }
                             ),
                         isEnabled: isEnabled,
-                        size: sketch.size
+                        size: sketch.size,
+        
                     )
                     // force redraw view on screen resize
                     .id(proxy.size)
