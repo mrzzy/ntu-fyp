@@ -3,7 +3,7 @@ import Testing
 
 @testable import broche
 
-class MockTextAIModel: TextAIModel {
+class MockTextAIModel: nonisolated TextAIModel {
     let modelID: String = "mock-text-model"
 
     private let mockResponse: String

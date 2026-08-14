@@ -3,7 +3,7 @@ import Testing
 
 @testable import broche
 
-struct MockImageAIModel: ImageAIModel {
+struct MockImageAIModel: nonisolated ImageAIModel {
     let modelID: String = "mock-image-model"
 
     func load() async throws {}

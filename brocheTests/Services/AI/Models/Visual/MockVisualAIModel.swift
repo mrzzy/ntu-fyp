@@ -3,7 +3,7 @@ import Testing
 
 @testable import broche
 
-struct MockVisualAIModel: VisualAIModel {
+struct MockVisualAIModel: nonisolated VisualAIModel {
     let modelID: String = "mock-visual-model"
 
     private let mockCaption: String
