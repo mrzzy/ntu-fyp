@@ -77,13 +77,9 @@ private struct ChatDetailView: View {
                     // wait for agent to load
                     ProgressView("Loading AI")
                         .onAppear {
-                            Task {
-                                let repo = AIRepository(MockAIModelFactory.shared)
-                                try await repo.load()
-                                agent = try! SketchAgent(
-                                    sketch: sketch, models: repo
-                                )
-                            }
+                            agent = try! SketchAgent(
+                                sketch: sketch, models: AIRepository.shared
+                            )
                         }
                 case .error:
                     ContentUnavailableView(
