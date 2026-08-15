@@ -96,15 +96,30 @@ private struct ChatDetailView: View {
         }
     }
 
-    private func handleSendMessage(_ message: ExyteChat.DraftMessage) {
-        // ignore if agent is not available
+    private func handleSendMessage(_ draft: ExyteChat.DraftMessage) {
         guard let agent = agent else { return }
+
+        // typing placeholder message to indicate the model is processing
+        let typingMessage = ExyteChat.Message(
+            id: UUID().uuidString,
+            user: User.ai.toExyteChatUser()!,
+            createdAt: Date(),
+            text: "⋯"
+        )
 
         Task {
             do {
-                for try await message in agent.instruct(prompt: message.text) {
+                for try await message in agent.instruct(prompt: draft.text) {
                     if let exyteMessage = message.toExyteChatMessage() {
-                        messages.append(exyteMessage)
+                        if message.user == .user {
+                            messages.append(exyteMessage)
+                            messages.append(typingMessage)
+                        }
+                        if message.user == .ai {
+                            messages.removeAll { $0.id == typingMessage.id }
+                            messages.append(exyteMessage)
+                            messages.append(typingMessage)
+                        }
                     }
                 }
             } catch let error as SketchAgentError {
@@ -113,6 +128,7 @@ private struct ChatDetailView: View {
             } catch {
                 print("Error: Failed to instruct SketchAgent: \(error)")
             }
+            messages.removeAll { $0.id == typingMessage.id }
         }
     }
 }
