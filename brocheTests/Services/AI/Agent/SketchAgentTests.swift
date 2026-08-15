@@ -47,21 +47,18 @@ struct SketchAgentTests {
         try await models.load()
         let agent = try SketchAgent(sketch: sketch, models: models)
 
-        var finalMessages: [Message]?
-        for try await snapshot in agent.instruct(
+        var hasMessages = false
+        for try await _ in agent.instruct(
             prompt: "Render the sketch in the style of a watercolour painting."
         ) {
-            finalMessages = snapshot
+            hasMessages = true
         }
 
-        guard let messages = finalMessages else {
-            Issue.record("Stream did not yield any messages")
-            return
-        }
+        #expect(hasMessages, "Stream should yield messages")
 
-        let toolMessages = messages.filter { $0.user == .tool }
-        let captionUsed = toolMessages.contains { $0.text.contains(CaptionTool.NAME) }
-        let renderUsed = toolMessages.contains { $0.text.contains(RenderTool.NAME) }
+        let sketchToolMessages = sketch.messages.filter { $0.user == .tool }
+        let captionUsed = sketchToolMessages.contains { $0.text.contains(CaptionTool.NAME) }
+        let renderUsed = sketchToolMessages.contains { $0.text.contains(RenderTool.NAME) }
         #expect(
             captionUsed,
             "Agent should have called caption_sketch to understand the sketch"
@@ -71,7 +68,7 @@ struct SketchAgentTests {
             "Agent should have called render_sketch to produce the watercolour image"
         )
 
-        let hasAI = messages.contains { $0.user == .ai }
+        let hasAI = sketch.messages.contains { $0.user == .ai }
         #expect(hasAI, "Agent should produce a final AI response")
 
         #expect(
@@ -82,19 +79,6 @@ struct SketchAgentTests {
         #expect(
             !sketch.messages.contains(where: { $0.user == .system }),
             "Sketch messages should never contain system messages"
-        )
-        let sketchToolMessages = sketch.messages.filter { $0.user == .tool }
-        #expect(
-            sketchToolMessages.contains { $0.text.contains(CaptionTool.NAME) },
-            "Sketch messages should contain caption tool result"
-        )
-        #expect(
-            sketchToolMessages.contains { $0.text.contains(RenderTool.NAME) },
-            "Sketch messages should contain render tool result"
-        )
-        #expect(
-            sketch.messages.contains { $0.user == .ai },
-            "Sketch messages should contain the final AI response"
         )
         #expect(
             sketch.messages.contains { $0.user == .user && $0.text.contains("watercolour") },

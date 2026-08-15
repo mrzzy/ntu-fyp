@@ -78,19 +78,15 @@ struct AIAgentTests {
             ]
         )
 
-        var finalMessages: [Message]?
-        var allSnapshots: [[Message]] = []
-        for try await snapshot in agent.instruct(
+        var collectedMessages: [Message] = []
+        for try await message in agent.instruct(
             prompt: "What is the weather at my current location?"
         ) {
-            allSnapshots.append(snapshot)
-            finalMessages = snapshot
+            collectedMessages.append(message)
         }
 
-        guard let messages = finalMessages else {
-            Issue.record("Stream did not yield any messages")
-            return
-        }
+        let messages = collectedMessages
+        #expect(!messages.isEmpty, "Stream should yield messages")
 
         let toolMessages = messages.filter { $0.user == .tool }
         let toolNames = toolMessages.map { msg in msg.text }
@@ -105,12 +101,10 @@ struct AIAgentTests {
         let hasAI = messages.contains { $0.user == .ai }
         #expect(hasAI, "Agent should produce a final AI response after tool calls")
 
-        print("Snapshots yielded: \(allSnapshots.count)")
-        for (i, snapshot) in allSnapshots.enumerated() {
-            print("--- Snapshot \(i) ---")
-            for msg in snapshot {
-                print("  [\(msg.user)] \(msg.text)")
-            }
+        print("Messages yielded: \(messages.count)")
+        for (i, msg) in messages.enumerated() {
+            print("--- Message \(i) [\(msg.user)] ---")
+            print("  \(msg.text)")
         }
     }
 }

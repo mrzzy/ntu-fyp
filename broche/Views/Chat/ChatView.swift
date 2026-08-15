@@ -42,29 +42,31 @@ struct ChatView: View {
 }
 
 private struct ChatDetailView: View {
-    let repo = Repository.shared
     let sketch: Sketch?
 
     @Environment(\.aiModelsState) var aiModelsState
     @State var agent: SketchAgent?
+    @State var messages: [ExyteChat.Message] = []
 
     var body: some View {
         if let sketch = sketch {
             if agent != nil {
-                let exyteMessages = sketch.messages.compactMap { $0.toExyteChatMessage() }
-
                 ExyteChat.ChatView(
-                    messages: exyteMessages,
-                    didSendMessage: handleSendMessage
-                )
+                    messages: messages
+                ) {
+                    draft in handleSendMessage(draft)
+                }
                 // Disable attachments for now (deferred feature)
                 .setAvailableInputs([.text])
                 .onAppear {
+                    // TODO: check if this is required
+                    // sketch.messages.removeAll()
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
-                        repo.save()
                     }
+                    // load sketch messages into exyte message state
+                    messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                 }
             } else {
                 switch aiModelsState {
@@ -75,7 +77,13 @@ private struct ChatDetailView: View {
                     // wait for agent to load
                     ProgressView("Loading AI")
                         .onAppear {
-                            agent = try! SketchAgent(sketch: sketch, models: AIRepository.shared)
+                            Task {
+                                let repo = AIRepository(MockAIModelFactory.shared)
+                                try await repo.load()
+                                agent = try! SketchAgent(
+                                    sketch: sketch, models: repo
+                                )
+                            }
                         }
                 case .error:
                     ContentUnavailableView(
@@ -93,14 +101,15 @@ private struct ChatDetailView: View {
     }
 
     private func handleSendMessage(_ message: ExyteChat.DraftMessage) {
-        // ignore if either sketch or agent is not available
-        guard let sketch = sketch, let agent = agent else { return }
+        // ignore if agent is not available
+        guard let agent = agent else { return }
 
         Task {
             do {
-                for try await messages in agent.instruct(prompt: message.text) {
-                    sketch.messages = messages
-                    try repo.modelContext.save()
+                for try await message in agent.instruct(prompt: message.text) {
+                    if let exyteMessage = message.toExyteChatMessage() {
+                        messages.append(exyteMessage)
+                    }
                 }
             } catch let error as SketchAgentError {
                 print("Error: Failed to create SketchAgent: \(error)")

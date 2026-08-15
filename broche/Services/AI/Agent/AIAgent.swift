@@ -36,21 +36,22 @@ class AIAgent {
         )
     }
 
-    /// Sends a user prompt to the agent and streams updated message history.
+    /// Sends a user prompt to the agent and streams each new message.
     ///
     /// The agent appends the user message, generates a response, and yields
-    /// the current messages after each step. If the response contains tool calls,
+    /// each newly appended message. If the response contains tool calls,
     /// each tool is executed and the loop continues until the model produces
     /// a final response with no tool calls.
     ///
     /// - Parameter prompt: The user's input text.
-    /// - Returns: A stream of message snapshots after each generation step.
-    func instruct(prompt: String) -> AsyncThrowingStream<[Message], Error> {
+    /// - Returns: A stream of new messages added during the conversation turn.
+    func instruct(prompt: String) -> AsyncThrowingStream<Message, Error> {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    _messages.append(Message(user: .user, text: prompt))
-                    continuation.yield(messages)
+                    let userMsg = Message(user: .user, text: prompt)
+                    _messages.append(userMsg)
+                    continuation.yield(userMsg)
 
                     var toolCallsFound = true
                     while toolCallsFound {
@@ -73,9 +74,10 @@ class AIAgent {
                         print("AIAgent: \(response)")
 
                         if !response.isEmpty {
-                            _messages.append(Message(user: .ai, text: response))
+                            let aiMsg = Message(user: .ai, text: response)
+                            _messages.append(aiMsg)
+                            continuation.yield(aiMsg)
                         }
-                        continuation.yield(messages)
 
                         toolCallsFound = !pendingToolCalls.isEmpty
 
@@ -94,14 +96,10 @@ class AIAgent {
                                 """
                             print("AIAgent: Invoked tool call: \(result)")
 
-                            _messages.append(
-                                Message(
-                                    user: .tool,
-                                    text: result
-                                )
-                            )
+                            let toolMsg = Message(user: .tool, text: result)
+                            _messages.append(toolMsg)
+                            continuation.yield(toolMsg)
                         }
-                        continuation.yield(messages)
                     }
                     continuation.finish()
                 } catch {

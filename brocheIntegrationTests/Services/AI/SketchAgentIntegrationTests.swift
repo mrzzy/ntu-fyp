@@ -14,25 +14,22 @@ struct SketchAgentIntegrationTests {
             models: AIRepository.shared,
         )
 
-        var finalMessages: [Message]?
-        for try await snapshot in agent.instruct(
+        var hasMessages = false
+        for try await _ in agent.instruct(
             prompt: "Render the sketch in the style of a watercolour painting."
         ) {
-            finalMessages = snapshot
+            hasMessages = true
         }
 
-        guard let messages = finalMessages else {
-            Issue.record("Stream did not yield any messages")
-            return
-        }
+        #expect(hasMessages, "Stream should yield messages")
 
-        let toolMessages = messages.filter { $0.user == .tool }.map { $0.text }
+        let toolMessages = sketch.messages.filter { $0.user == .tool }.map { $0.text }
         let captionUsed = toolMessages.contains { $0.contains(CaptionTool.NAME) }
         let renderUsed = toolMessages.contains { $0.contains(RenderTool.NAME) }
         #expect(captionUsed, "Agent should have called caption_sketch to understand the sketch")
         #expect(renderUsed, "Agent should have called render_sketch to produce the watercolour image")
 
-        let hasAI = messages.contains { $0.user == .ai }
+        let hasAI = sketch.messages.contains { $0.user == .ai }
         #expect(hasAI, "Agent should produce a final AI response")
 
         #expect(sketch.layers.count > 1,
@@ -62,7 +59,7 @@ struct SketchAgentIntegrationTests {
 
 
         print("Final layers: \(sketch.layers.count)")
-        for (i, msg) in messages.enumerated() {
+        for (i, msg) in sketch.messages.enumerated() {
             print("--- Message \(i) [\(msg.user)] ---")
             print("  \(msg.text)")
         }

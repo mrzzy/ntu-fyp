@@ -38,8 +38,11 @@ enum SketchAgentError: LocalizedError {
 /// The injected system message instructs the model to act as a helpful sketch assistant
 /// focused on rendering, composition enhancement, and visual guidance.
 class SketchAgent: AIAgent {
+    /// SwiftData models repository
+    let data: Repository = .shared
     /// The sketch this agent operates on.
     let sketch: Sketch
+    /// Repository of AI models
     let models: AIRepository
 
     /// The system message injected automatically for all sketch agent conversations.
@@ -116,7 +119,7 @@ class SketchAgent: AIAgent {
         )
     }
 
-    override func instruct(prompt: String) -> AsyncThrowingStream<[Message], Error> {
+    override func instruct(prompt: String) -> AsyncThrowingStream<Message, Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -126,9 +129,10 @@ class SketchAgent: AIAgent {
                         hasChanges: captionedOn < sketch.modifiedOn
                     )
 
-                    for try await messages in super.instruct(prompt: prompt) {
-                        sketch.messages = messages
-                        continuation.yield(messages)
+                    for try await message in super.instruct(prompt: prompt) {
+                        sketch.messages.append(message)
+                        data.save()
+                        continuation.yield(message)
                     }
 
                     continuation.finish()
