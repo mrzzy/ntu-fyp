@@ -12,15 +12,31 @@ import UniformTypeIdentifiers
 struct SketchToolbar: ToolbarContent {
     let sketch: Sketch
 
+    @Environment(\.undoManager) private var undoManager
+
     var body: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button {
+                undoManager?.undo()
+            } label: {
+                Label("Undo", systemImage: "arrow.uturn.backward")
+            }
+            .disabled(!(undoManager?.canUndo ?? false))
+
+            Button {
+                undoManager?.redo()
+            } label: {
+                Label("Redo", systemImage: "arrow.uturn.forward")
+            }
+            .disabled(!(undoManager?.canRedo ?? false))
+
             Button {
                 sketch.zoom = Zoom()
             } label: {
                 Label("Reset Zoom", systemImage: "arrow.counterclockwise")
             }
-        }
-        ToolbarItem(placement: .primaryAction) {
+
+            /// Export sketch button
             ShareLink(
                 item: ShareableSketch(sketch: sketch),
                 preview: SharePreview(
