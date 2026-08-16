@@ -83,17 +83,18 @@ struct CaptionTool: AITool {
 
                 \(sketch.description)
 
-                Describe what the user appears to be trying to sketch based only on the visual content. Identify the most likely recognizable subject, object, symbol, or scene (for example, a plane, house, tree, person, or car) when the sketch provides enough visual evidence to support that interpretation.
+                User intention hint, Use this hint to tailor the description to the user's task:
+                                
+                \(arguments.hint)
+
+                Describe what the user appears to be trying to sketch based only on the visual content and user intention hint. Identify the most likely recognizable subject, object, symbol, or scene (for example, a plane, house, tree, person, or car) when the sketch provides enough visual evidence to support that interpretation.
 
                 Start with the most likely intended subject in plain language, then briefly describe the visual evidence supporting it. If the sketch is ambiguous, incomplete, abstract, or too rough to identify confidently, say what it most resembles and indicate the uncertainty rather than inventing details.
 
-                Focus on what the user appears to be drawing rather than merely listing individual strokes or geometric primitives.
+                Focus on what the user appears to be drawing or hint rather than merely listing individual strokes or geometric primitives.
 
-                Do not infer details that are not visually supported by the sketch. Distinguish clearly between confident identification and uncertain interpretation.
-                Captioning hint:
-                \(arguments.hint)
+                Do not infer details that are not visually supported by the sketch or hint. Distinguish clearly between confident identification and uncertain interpretation.
 
-                Use this hint to prioritize relevant visual features and tailor the description to the user's task.
                 """,
             images: [imageData],
             options: VisualAIOptions()
