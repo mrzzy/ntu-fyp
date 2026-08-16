@@ -15,6 +15,7 @@ struct SketchDetailView: View {
     let isEnabled: Bool
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.undoManager) private var undoManager
 
     init(sketch: Sketch?, isEnabled: Bool = true) {
         self.sketch = sketch
@@ -74,6 +75,8 @@ struct SketchDetailView: View {
             }
             // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
             .id(sketch.id)
+            .gesture(MultiFingerTapGesture(count: 2) { undoManager?.undo() })
+            .gesture(MultiFingerTapGesture(count: 3) { undoManager?.redo() })
         } else {
             ContentUnavailableView(
                 "Sketch not found",
