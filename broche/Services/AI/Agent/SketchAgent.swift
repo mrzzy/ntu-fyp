@@ -56,13 +56,13 @@ class SketchAgent: AIAgent {
         return Message(
             user: .system,
             text: """
-                You are a sketch assistant. Your role is to help the user with their \
-                sketch by rendering it, enhancing its composition, and providing visual guidance. \
-                All tools should be called only once per turn and only when necessary.
-                Focus on composition, clarity, and artistic intent.
-                Do not be overly encouraging or verbose. Provide concise, actionable guidance.
-                \(changePrompt)
-                """
+            You are a sketch assistant. Your role is to help the user with their \
+            sketch by rendering or editing it, and providing visual guidance. \
+            Focus on composition, clarity, and artistic intent.
+            Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling user message. Choose one based on the user's request.
+            Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+            \(changePrompt)
+            """
         )
     }
 
@@ -70,14 +70,14 @@ class SketchAgent: AIAgent {
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-            Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+        Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-            You can ask me to:
-            • Modify, refine, or enhance parts of your sketch
-            • Colorize and experiment with different styles
-            • Render your ideas into more polished artwork
-            • Discuss creative changes and improvements
-            """
+        You can ask me to:
+        • Modify, refine, or enhance parts of your sketch
+        • Colorize and experiment with different styles
+        • Render your ideas into more polished artwork
+        • Discuss creative changes and improvements
+        """
     )
 
     /// Creates a new sketch agent for the given sketch with the specified AI models.
