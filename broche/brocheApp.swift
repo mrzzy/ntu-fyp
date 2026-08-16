@@ -5,7 +5,6 @@
 //  Created by Zhu Zhanyan on 4/6/26.
 //
 
-import SwiftData
 import SwiftUI
 
 @main
@@ -14,6 +13,5 @@ struct brocheApp: App {
         WindowGroup {
             MainView()
         }
-        .modelContainer(Repository.shared.modelContainer)
     }
 }

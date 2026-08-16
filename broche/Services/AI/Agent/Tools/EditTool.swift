@@ -62,6 +62,7 @@ struct EditTool: AITool {
         Use this tool when the user wants to add, remove, correct, or refine something
         in the existing sketch. Treat the 2 image as a change to apply to the first.
         """
+    let repo: Repository = .shared
 
     let sketch: Sketch
     let imageModel: ImageAIModel
@@ -113,9 +114,10 @@ struct EditTool: AITool {
             throw EditToolError.imageEditFailed
         }
 
-        // append session
         sketch.addLayer(.image(data: resultImageData))
         sketch.addLayer(.drawing())
+        // save changes
+        repo.save()
 
         return EditOutput(
             message:

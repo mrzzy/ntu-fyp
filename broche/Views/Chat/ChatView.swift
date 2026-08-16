@@ -42,11 +42,12 @@ struct ChatView: View {
 }
 
 private struct ChatDetailView: View {
-    let sketch: Sketch?
+    let repo: Repository = .shared
+    @State var messages: [ExyteChat.Message] = []
 
+    let sketch: Sketch?
     @Environment(\.aiModelsState) var aiModelsState
     @State var agent: SketchAgent?
-    @State var messages: [ExyteChat.Message] = []
 
     var body: some View {
         if let sketch = sketch {
@@ -64,6 +65,7 @@ private struct ChatDetailView: View {
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
+                        repo.save()
                     }
                     // load sketch messages into exyte message state
                     messages = sketch.messages.compactMap { $0.toExyteChatMessage() }

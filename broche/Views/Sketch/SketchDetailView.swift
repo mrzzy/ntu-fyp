@@ -108,6 +108,7 @@ struct SketchDetailView: View {
                                             drawing: newDrawing, modifiedOn: .now
                                         ))
                                     do {
+                                        // save updated drawing
                                         try modelContext.save()
                                     } catch {
                                         print("Warning: Failed to save drawing changes")

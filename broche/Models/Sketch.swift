@@ -31,7 +31,7 @@ let SketchDefaultLayers: [Layer] = [
 
 /// Defines a sketch composed of a series of layers
 @Model
-final class Sketch: CustomStringConvertible  {
+final class Sketch: CustomStringConvertible {
     var title: String
 
     @Attribute(originalName: "layers")
@@ -43,22 +43,12 @@ final class Sketch: CustomStringConvertible  {
     /// AI assistant conversation messages
     @Relationship(deleteRule: .cascade)
     var messages: [Message]
+
     /// Zoom view zoom/pan/rotation state
     var zoom: Zoom = Zoom()
 
     var layers: [Layer] {
         _layers
-    }
-
-    @Transient private var _renderer: SketchRender?
-    var render: SketchRender {
-        // create renderer on first access
-        guard let r = _renderer else {
-            let r = SketchRender(sketch: self)
-            _renderer = r
-            return r
-        }
-        return r
     }
 
     /// When the sketch was last modified
@@ -85,6 +75,17 @@ final class Sketch: CustomStringConvertible  {
             Layers:
             \(layerDescriptions)
             """
+    }
+
+    @Transient private var _renderer: SketchRender?
+    var render: SketchRender {
+        // create renderer on first access
+        guard let r = _renderer else {
+            let r = SketchRender(sketch: self)
+            _renderer = r
+            return r
+        }
+        return r
     }
 
     init(

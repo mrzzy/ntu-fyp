@@ -11,13 +11,13 @@ import SwiftUI
 struct SketchView: View {
     /// currently selected sketch id
     @Binding var sketchId: Sketch.ID?
+    @State private var editingSketch: Sketch?
+    @State private var viewportSize: CGSize?
 
     let repo: Repository = .shared
     @Query private var sketches: [Sketch]
-    @State private var editingSketch: Sketch?
-    @State private var editedTitle: String = ""
-    @State private var viewportSize: CGSize?
     @State private var showingSizePicker = false
+    @State private var editedTitle: String = ""
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
@@ -76,6 +76,7 @@ struct SketchView: View {
                     Button("Save") {
                         if let sketch = editingSketch {
                             sketch.title = editedTitle
+                            repo.save()
                         }
                         resetEditTitle()
                     }

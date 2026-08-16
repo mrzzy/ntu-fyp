@@ -58,6 +58,7 @@ struct RenderTool: AITool {
         Generate a polished image from the user's sketch using AI image generation. 
         Use this tool when the user wants their sketch rendered into a finished or more polished image.
         """
+    let repo: Repository = .shared
 
     let sketch: Sketch
     let imageModel: ImageAIModel
@@ -111,6 +112,8 @@ struct RenderTool: AITool {
         sketch.addLayer(.image(data: resultImageData))
         // append a sketchable layer on top of the rendered image layer for further sketching
         sketch.addLayer(.drawing())
+        // save changes
+        repo.save()
 
         return RenderOutput(
             message: "Rendered layers \(indices) into a new image layer appended to the sketch."
