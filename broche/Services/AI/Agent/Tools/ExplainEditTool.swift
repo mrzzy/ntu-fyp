@@ -76,8 +76,10 @@ struct ExplainEditTool: AITool {
             throw ExplainEditToolError.imageRenderFailed
         }
 
-        let foregroundLayer = layers[layers.count - 1]
-        let foregroundImageData = try foregroundLayer.render(size: sketch.size)
+        let foregroundLayer = try sketch.render.renderLayers(indices: layers.count - 1..<layers.count)
+        guard let foregroundImageData = foregroundLayer.pngData() else {
+            throw ExplainEditToolError.imageRenderFailed
+        }
 
         var description = ""
         let stream = visualModel.generate(

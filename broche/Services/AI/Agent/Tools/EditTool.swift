@@ -38,6 +38,7 @@ struct EditArguments: Codable, Sendable {
             Include the placement, materials, objects, and visual \
             style needed to achieve the edit. 
             If the generated image is likely contain visible text, transcribe the exact text verbatim in quotation marks, e.g. "Hello World".
+            Be specific when specifying images eg. Image 1, Image 2 etc.
             """
     )
     let prompt: String
