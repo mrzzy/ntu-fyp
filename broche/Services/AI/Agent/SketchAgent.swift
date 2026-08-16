@@ -56,13 +56,16 @@ class SketchAgent: AIAgent {
         return Message(
             user: .system,
             text: """
-            You are a sketch assistant. Your role is to help the user with their \
-            sketch by rendering or editing it, and providing visual guidance. \
-            Focus on composition, clarity, and artistic intent.
-            Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling user message. Choose one based on the user's request.
-            Do not be overly encouraging or verbose. Provide concise, actionable guidance.
-            \(changePrompt)
-            """
+                You are a sketch assistant. Your role is to help the user with their
+                sketch by rendering or editing it, and providing visual guidance.
+                Focus on composition, clarity, and artistic intent.
+                You may use tools to complete your task:
+                1. Rendering Pipeline: \(CaptionTool.NAME), \(RenderTool.NAME): Use these tools when user wants to render a final image.
+                2. Editing Pipeline: \(ExplainEditTool.NAME), [Optional] \(TidyEditTool.NAME), \(EditTool.NAME) Use these tools when user wants to modify or refine the sketch.
+                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
+                Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+                \(changePrompt)
+                """
         )
     }
 
@@ -70,14 +73,14 @@ class SketchAgent: AIAgent {
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-        Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+            Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-        You can ask me to:
-        • Modify, refine, or enhance parts of your sketch
-        • Colorize and experiment with different styles
-        • Render your ideas into more polished artwork
-        • Discuss creative changes and improvements
-        """
+            You can ask me to:
+            • Modify, refine, or enhance parts of your sketch
+            • Colorize and experiment with different styles
+            • Render your ideas into more polished artwork
+            • Discuss creative changes and improvements
+            """
     )
 
     /// Creates a new sketch agent for the given sketch with the specified AI models.
@@ -114,6 +117,7 @@ class SketchAgent: AIAgent {
                 EditTool(sketch: sketch, imageModel: models.imageModel),
                 CaptionTool(sketch: sketch, visualModel: models.visualModel),
                 ExplainEditTool(sketch: sketch, visualModel: models.visualModel),
+                TidyEditTool(sketch: sketch, imageModel: models.imageModel),
             ],
             messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )
