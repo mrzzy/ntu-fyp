@@ -5,19 +5,22 @@
 //  Created by Zhu Zhanyan on 2026-07-05.
 //
 
-import SwiftUI
-import SwiftData
 import PhotosUI
+import SwiftData
+import SwiftUI
 
 /// Sheet for adding or editing a mood
 struct EditMoodView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
     var mood: Mood?
 
+    @State private var title = ""
     @State private var info = ""
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var images: [Data] = []
+    @State private var isDescribing = false
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.aiModelsState) private var aiModelsState
 
     init(mood: Mood? = nil) {
         self.mood = mood
@@ -38,7 +41,8 @@ struct EditMoodView: View {
                     if !images.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
-                                ForEach(Array(images.enumerated()), id: \.offset) { index, imageData in
+                                ForEach(Array(images.enumerated()), id: \.offset) {
+                                    index, imageData in
                                     if let uiImage = UIImage(data: imageData) {
                                         ZStack(alignment: .topTrailing) {
                                             Image(uiImage: uiImage)
@@ -52,7 +56,9 @@ struct EditMoodView: View {
                                             } label: {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .foregroundStyle(.white)
-                                                    .background(Circle().fill(Color.black.opacity(0.5)))
+                                                    .background(
+                                                        Circle().fill(Color.black.opacity(0.5))
+                                                    )
                                             }
                                             .offset(x: 4, y: -4)
                                         }
@@ -67,10 +73,29 @@ struct EditMoodView: View {
                 }
 
                 Section {
+                    TextField("Title", text: $title)
                     TextField("Description", text: $info, axis: .vertical)
                         .lineLimit(3...6)
                 } header: {
-                    Text("Describe it")
+                    HStack {
+                        Text("Description")
+                        Spacer()
+                        if isDescribing {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Generating…")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Button {
+                                Task { await handleDescribeMood() }
+                            } label: {
+                                Text("Generate")
+                                Image(systemName: "wand.and.stars")
+                            }
+                            .disabled(images.isEmpty || aiModelsState != .loaded)
+                        }
+                    }
                 }
             }
             .navigationTitle(mood == nil ? "New Mood" : "Edit Mood")
@@ -86,7 +111,7 @@ struct EditMoodView: View {
                         saveMood()
                         dismiss()
                     }
-                    .disabled(info.isEmpty && images.isEmpty)
+                    .disabled(title.isEmpty && images.isEmpty)
                 }
             }
             .onChange(of: selectedItems) { _, newItems in
@@ -102,6 +127,7 @@ struct EditMoodView: View {
         }
         .onAppear {
             if let mood = mood {
+                title = mood.title
                 info = mood.info
                 images = mood.images
             }
@@ -110,12 +136,30 @@ struct EditMoodView: View {
 
     private func saveMood() {
         if let mood = mood {
+            mood.title = title
             mood.info = info
             mood.images = images
+            mood.modifiedOn = .now
         } else {
-            let newMood = Mood(info: info, images: images)
+            let newMood = Mood(title: title, info: info, images: images)
             modelContext.insert(newMood)
         }
     }
-}
 
+    private func handleDescribeMood() async {
+        guard aiModelsState == .loaded else {
+            return
+        }
+
+        isDescribing = true
+        defer { isDescribing = false }
+
+        do {
+            let output = try await describeMood(images: images, visualModel: AIRepository.shared.visualModel)
+            title = output.title
+            info = output.description
+        } catch {
+            print("Failed to describe mood: \(error)")
+        }
+    }
+}

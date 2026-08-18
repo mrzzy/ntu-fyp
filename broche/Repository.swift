@@ -11,24 +11,29 @@ import SwiftData
 /// Repository stores and manipulates data. Internally it uses swiftdata to persist the data.
 @MainActor
 class Repository {
+    static let schema = Schema([
+        Mood.self,
+        Sketch.self,
+    ])
     /// Access the shared instance of the Repository.
     static let shared = Repository()
 
     let modelContainer: ModelContainer
-    let schema = Schema([
-        Mood.self,
-        Sketch.self,
-    ])
 
     var modelContext: ModelContext {
         return modelContainer.mainContext
     }
 
-    private init() {
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
+    convenience init() {
         do {
             // disable swiftdata integration persistence in cloudkit
-            let config = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
+            let config = ModelConfiguration(schema: Self.schema, cloudKitDatabase: .none)
+            let modelContainer = try ModelContainer(for: Self.schema, configurations: [config])
+            self.init(modelContainer: modelContainer)
         } catch {
             fatalError("Failed to initialize ModelContainer: \(error)")
         }
@@ -52,6 +57,17 @@ class Repository {
                 predicate: #Predicate { $0.id == id }
             )
         ).first
+    }
+    
+    func fetchMoods() -> [Mood] {
+        do {
+            let descriptor = FetchDescriptor<Mood>(
+                sortBy: [SortDescriptor(\.modifiedOn, order: .forward)]
+            )
+            return try modelContext.fetch(descriptor)
+        } catch {
+            fatalError("Failed to fetch moods: \(error)")
+        }
     }
 
     func save() {

@@ -56,18 +56,19 @@ class SketchAgent: AIAgent {
         return Message(
             user: .system,
             text: """
-            You are a sketch assistant. Your role is to help the user with their
-            sketch by rendering or editing it, and providing visual guidance.
-            If the user's message is ambiguous, ask for clarification.
-            Focus on composition, clarity, and artistic intent.
-            You may use tools to complete your task:
-            1. Rendering Pipeline: [\(CaptionTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
-            2. Editing Pipeline: [\(ExplainEditTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
-            Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
-            Do not be overly encouraging or verbose. Provide concise, actionable guidance.
-            Try again there are transient failures eg. Request timed out.
-            \(changePrompt)
-            """
+                You are a sketch assistant. Your role is to help the user with their
+                sketch by rendering or editing it, and providing visual guidance.
+                If the user's message is ambiguous, ask for clarification.
+                Focus on composition, clarity, and artistic intent.
+                You may use tools to complete your task:
+                1. Rendering Pipeline: [\(CaptionTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
+                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
+                If the user cites a specific mood, use \(ListMoodTool.NAME) tool to list the moods and their corresponding style information.
+                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
+                Do not be overly encouraging or verbose. Provide concise, actionable guidance.
+                Try again there are transient failures eg. Request timed out.
+                \(changePrompt)
+                """
         )
     }
 
@@ -75,14 +76,14 @@ class SketchAgent: AIAgent {
     static let welcomeMessage = Message(
         user: .ai,
         text: """
-        Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+            Hey! I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-        You can ask me to:
-        • Modify, refine, or enhance parts of your sketch
-        • Colorize and experiment with different styles
-        • Render your ideas into more polished artwork
-        • Discuss creative changes and improvements
-        """
+            You can ask me to:
+            • Modify, refine, or enhance parts of your sketch
+            • Colorize and experiment with different styles
+            • Render your ideas into more polished artwork
+            • Discuss creative changes and improvements
+            """
     )
 
     /// Creates a new sketch agent for the given sketch with the specified AI models.
@@ -119,6 +120,7 @@ class SketchAgent: AIAgent {
                 ExplainEditTool(sketch: sketch, visualModel: models.visualModel),
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
                 EditTool(sketch: sketch, imageModel: models.imageModel),
+                ListMoodTool(repo: data),
             ],
             messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )

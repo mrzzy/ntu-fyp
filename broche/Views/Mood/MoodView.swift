@@ -11,15 +11,17 @@ import SwiftUI
 
 /// Renders a grid of user created moods
 struct MoodView: View {
+    @Query(sort: \Mood.modifiedOn, order: .reverse) var moods: [Mood]
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.modelContext) private var modelContext
-    @Query private var moods: [Mood]
     @State private var showingAddSheet = false
     @State private var editingMood: Mood?
+    let columnWidth: CGFloat = 180
 
     private var columns: [GridItem] {
         return [
-            GridItem(.adaptive(minimum: 220, maximum: 240), spacing: 16)
+            // multiple items on the same row
+            GridItem(.adaptive(minimum: columnWidth, maximum: columnWidth), spacing: 24)
         ]
     }
 
@@ -35,15 +37,14 @@ struct MoodView: View {
                     )
                 } else {
                     ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(moods) { mood in
-                            MoodCard(mood: mood)
-                                .onTapGesture {
-                                    editingMood = mood
-                                }
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(moods) { mood in
+                                MoodCard(mood: mood, width: columnWidth)
+                                    .onTapGesture {
+                                        editingMood = mood
+                                    }
+                            }
                         }
-                    }
-                        .padding(16)
                     }
                 }
             }
@@ -57,55 +58,54 @@ struct MoodView: View {
                     }
                 }
             }
-        .sheet(isPresented: $showingAddSheet) {
-            EditMoodView()
-        }
-        .sheet(item: $editingMood) { mood in
-            EditMoodView(mood: mood)
-        }
+            .sheet(isPresented: $showingAddSheet) {
+                EditMoodView()
+            }
+            .sheet(item: $editingMood) { mood in
+                EditMoodView(mood: mood)
+            }
         }
     }
 }
+
 /// Displays a single mood as a card with optional image and description
 struct MoodCard: View {
     let mood: Mood
+    let width: CGFloat
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ZStack {
+        VStack(alignment: .center, spacing: 16) {
+            Group {
                 if let imageData = mood.images.first,
                     let uiImage = UIImage(data: imageData)
                 {
                     Image(uiImage: uiImage)
                         .resizable()
-                        .aspectRatio(contentMode:.fit)
+                        .aspectRatio(contentMode: .fill)
                         .clipped()
-                        .frame(width: 240)
                 } else {
                     Image(systemName: MoodIcon)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .foregroundStyle(.secondary)
-                        .padding(32)
                         .clipped()
                 }
             }
-            .frame(height: 160)
+            .frame(width: width, height: 180)
             .background(Color(.tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            Text(mood.info)
-                .font(.caption)
-                .lineLimit(3)
-                .padding(16)
+            Text(mood.title)
+                .font(.headline)
+                .lineLimit(1)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.bottom, 12)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .frame(maxWidth: width)
     }
 }
 
 #Preview {
-    MoodView()
-        .modelContainer(for: Mood.self, inMemory: true)
+    MoodView().modelContainer(for: Mood.self, inMemory: true)
 }

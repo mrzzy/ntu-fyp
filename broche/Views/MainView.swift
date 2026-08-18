@@ -89,6 +89,7 @@ struct MainView: View {
                 try await AIRepository.shared.load()
                 aiModelsState = .loaded
             } catch {
+                print("Failed to load AI models: \(error)")
                 aiModelsState = .error
             }
         }
