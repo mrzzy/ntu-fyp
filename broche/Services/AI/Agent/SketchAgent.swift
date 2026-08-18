@@ -60,13 +60,14 @@ class SketchAgent: AIAgent {
                 sketch by rendering or editing it, and providing visual guidance.
                 If the user's message is ambiguous, ask for clarification.
                 Focus on composition, clarity, and artistic intent.
-                You may use tools to complete your task:
-                1. Rendering Pipeline: [\(CaptionTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
-                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
-                If the user cites a specific mood, use \(ListMoodTool.NAME) tool to list the moods and their corresponding style information.
-                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
                 Do not be overly encouraging or verbose. Provide concise, actionable guidance.
                 Try again there are transient failures eg. Request timed out.
+                You may use tools to complete your task:
+                1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME)] \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
+                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
+                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
+                If the user cites a specific mood, always use the \(ListMoodTool.NAME) tool to clarify the mood and their corresponding style information.
+                Before using any tool, provide user feedback on what you are about to do and why.
                 \(changePrompt)
                 """
         )
