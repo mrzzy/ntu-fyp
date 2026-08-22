@@ -19,8 +19,6 @@ struct ChatView: View {
             NavigationSplitView {
                 ChatDetailView(sketch: sketch)
                     .navigationTitle("AI Assistant")
-                    // replace chat on switching of sketch
-                    .id(id)
             } detail: {
                 SketchDetailView(sketch: sketch, isEnabled: false)
                     .navigationTitle("AI")
@@ -47,7 +45,7 @@ private struct ChatDetailView: View {
 
     let sketch: Sketch?
     @Environment(\.aiModelsState) var aiModelsState
-    @State var agent: SketchAgent?
+    @State var agent: SketchAgent? = nil
 
     var body: some View {
         if let sketch = sketch {
@@ -69,6 +67,10 @@ private struct ChatDetailView: View {
                     }
                     // load sketch messages into exyte message state
                     messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
+                }
+                .onDisappear {
+                    messages = []
+                    agent = nil
                 }
             } else {
                 switch aiModelsState {

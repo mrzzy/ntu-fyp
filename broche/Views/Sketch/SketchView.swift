@@ -41,10 +41,11 @@ struct SketchView: View {
                     .swipeActions(edge: .trailing) {
                         // delete (presented last)
                         Button(role: .destructive) {
-                            repo.modelContext.delete(sketch)
                             if sketchId == sketch.id {
                                 sketchId = nil
                             }
+                            repo.modelContext.delete(sketch)
+                            repo.save()
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
