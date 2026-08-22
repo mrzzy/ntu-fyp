@@ -16,12 +16,17 @@ struct MoodView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showingAddSheet = false
     @State private var editingMood: Mood?
+    @State private var selectedMoods = Set<Mood.ID>()
     let columnWidth: CGFloat = 180
+
+    private var isSelecting: Bool {
+        !selectedMoods.isEmpty
+    }
 
     private var columns: [GridItem] {
         return [
             // multiple items on the same row
-            GridItem(.adaptive(minimum: columnWidth, maximum: columnWidth), spacing: 24)
+            GridItem(.adaptive(minimum: columnWidth, maximum: columnWidth), spacing: 24),
         ]
     }
 
@@ -40,8 +45,24 @@ struct MoodView: View {
                         LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(moods) { mood in
                                 MoodCard(mood: mood, width: columnWidth)
+                                    // ring to indicate selection
+                                    .overlay {
+                                        if selectedMoods.contains(mood.id) {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.accentColor, lineWidth: 3)
+                                        }
+                                    }
                                     .onTapGesture {
-                                        editingMood = mood
+                                        if isSelecting {
+                                            toggleSelection(of: mood)
+                                        } else {
+                                            editingMood = mood
+                                        }
+                                    }
+                                    .onLongPressGesture {
+                                        let _ = withAnimation {
+                                            selectedMoods.insert(mood.id)
+                                        }
                                     }
                             }
                         }
@@ -50,11 +71,28 @@ struct MoodView: View {
             }
             .navigationTitle("Moods")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if isSelecting {
+                        Button("Cancel") {
+                            withAnimation { selectedMoods.removeAll() }
+                        }
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showingAddSheet = true
-                    } label: {
-                        Image(systemName: "plus")
+                    if isSelecting {
+                        Button(role: .destructive) {
+                            deleteSelected()
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                        }
+                        .disabled(selectedMoods.isEmpty)
+                    } else {
+                        Button {
+                            showingAddSheet = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }
@@ -65,6 +103,23 @@ struct MoodView: View {
                 EditMoodView(mood: mood)
             }
         }
+    }
+
+    private func toggleSelection(of mood: Mood) {
+        withAnimation {
+            if selectedMoods.contains(mood.id) {
+                selectedMoods.remove(mood.id)
+            } else {
+                selectedMoods.insert(mood.id)
+            }
+        }
+    }
+
+    private func deleteSelected() {
+        for mood in moods where selectedMoods.contains(mood.id) {
+            modelContext.delete(mood)
+        }
+        selectedMoods.removeAll()
     }
 }
 
@@ -77,7 +132,7 @@ struct MoodCard: View {
         VStack(alignment: .center, spacing: 16) {
             Group {
                 if let imageData = mood.images.first,
-                    let uiImage = UIImage(data: imageData)
+                   let uiImage = UIImage(data: imageData)
                 {
                     Image(uiImage: uiImage)
                         .resizable()
