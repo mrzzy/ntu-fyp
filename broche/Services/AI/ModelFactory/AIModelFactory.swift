@@ -32,7 +32,7 @@ class DefaultAIModelFactory: AIModelFactory {
     static let defaultVisualModelID = "openai/gpt-5-nano"
 
     /// Default model ID used for image editing.
-    static let defaultImageModelID = "black-forest-labs/flux-2-klein-4b"
+    static let defaultImageModelID = "black-forest-labs/flux-2-klein-9b"
 
     static let shared = DefaultAIModelFactory()
 
