@@ -49,7 +49,11 @@ private struct ChatDetailView: View {
 
     var body: some View {
         if let sketch = sketch {
-            if agent != nil {
+            switch appState.aiModels {
+            case .unloaded:
+                // wait for models to load
+                ProgressView("Loading AI")
+            case .loaded:
                 ExyteChat.ChatView(
                     messages: messages
                 ) {
@@ -58,8 +62,9 @@ private struct ChatDetailView: View {
                 // Disable attachments for now (deferred feature)
                 .setAvailableInputs([.text])
                 .onAppear {
-                    // TODO: check if this is required
-                    // sketch.messages.removeAll()
+                    agent = try! SketchAgent(
+                        sketch: sketch, models: AIRepository.shared
+                    )
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
@@ -69,28 +74,13 @@ private struct ChatDetailView: View {
                     messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                 }
                 .onDisappear {
-                    messages = []
                     agent = nil
                 }
-            } else {
-                switch appState.aiModels {
-                case .unloaded:
-                    // wait for models to load
-                    ProgressView("Loading AI")
-                case .loaded:
-                    // wait for agent to load
-                    ProgressView("Loading AI")
-                        .onAppear {
-                            agent = try! SketchAgent(
-                                sketch: sketch, models: AIRepository.shared
-                            )
-                        }
-                case .error:
-                    ContentUnavailableView(
-                        "AI failed to Load. ",
-                        systemImage: "exclamationmark.triangle"
-                    )
-                }
+            case .error:
+                ContentUnavailableView(
+                    "AI failed to Load. ",
+                    systemImage: "exclamationmark.triangle"
+                )
             }
         } else {
             ContentUnavailableView(
