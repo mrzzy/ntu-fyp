@@ -6,11 +6,13 @@
 import CloudKit
 import Foundation
 import OpenAI
+import UIKit
 
 /// Errors that can occur during OpenRouter visual text generation.
 enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
     case modelNotLoaded
     case tokenNotFound
+    case imageDataInvalid
 
     var errorDescription: String? {
         switch self {
@@ -18,6 +20,8 @@ enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
             "Model has not been loaded. Call load() first."
         case .tokenNotFound:
             "OpenRouter API token not found in CloudKit."
+        case .imageDataInvalid:
+            "Image data is invalid and could not be decoded."
         }
     }
 }
@@ -88,13 +92,17 @@ final class OpenRouterVisualAIModel: VisualAIModel {
                         [.text(.init(text: prompt))]
 
                     for imageData in images {
-                        let base64 = imageData.base64EncodedString()
+                        // pad image into square to avoid cropping on model side clipping contents of image.
+                        guard let uiImage = UIImage(data: imageData) else {
+                            throw OpenRouterVisualAIError.imageDataInvalid
+                        }
+                        let base64 = padSqaure(uiImage).pngData()!.base64EncodedString()
                         contentParts.append(
                             .image(
                                 .init(
                                     imageUrl: .init(
                                         url: "data:image/png;base64,\(base64)",
-                                        detail: .high
+                                        detail: .auto
                                     )
                                 )
                             )
@@ -183,5 +191,28 @@ final class OpenRouterVisualAIModel: VisualAIModel {
                 }
             }
         }
+    }
+
+    private func padSqaure(
+        _ image: UIImage,
+        backgroundColor: UIColor = .white
+    ) -> UIImage {
+        let side = max(image.size.width, image.size.height)
+        let size = CGSize(width: side, height: side)
+
+        let origin = CGPoint(
+            x: (side - image.size.width) / 2,
+            y: (side - image.size.height) / 2
+        )
+
+        UIGraphicsBeginImageContextWithOptions(size, true, 0)
+        defer { UIGraphicsEndImageContext() }
+
+        backgroundColor.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+
+        image.draw(at: origin)
+
+        return UIGraphicsGetImageFromCurrentImageContext()!
     }
 }
