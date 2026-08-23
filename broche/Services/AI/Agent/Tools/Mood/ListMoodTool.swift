@@ -16,7 +16,7 @@ struct ListMoodArguments: Codable, Sendable {}
 struct ListMoodOutput: Codable, Sendable {
     @Guide(
         description:
-            "A list of all user-created moods with their titles, descriptions, image counts, and last modified times."
+            "A list of all user-created moods or styles with their titles, descriptions, image counts, and last modified times."
     )
     let moods: [MoodSummary]
 }
@@ -25,8 +25,8 @@ struct ListMoodTool: AITool {
     nonisolated static let NAME = "list_mood"
     let name = Self.NAME
     let description = """
-        Use this tool to list all moods the user has created.
-        Use this tool to understand what moods are available before selecting or working with one.
+        Use this tool to list all moods or styles the user has created.
+        Use this tool to understand what moods or styles are available before selecting or working with one.
 
         It returns each mood in the following schema:
         \(MoodSummary.generationSchema.debugDescription)

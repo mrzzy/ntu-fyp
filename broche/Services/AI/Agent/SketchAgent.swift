@@ -66,7 +66,7 @@ class SketchAgent: AIAgent {
                 1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME)] \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
                 2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
                 Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
-                If the user cites a specific mood, always use the \(ListMoodTool.NAME) tool to clarify the mood and their corresponding style information.
+                If the user cites a specific mood or style, always use the \(ListMoodTool.NAME) tool to clarify the mood and their corresponding style information.
                 Before using any tool, provide user feedback on what you are about to do and why.
                 \(changePrompt)
                 """
