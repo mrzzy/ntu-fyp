@@ -41,7 +41,6 @@ final class Sketch: CustomStringConvertible {
     private(set) var height: Double
 
     /// AI assistant conversation messages
-    @Relationship(deleteRule: .cascade)
     var messages: [Message]
 
     /// Zoom view zoom/pan/rotation state

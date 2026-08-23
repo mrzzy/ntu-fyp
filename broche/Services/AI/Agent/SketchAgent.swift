@@ -62,8 +62,8 @@ class SketchAgent: AIAgent {
                 Focus on composition, clarity, and artistic intent.
                 Do not be overly encouraging or verbose. Provide concise, actionable guidance.
                 Retry there are transient failures eg. Request timed out. Do not modify tool call when trying.
-                Before using any tool, provide user feedback on what you are about to do and why.
-                Continue generation until you have completed your tool calls and response.
+                When using any tool, provide user feedback on what you are about to do and why.
+                Do not include text in rendered images unless explicitly requested by the user.
                 You may use tools to complete your task:
                 1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
                 2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
