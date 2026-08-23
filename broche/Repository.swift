@@ -58,7 +58,7 @@ class Repository {
             )
         ).first
     }
-    
+
     func fetchMoods() -> [Mood] {
         do {
             let descriptor = FetchDescriptor<Mood>(
@@ -82,7 +82,8 @@ class Repository {
         let copy = Sketch(
             title: "\(sketch.title) copy",
             layers: sketch.layers,
-            size: sketch.size
+            size: sketch.size,
+            messages: sketch.messages
         )
         modelContext.insert(copy)
         save()
