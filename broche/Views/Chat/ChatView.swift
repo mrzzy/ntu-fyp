@@ -62,7 +62,8 @@ private struct ChatDetailView: View {
                 // Disable attachments for now (deferred feature)
                 .setAvailableInputs([.text])
                 .onAppear {
-                    if agent == nil || agent!.sketch.id == sketch.id {
+                    // create or recreate sketch agent for sketch
+                    if agent == nil || agent!.sketch.id != sketch.id {
                         agent = try! SketchAgent(
                             sketch: sketch, models: AIRepository.shared
                         )

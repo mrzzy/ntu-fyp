@@ -46,9 +46,9 @@ struct CaptionTool: AITool {
     nonisolated static let NAME = "caption_sketch"
     let name = Self.NAME
     let description = """
-        Use this tool when you need to understand what the user has currently drawn in their sketch.
+        Use this tool when you need to understand what the user has currently drawn in their entire sketch.
 
-        It analyzes the visible sketch and returns a detailed description of its visual content. Use this description to reason about the drawing, answer questions about what is shown, or perform tasks that require understanding the sketch.
+        It analyzes the visible sketch and returns a detailed description of its visual content. Use this description to reason about the drawing, answer questions about what is shown, or perform tasks that require understanding the entire sketch.
 
         Base your reasoning only on information that is visually present and reliably discernible based on the output of this caption tool. Do not assume, infer, or invent details that cannot be determined from the drawing.
         """

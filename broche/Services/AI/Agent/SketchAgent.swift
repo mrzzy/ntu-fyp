@@ -65,10 +65,10 @@ class SketchAgent: AIAgent {
                 When using any tool, provide user feedback on what you are about to do and why.
                 Do not include text in rendered images unless explicitly requested by the user.
                 You may use tools to complete your task:
-                1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
-                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
-                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
                 If the user cites a specific mood or style, use \(ListMoodTool.NAME) to list available moods, then \(InjectMoodTool.NAME) with the mood's id to retrieve its full description.
+                1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image.
+                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch.
+                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
                 Prompt:
                 \(changePrompt)
                 """
