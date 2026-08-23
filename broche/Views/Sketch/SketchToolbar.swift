@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 /// Common toolbar for views hosting a Sketch
 struct SketchToolbar: ToolbarContent {
     let sketch: Sketch
+    @Environment(\.appState) var appState
 
     @Environment(\.undoManager) private var undoManager
 
@@ -18,6 +19,7 @@ struct SketchToolbar: ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
             Button {
                 undoManager?.undo()
+                appState.nUndoRedo += 1
             } label: {
                 Label("Undo", systemImage: "arrow.uturn.backward")
             }
@@ -25,6 +27,7 @@ struct SketchToolbar: ToolbarContent {
 
             Button {
                 undoManager?.redo()
+                appState.nUndoRedo += 1
             } label: {
                 Label("Redo", systemImage: "arrow.uturn.forward")
             }
@@ -36,7 +39,7 @@ struct SketchToolbar: ToolbarContent {
                 Label("Reset Zoom", systemImage: "arrow.counterclockwise")
             }
 
-            /// Export sketch button
+            // Export sketch button
             ShareLink(
                 item: ShareableSketch(sketch: sketch),
                 preview: SharePreview(

@@ -44,7 +44,7 @@ private struct ChatDetailView: View {
     @State var messages: [ExyteChat.Message] = []
 
     let sketch: Sketch?
-    @Environment(\.aiModelsState) var aiModelsState
+    @Environment(\.appState) var appState
     @State var agent: SketchAgent? = nil
 
     var body: some View {
@@ -73,7 +73,7 @@ private struct ChatDetailView: View {
                     agent = nil
                 }
             } else {
-                switch aiModelsState {
+                switch appState.aiModels {
                 case .unloaded:
                     // wait for models to load
                     ProgressView("Loading AI")

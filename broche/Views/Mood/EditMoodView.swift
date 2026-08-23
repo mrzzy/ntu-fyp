@@ -20,7 +20,7 @@ struct EditMoodView: View {
     @State private var isDescribing = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.aiModelsState) private var aiModelsState
+    @Environment(\.appState) private var appState
 
     init(mood: Mood? = nil) {
         self.mood = mood
@@ -93,7 +93,7 @@ struct EditMoodView: View {
                                 Text("Generate")
                                 Image(systemName: "wand.and.stars")
                             }
-                            .disabled(images.isEmpty || aiModelsState != .loaded)
+                            .disabled(images.isEmpty || appState.aiModels != .loaded)
                         }
                     }
                 }
@@ -147,7 +147,7 @@ struct EditMoodView: View {
     }
 
     private func handleDescribeMood() async {
-        guard aiModelsState == .loaded else {
+        guard appState.aiModels == .loaded else {
             return
         }
 
@@ -155,7 +155,8 @@ struct EditMoodView: View {
         defer { isDescribing = false }
 
         do {
-            let output = try await describeMood(images: images, visualModel: AIRepository.shared.visualModel)
+            let output = try await describeMood(
+                images: images, visualModel: AIRepository.shared.visualModel)
             title = output.title
             info = output.description
         } catch {

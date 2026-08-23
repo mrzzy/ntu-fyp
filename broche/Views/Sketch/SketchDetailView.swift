@@ -16,11 +16,9 @@ struct SketchDetailView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.undoManager) private var undoManager
+    @Environment(\.appState) private var appState
 
-    init(sketch: Sketch?, isEnabled: Bool = true) {
-        self.sketch = sketch
-        self.isEnabled = isEnabled
-    }
+    let repo: Repository = .shared
 
     var body: some View {
         if let sketch = sketch {
@@ -75,8 +73,18 @@ struct SketchDetailView: View {
             }
             // reset zoom scroll settings for each new sketch by replacing ZoomableScrollView
             .id(sketch.id)
-            .gesture(MultiFingerTapGesture(count: 2) { undoManager?.undo() })
-            .gesture(MultiFingerTapGesture(count: 3) { undoManager?.redo() })
+            .gesture(
+                MultiFingerTapGesture(count: 2) {
+                    undoManager?.undo()
+                    appState.nUndoRedo += 1
+                }
+            )
+            .gesture(
+                MultiFingerTapGesture(count: 3) {
+                    undoManager?.redo()
+                    appState.nUndoRedo += 1
+                }
+            )
         } else {
             ContentUnavailableView(
                 "Sketch not found",
@@ -106,19 +114,16 @@ struct SketchDetailView: View {
                                         at: layer,
                                         to: .drawing(
                                             drawing: newDrawing, modifiedOn: .now
-                                        ))
-                                    do {
-                                        // save updated drawing
-                                        try modelContext.save()
-                                    } catch {
-                                        print("Warning: Failed to save drawing changes")
-                                    }
+                                        )
+                                    )
+                                    repo.save()
                                 }
                             ),
                         isEnabled: isEnabled
                     )
-                    // force redraw view on screen resize
+                    // force redraw view on screen resize & undo / redo count change
                     .id(proxy.size)
+                    .id(appState.nUndoRedo)
                 }
             }
         }
@@ -139,6 +144,6 @@ struct SketchDetailView: View {
         ]
     )
     container.mainContext.insert(sketch)
-    return SketchDetailView(sketch: sketch)
+    return SketchDetailView(sketch: sketch, isEnabled: true)
         .modelContainer(container)
 }

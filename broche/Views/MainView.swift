@@ -21,8 +21,16 @@ enum AIModelsLoadState: Sendable, Equatable {
     case error
 }
 
+/// Non-persistent shared app state object
+/// Use for cross cutting app state.
+@Observable
+class AppState {
+    var aiModels: AIModelsLoadState = .unloaded
+    var nUndoRedo: Int = 0
+}
+
 extension EnvironmentValues {
-    @Entry var aiModelsState: AIModelsLoadState = .unloaded
+    @Entry var appState: AppState = .init()
 }
 
 struct MainView: View {
@@ -30,21 +38,21 @@ struct MainView: View {
     @State private var sketchId: Sketch.ID?
     /// Currently selected tab
     @State var tab: Tab = .Draw
-    @State private var aiModelsState: AIModelsLoadState = .unloaded
+    @State var appState: AppState = .init()
     @Environment(\.undoManager) private var undoManager
     let repo = Repository.shared
 
     private var showAIError: Binding<Bool> {
         Binding(
             get: {
-                if case .error = aiModelsState {
+                if case .error = appState.aiModels {
                     return true
                 }
                 return false
             },
             set: { isPresented in
                 if !isPresented {
-                    aiModelsState = .unloaded
+                    appState.aiModels = .unloaded
                 }
             }
         )
@@ -71,15 +79,15 @@ struct MainView: View {
                 .tag(Tab.Chat)
         }
         .alert("AI Features Unavailable", isPresented: showAIError) {
-            Button("OK") { aiModelsState = .unloaded }
+            Button("OK") { appState.aiModels = .unloaded }
         } message: {
-            if case .error = aiModelsState {
+            if case .error = appState.aiModels {
                 Text("Unexpected Error occurred. AI features are disabled.")
             }
         }
+        .environment(\.appState, appState)
         // configure swiftdata for all child views
         .modelContainer(repo.modelContainer)
-        .environment(\.aiModelsState, aiModelsState)
         .task {
             // track swiftdata model changes in view undoManager
             repo.modelContext.undoManager = undoManager
@@ -87,10 +95,10 @@ struct MainView: View {
             // start loading AI models in the background as soon as app starts
             do {
                 try await AIRepository.shared.load()
-                aiModelsState = .loaded
+                appState.aiModels = .loaded
             } catch {
                 print("Failed to load AI models: \(error)")
-                aiModelsState = .error
+                appState.aiModels = .error
             }
         }
     }
