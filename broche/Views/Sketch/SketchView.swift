@@ -39,7 +39,14 @@ struct SketchView: View {
                     )
                     .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                     .swipeActions(edge: .trailing) {
-                        // duplicate (presented first)
+                        // rename title (presented last)
+                        Button {
+                            editingSketch = sketch
+                            editedTitle = sketch.title
+                        } label: {
+                            Label("Rename", systemImage: "pencil")
+                        }
+                        // duplicate
                         Button {
                             if let duplicated = repo.duplicate(sketch) {
                                 sketchId = duplicated.id
@@ -47,7 +54,7 @@ struct SketchView: View {
                         } label: {
                             Label("Duplicate", systemImage: "doc.on.doc")
                         }
-                        // delete (presented second)
+                        // delete
                         Button(role: .destructive) {
                             if sketchId == sketch.id {
                                 sketchId = nil
@@ -56,13 +63,6 @@ struct SketchView: View {
                             repo.save()
                         } label: {
                             Label("Delete", systemImage: "trash")
-                        }
-                        // rename title (presented last)
-                        Button {
-                            editingSketch = sketch
-                            editedTitle = sketch.title
-                        } label: {
-                            Label("Rename", systemImage: "pencil")
                         }
                     }
                 }
