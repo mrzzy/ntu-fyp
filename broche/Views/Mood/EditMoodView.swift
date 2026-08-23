@@ -154,11 +154,21 @@ struct EditMoodView: View {
         isDescribing = true
         defer { isDescribing = false }
 
+        // empty info to be generated
+        // but keep title.
+        info = ""
+
         do {
             let output = try await describeMood(
-                images: images, visualModel: AIRepository.shared.visualModel)
-            title = output.title
-            info = output.description
+                images: images, visualModel: AIRepository.shared.visualModel
+            )
+            // only override if still empty
+            if title.isEmpty {
+                title = output.title
+            }
+            if info.isEmpty {
+                info = output.description
+            }
         } catch {
             print("Failed to describe mood: \(error)")
         }

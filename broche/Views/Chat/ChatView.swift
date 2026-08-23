@@ -62,21 +62,18 @@ private struct ChatDetailView: View {
                 // Disable attachments for now (deferred feature)
                 .setAvailableInputs([.text])
                 .onAppear {
-                    agent = try! SketchAgent(
-                        sketch: sketch, models: AIRepository.shared
-                    )
+                    if agent == nil || agent!.sketch.id == sketch.id {
+                        agent = try! SketchAgent(
+                            sketch: sketch, models: AIRepository.shared
+                        )
+                    }
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
-                        repo.save()
+                    } else {
+                        // load sketch messages into exyte message state
+                        messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                     }
-                    // load sketch messages into exyte message state
-                    messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
-                }
-                .onDisappear {
-                    // save any agent state ie. messages
-                    repo.save()
-                    agent = nil
                 }
             case .error:
                 ContentUnavailableView(
