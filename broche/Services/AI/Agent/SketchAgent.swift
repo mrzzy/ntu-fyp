@@ -61,13 +61,15 @@ class SketchAgent: AIAgent {
                 If the user's message is ambiguous, ask for clarification.
                 Focus on composition, clarity, and artistic intent.
                 Do not be overly encouraging or verbose. Provide concise, actionable guidance.
-                Try again there are transient failures eg. Request timed out.
-                You may use tools to complete your task:
-                1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME)] \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
-                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
-                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
-                If the user cites a specific mood or style, always use the \(ListMoodTool.NAME) tool to clarify the mood and their corresponding style information.
+                Retry there are transient failures eg. Request timed out. Do not modify tool call when trying.
                 Before using any tool, provide user feedback on what you are about to do and why.
+                Continue generation until you have completed your tool calls and response.
+                You may use tools to complete your task:
+                1. Rendering Pipeline: [\(CaptionTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(RenderTool.NAME)]: Use these tools when user wants to render a final image (big scope).
+                2. Editing Pipeline: [\(ExplainEditTool.NAME), \(ListMoodTool.NAME), \(InjectMoodTool.NAME), \(EditTool.NAME)]: Use these tools when user wants to modify or refine the sketch (small scope).
+                Do not use both \(EditTool.NAME) & \(RenderTool.NAME) when handling the same user message. Choose one based on the user's request.
+                If the user cites a specific mood or style, use \(ListMoodTool.NAME) to list available moods, then \(InjectMoodTool.NAME) with the mood's id to retrieve its full description.
+                Prompt:
                 \(changePrompt)
                 """
         )
@@ -122,6 +124,7 @@ class SketchAgent: AIAgent {
                 RenderTool(sketch: sketch, imageModel: models.imageModel),
                 EditTool(sketch: sketch, imageModel: models.imageModel),
                 ListMoodTool(repo: data),
+                InjectMoodTool(repo: data),
             ],
             messages: [Self.makeSystemMessage(hasChanges: false)] + sketch.messages
         )

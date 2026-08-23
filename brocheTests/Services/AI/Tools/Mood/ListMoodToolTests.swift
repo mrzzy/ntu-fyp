@@ -14,7 +14,7 @@ struct ListMoodToolTests {
         return Repository(modelContainer: container)
     }
 
-    @Test("Lists moods with title, description")
+    @Test("Lists moods with id and title only")
     func listsMoods() async throws {
         let repo = try makeTestRepository()
         let context = repo.modelContext
@@ -44,9 +44,9 @@ struct ListMoodToolTests {
         #expect(
             output.moods[0].title == "Serene Sunset", "First mood should be the earliest modified"
         )
-        #expect(output.moods[0].description == "Warm sunset colors over a calm ocean")
+        #expect(output.moods[0].id == mood1.id.uuidString)
         #expect(output.moods[1].title == "Urban Night", "Second mood should be the later modified")
-        #expect(output.moods[1].description == "City lights reflecting on wet streets")
+        #expect(output.moods[1].id == mood2.id.uuidString)
     }
 
     @Test("Returns empty list when no moods exist")

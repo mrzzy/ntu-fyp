@@ -70,6 +70,14 @@ class Repository {
         }
     }
 
+    func fetchMood(id: UUID) -> Mood? {
+        try? modelContext.fetch(
+            FetchDescriptor<Mood>(
+                predicate: #Predicate { $0.id == id }
+            )
+        ).first
+    }
+
     func duplicate(_ sketch: Sketch) -> Sketch? {
         let copy = Sketch(
             title: "\(sketch.title) copy",

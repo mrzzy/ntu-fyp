@@ -16,9 +16,25 @@ struct ListMoodArguments: Codable, Sendable {}
 struct ListMoodOutput: Codable, Sendable {
     @Guide(
         description:
-            "A list of all user-created moods or styles with their titles, descriptions, image counts, and last modified times."
+            "A list of all user-created moods or styles with their ids and titles."
     )
-    let moods: [MoodSummary]
+    let moods: [MoodListItem]
+}
+
+@Generable
+struct MoodListItem: Codable, Sendable {
+    @Guide(description: "The unique identifier of the mood.")
+    let id: String
+
+    @Guide(description: "The title of the mood.")
+    let title: String
+
+    static func fromMood(_ mood: Mood) -> MoodListItem {
+        MoodListItem(
+            id: mood.id.uuidString,
+            title: mood.title
+        )
+    }
 }
 
 struct ListMoodTool: AITool {
@@ -29,7 +45,7 @@ struct ListMoodTool: AITool {
         Use this tool to understand what moods or styles are available before selecting or working with one.
 
         It returns each mood in the following schema:
-        \(MoodSummary.generationSchema.debugDescription)
+        \(MoodListItem.generationSchema.debugDescription)
         """
 
     let repo: Repository
@@ -40,7 +56,7 @@ struct ListMoodTool: AITool {
 
     func call(arguments _: ListMoodArguments) async throws -> ListMoodOutput {
         let moods = repo.fetchMoods()
-        let summaries = moods.map { MoodSummary.fromMood($0) }
-        return ListMoodOutput(moods: summaries)
+        let items = moods.map { MoodListItem.fromMood($0) }
+        return ListMoodOutput(moods: items)
     }
 }
