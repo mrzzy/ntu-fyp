@@ -70,6 +70,17 @@ class Repository {
         }
     }
 
+    func duplicate(_ sketch: Sketch) -> Sketch? {
+        let copy = Sketch(
+            title: "\(sketch.title) copy",
+            layers: sketch.layers,
+            size: sketch.size
+        )
+        modelContext.insert(copy)
+        save()
+        return copy
+    }
+
     func save() {
         do {
             try modelContext.save()
