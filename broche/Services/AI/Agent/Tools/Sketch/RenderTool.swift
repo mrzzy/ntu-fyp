@@ -86,8 +86,9 @@ struct RenderTool: AITool {
                 \(sketch.description)
 
                 Create a polished image based on the user's sketch and the provided rendering prompt.
-                Preserve the important elements, composition, spatial relationships, and overall intent of the sketch while transforming it into a coherent, refined image.
-                Generate only the image content described by the rendering prompt. 
+                Preserve the important subject, composition, spatial relationships, and overall intent of the sketch while transforming it into a coherent, refined image.
+                Generate only the subject content depicted by the sketch.
+                Use the stylistic and rendering instructions provided in the prompt to guide the transformation.
                 Do not add unrelated objects or alter the core composition.
                 Do not add text unless explicit quoted below in the rendering prompt.
 

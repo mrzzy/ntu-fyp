@@ -70,10 +70,9 @@ private struct ChatDetailView: View {
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
-                    } else {
-                        // load sketch messages into exyte message state
-                        messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
-                    }
+                    } 
+                    // load sketch messages into exyte message state
+                    messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                 }
             case .error:
                 ContentUnavailableView(
