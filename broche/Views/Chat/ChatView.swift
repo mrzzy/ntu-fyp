@@ -74,6 +74,8 @@ private struct ChatDetailView: View {
                     messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                 }
                 .onDisappear {
+                    // save any agent state ie. messages
+                    repo.save()
                     agent = nil
                 }
             case .error:
