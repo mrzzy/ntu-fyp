@@ -74,6 +74,10 @@ private struct ChatDetailView: View {
                     // load sketch messages into exyte message state
                     messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
                 }
+                .onDisappear{
+                    // save changes made by the sketch agent
+                    repo.save()
+                }
             case .error:
                 ContentUnavailableView(
                     "AI failed to Load. ",

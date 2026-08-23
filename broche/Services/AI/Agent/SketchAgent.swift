@@ -142,7 +142,6 @@ class SketchAgent: AIAgent {
 
                     for try await message in super.instruct(prompt: prompt) {
                         sketch.messages.append(message)
-                        data.save()
                         continuation.yield(message)
                     }
 
