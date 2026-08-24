@@ -5,34 +5,31 @@
 //  Created by Zhu Zhanyan on 7/10/26.
 //
 
+@testable import broche
 import ExyteChat
 import PencilKit
 import Testing
 import UIKit
-
-@testable import broche
 
 @Suite("Message model tests")
 struct MessageTests {
     @Test("Message conversion to ExyteChat.Message works correctly")
     func messageConversion() throws {
         // Create a test message with attachments and reactions
-        let message = Message(
+        let message = try broche.Message(
             user: .user,
             text: "Hello, this is a test message!",
             id: "test-message-1",
             createdAt: Date(),
-            replyMessage: nil
+            attachments: [
+                Attachment(
+                    id: "attachment-1",
+                    type: .image,
+                    thumbnail: #require(URL(string: "https://example.com/thumb.jpg")),
+                    full: #require(URL(string: "https://example.com/full.jpg"))
+                ),
+            ]
         )
-
-        // Add an attachment
-        let attachment = try Attachment(
-            id: "attachment-1",
-            type: .image,
-            thumbnail: #require(URL(string: "https://example.com/thumb.jpg")),
-            full: #require(URL(string: "https://example.com/full.jpg"))
-        )
-        message.attachments.append(attachment)
 
         // Test conversion
         let exyteChatMessage = try #require(message.toExyteChatMessage())
@@ -86,7 +83,7 @@ struct MessageTests {
                     thumbnail: thumbURL,
                     full: fullURL,
                     type: ExyteChat.AttachmentType.image
-                )
+                ),
             ],
             replyMessage: replyMessage
         )
@@ -103,10 +100,6 @@ struct MessageTests {
         #expect(attachment.type == .image)
         #expect(attachment.thumbnail == thumbURL)
         #expect(attachment.full == fullURL)
-
-        let reply = try #require(message.replyMessage)
-        #expect(reply.id == "reply-1")
-        #expect(reply.text == "Original message")
     }
 
     @Test("System user ExyteChat.Message converts to AI MessageUser")

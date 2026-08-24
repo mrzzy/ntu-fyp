@@ -24,7 +24,7 @@ struct ChatView: View {
                     .navigationTitle("AI")
                     .toolbar {
                         if let id = sketchId,
-                            let sketch = repo.fetchSketch(id: id)
+                           let sketch = repo.fetchSketch(id: id)
                         {
                             SketchToolbar(sketch: sketch)
                         }
@@ -139,14 +139,14 @@ private struct ChatDetailView: View {
     let welcome = Message(
         user: .ai,
         text: """
-            Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
+        Hey! 👋 I'm your AI art assistant. I can help you refine your sketch and explore ideas.
 
-            You can ask me to:
-            • Modify, refine, or enhance parts of your sketch
-            • Colorize and experiment with different styles
-            • Render your ideas into more polished artwork
-            • Discuss creative changes and improvements
-            """
+        You can ask me to:
+        • Modify, refine, or enhance parts of your sketch
+        • Colorize and experiment with different styles
+        • Render your ideas into more polished artwork
+        • Discuss creative changes and improvements
+        """
     )
     let userMsg = Message(
         user: .user,
@@ -155,8 +155,7 @@ private struct ChatDetailView: View {
     let aiReply = Message(
         user: .ai,
         text:
-            "Sure! I'll add some gentle gradient shading to the background to give it more depth. Let me process that for you — this will create a subtle radial gradient from light blue to white behind the main subject.",
-        replyMessage: userMsg
+        "Sure! I'll add some gentle gradient shading to the background to give it more depth. Let me process that for you — this will create a subtle radial gradient from light blue to white behind the main subject."
     )
     let userMsg2 = Message(
         user: .user,
@@ -165,8 +164,7 @@ private struct ChatDetailView: View {
     let aiReply2 = Message(
         user: .ai,
         text:
-            "Done! I've increased the stroke width on the main outlines. The thicker lines should give the sketch a bolder, more defined look while keeping the overall style consistent.",
-        replyMessage: userMsg2
+        "Done! I've increased the stroke width on the main outlines. The thicker lines should give the sketch a bolder, more defined look while keeping the overall style consistent."
     )
     let sketch = Sketch(
         title: "Sample Sketch", size: CGSize(width: 400, height: 400),

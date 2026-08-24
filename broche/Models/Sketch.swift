@@ -40,7 +40,6 @@ final class Sketch: CustomStringConvertible {
     private(set) var height: Double
 
     /// AI assistant conversation messages
-    @Relationship(deleteRule: .cascade)
     var messages: [Message]
 
     /// Returns the messages sorted in chronological order (oldest first)
