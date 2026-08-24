@@ -83,7 +83,7 @@ class Repository {
             title: "\(sketch.title) copy",
             layers: sketch.layers,
             size: sketch.size,
-            messages: sketch.messages
+            messages: sketch.messages.map { Message(copying: $0) }
         )
         modelContext.insert(copy)
         save()

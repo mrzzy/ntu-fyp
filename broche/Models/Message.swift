@@ -17,7 +17,7 @@ enum User: nonisolated Codable, CustomStringConvertible {
     case user
     case ai
     case tool
-    
+
     var description: String {
         switch self {
         case .system:
@@ -160,6 +160,17 @@ final class Message {
         self.text = text
         self.attachments = attachments
         self.replyMessage = replyMessage
+    }
+
+    init(
+        copying message: Message
+    ) {
+        id = message.id
+        user = message.user
+        createdAt = message.createdAt
+        text = message.text
+        attachments = message.attachments
+        replyMessage = message.replyMessage
     }
 
     /// Creates a SwiftData Message from an ExyteChat Message

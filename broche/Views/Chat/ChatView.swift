@@ -71,11 +71,11 @@ private struct ChatDetailView: View {
                     if sketch.messages.isEmpty {
                         // display a welcome message to the user
                         sketch.messages.append(SketchAgent.welcomeMessage)
-                    } 
-                    // load sketch messages into exyte message state
-                    messages = sketch.messages.compactMap { $0.toExyteChatMessage() }
+                    }
+                    // load sketch messages into exyte message state in chronologica
+                    messages = sketch.orderedMessages.compactMap { $0.toExyteChatMessage() }
                 }
-                .onDisappear{
+                .onDisappear {
                     // save changes made by the sketch agent
                     repo.save()
                 }

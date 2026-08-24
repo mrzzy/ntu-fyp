@@ -15,8 +15,7 @@ struct Zoom: Codable {
     var offsetX: Double
     var offsetY: Double
     var rotation: Double
-    init(scale: Double = 1.0, offsetX: Double = 0.0, offsetY: Double = 0.0, rotation: Double = 0.0)
-    {
+    init(scale: Double = 1.0, offsetX: Double = 0.0, offsetY: Double = 0.0, rotation: Double = 0.0) {
         self.scale = scale
         self.offsetX = offsetX
         self.offsetY = offsetY
@@ -26,7 +25,7 @@ struct Zoom: Codable {
 
 /// Defines a set of default layers a sketch starts with.
 let SketchDefaultLayers: [Layer] = [
-    .drawing(drawing: PKDrawing())
+    .drawing(drawing: PKDrawing()),
 ]
 
 /// Defines a sketch composed of a series of layers
@@ -41,7 +40,13 @@ final class Sketch: CustomStringConvertible {
     private(set) var height: Double
 
     /// AI assistant conversation messages
+    @Relationship(deleteRule: .cascade)
     var messages: [Message]
+
+    /// Returns the messages sorted in chronological order (oldest first)
+    var orderedMessages: [Message] {
+        messages.sorted { $0.createdAt < $1.createdAt }
+    }
 
     /// Zoom view zoom/pan/rotation state
     var zoom: Zoom = Zoom()
@@ -68,12 +73,12 @@ final class Sketch: CustomStringConvertible {
         }.joined(separator: "\n")
 
         return """
-            Sketch: \(title) 
-            Dimensions: (\(Int(width))x\(Int(height)))
-            Total Layers: \(layers.count)
-            Layers:
-            \(layerDescriptions)
-            """
+        Sketch: \(title) 
+        Dimensions: (\(Int(width))x\(Int(height)))
+        Total Layers: \(layers.count)
+        Layers:
+        \(layerDescriptions)
+        """
     }
 
     @Transient private var _renderer: SketchRender?
