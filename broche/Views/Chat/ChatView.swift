@@ -46,6 +46,7 @@ private struct ChatDetailView: View {
     let sketch: Sketch?
     @Environment(\.appState) var appState
     @State var agent: SketchAgent? = nil
+    @State var agentTask: Task<Void, Never>? = nil
 
     var body: some View {
         if let sketch = sketch {
@@ -75,10 +76,6 @@ private struct ChatDetailView: View {
                     // load sketch messages into exyte message state in chronologica
                     messages = sketch.orderedMessages.compactMap { $0.toExyteChatMessage() }
                 }
-                .onDisappear {
-                    // save changes made by the sketch agent
-                    repo.save()
-                }
             case .error:
                 ContentUnavailableView(
                     "AI failed to Load. ",
@@ -96,6 +93,11 @@ private struct ChatDetailView: View {
     private func handleSendMessage(_ draft: ExyteChat.DraftMessage) {
         guard let agent = agent else { return }
 
+        // cancel any existing agent task to avoid agent instructionsk
+        if let task = agentTask {
+            task.cancel()
+        }
+
         // typing placeholder message to indicate the model is processing
         let typingMessage = ExyteChat.Message(
             id: UUID().uuidString,
@@ -104,9 +106,10 @@ private struct ChatDetailView: View {
             text: "⋯"
         )
 
-        Task {
+        agentTask = Task {
             do {
                 for try await message in agent.instruct(prompt: draft.text) {
+                    try Task.checkCancellation()
                     if let exyteMessage = message.toExyteChatMessage() {
                         if message.user == .user {
                             messages.append(exyteMessage)
@@ -119,9 +122,10 @@ private struct ChatDetailView: View {
                         }
                     }
                 }
+            } catch is CancellationError {
+                // task canceled, return immediately
             } catch let error as SketchAgentError {
                 print("Error: Failed to create SketchAgent: \(error)")
-                return
             } catch {
                 print("Error: Failed to instruct SketchAgent: \(error)")
             }
