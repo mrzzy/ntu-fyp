@@ -63,6 +63,7 @@ class SketchAgent: AIAgent {
                 Do not be overly encouraging or verbose. Provide concise, actionable guidance.
                 Retry there are transient failures eg. Request timed out. Do not modify tool call when trying.
                 When using any tool, provide user feedback on what you are about to do and why.
+                Do not ask for confirmation again if you previously asked for confirmation.
                 Do not include text in rendered images unless explicitly requested by the user.
                 You may use tools to complete your task:
                 If the user cites a specific mood or style, use \(ListMoodTool.NAME) to list available moods, then \(InjectMoodTool.NAME) with the mood's id to retrieve its full description.
