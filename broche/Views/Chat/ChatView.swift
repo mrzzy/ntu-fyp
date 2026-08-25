@@ -49,45 +49,60 @@ private struct ChatDetailView: View {
     @State var agentTask: Task<Void, Never>? = nil
 
     var body: some View {
-        if let sketch = sketch {
-            switch appState.aiModels {
-            case .unloaded:
-                // wait for models to load
-                ProgressView("Loading AI")
-            case .loaded:
-                ExyteChat.ChatView(
-                    messages: messages
-                ) {
-                    draft in handleSendMessage(draft)
-                }
-                // Disable attachments for now (deferred feature)
-                .setAvailableInputs([.text])
-                .onAppear {
-                    // create or recreate sketch agent for sketch
-                    if agent == nil || agent!.sketch.id != sketch.id {
-                        agent = try! SketchAgent(
-                            sketch: sketch, models: AIRepository.shared
-                        )
+        Group {
+            if sketch != nil {
+                switch appState.aiModels {
+                case .unloaded:
+                    // wait for models to load
+                    ProgressView("Loading AI")
+                case .loaded:
+                    ExyteChat.ChatView(
+                        messages: messages
+                    ) {
+                        draft in handleSendMessage(draft)
                     }
-                    if sketch.messages.isEmpty {
-                        // display a welcome message to the user
-                        sketch.messages.append(SketchAgent.welcomeMessage)
-                    }
-                    // load sketch messages into exyte message state in chronologica
-                    messages = sketch.orderedMessages.compactMap { $0.toExyteChatMessage() }
+                    // Disable attachments for now (deferred feature)
+                    .setAvailableInputs([.text])
+                    .onAppear(perform: initState)
+                case .error:
+                    ContentUnavailableView(
+                        "AI failed to Load. ",
+                        systemImage: "exclamationmark.triangle"
+                    )
                 }
-            case .error:
+            } else {
                 ContentUnavailableView(
-                    "AI failed to Load. ",
-                    systemImage: "exclamationmark.triangle"
+                    "Sketch not found.",
+                    systemImage: "questionmark"
                 )
             }
-        } else {
-            ContentUnavailableView(
-                "Sketch not found.",
-                systemImage: "questionmark"
-            )
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .destructive) {
+                    // reset: clear message history to starting state: only welcome message
+                    sketch?.messages = []
+                    messages = []
+                    initState()
+                } label: {
+                    Label("Reset", systemImage: "arrow.counterclockwise")
+                }
+            }
+        }
+    }
+
+    private func initState() {
+        guard let sketch = sketch else { return }
+
+        agent = try! SketchAgent(
+            sketch: sketch, models: AIRepository.shared
+        )
+        if sketch.messages.isEmpty {
+            // display a welcome message to the user
+            sketch.messages.append(SketchAgent.welcomeMessage)
+        }
+        // load sketch messages into exyte message state in chronologica
+        messages = sketch.orderedMessages.compactMap { $0.toExyteChatMessage() }
     }
 
     private func handleSendMessage(_ draft: ExyteChat.DraftMessage) {
