@@ -22,12 +22,13 @@ struct SketchDetailView: View {
 
     var body: some View {
         if let sketch = sketch {
-            let nLayers = sketch.layers.count
+            let layers = sketch.layers
+            let nLayers = layers.count
             // composite all layers except last layer in 1 image
             let backgroundLayers =
                 if nLayers > 1 {
                     // hot should be cached
-                    (try? sketch.render.renderLayers(indices: 0..<sketch.layers.count - 1))
+                    (try? sketch.render.renderLayers(indices: 0..<nLayers - 1))
                         ?? UIImage()
                 } else {
                     UIImage()
@@ -62,7 +63,41 @@ struct SketchDetailView: View {
                         .scaledToFit()
 
                     // render final layer
-                    renderLayer(sketch, layer: sketch.layers.count - 1)
+                    let iLastLayer = nLayers - 1
+                    Group {
+                        switch layers[iLastLayer] {
+                        case .image(let data, _):
+                            if let image = UIImage(data: data) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                        case .drawing(let drawing, _):
+                            GeometryReader { proxy in
+                                DrawingCanvasView(
+                                    drawing:
+                                        Binding(
+                                            get: { drawing },
+                                            set: { newDrawing in
+                                                // sync drawing changes back to model
+                                                sketch.setLayer(
+                                                    at: iLastLayer,
+                                                    to: .drawing(
+                                                        drawing: newDrawing, modifiedOn: .now
+                                                    )
+                                                )
+                                                repo.save()
+                                            }
+                                        ),
+                                    isEnabled: isEnabled
+                                )
+                                // force redraw view on screen resize & undo / redo count change
+                                .id(proxy.size)
+                                .id(appState.nUndoRedo)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 // rotate sketch as per ZoomableScrollView instructions
                 .rotationEffect(rotation)
@@ -91,43 +126,6 @@ struct SketchDetailView: View {
                 systemImage: "questionmark"
             )
         }
-    }
-
-    private func renderLayer(_ sketch: Sketch, layer: Int) -> some View {
-        Group {
-            switch sketch.layers[layer] {
-            case .image(let data, _):
-                if let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                }
-            case .drawing(let drawing, _):
-                GeometryReader { proxy in
-                    DrawingCanvasView(
-                        drawing:
-                            Binding(
-                                get: { drawing },
-                                set: { newDrawing in
-                                    // sync drawing changes back to model
-                                    sketch.setLayer(
-                                        at: layer,
-                                        to: .drawing(
-                                            drawing: newDrawing, modifiedOn: .now
-                                        )
-                                    )
-                                    repo.save()
-                                }
-                            ),
-                        isEnabled: isEnabled
-                    )
-                    // force redraw view on screen resize & undo / redo count change
-                    .id(proxy.size)
-                    .id(appState.nUndoRedo)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
