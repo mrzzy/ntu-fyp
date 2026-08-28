@@ -10,6 +10,10 @@
 		475E76DA30201EB5007198F0 /* Replicate in Frameworks */ = {isa = PBXBuildFile; productRef = 475E76DB30201EB5007198F1 /* Replicate */; };
 		475E76DC30201EB60007198F /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 475E76DD30201EB60007198F /* OpenAI */; };
 		47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */ = {isa = PBXBuildFile; productRef = 47859C6B300DBAB200C137AD /* ExyteChat */; };
+		4792AE12303FD36F000A86A1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4792AE11303FD36F000A86A1 /* FirebaseAuth */; };
+		4792AE14303FD36F000A86A1 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 4792AE13303FD36F000A86A1 /* FirebaseFunctions */; };
+		4792AE1F303FE0F7000A86A1 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4792AE1E303FE0F7000A86A1 /* FirebaseCore */; };
+		4792AEE630410D2C000A86A1 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4792AEE530410D2C000A86A1 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,9 +47,46 @@
 		47E36F733010F0AB00AC348D /* brocheUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = brocheUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4792AE1C303FDF93000A86A1 /* Exceptions for "broche" folder in "broche" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 473062D12FD17E5200086379 /* broche */;
+		};
+		4792AE27303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 473062DE2FD17E5400086379 /* brocheTests */;
+		};
+		4792AE28303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 473062E82FD17E5400086379 /* brocheUITests */;
+		};
+		4792AE29303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheIntegrationTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 47618D5D3011BA3B007F4623 /* brocheIntegrationTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		473062D42FD17E5200086379 /* broche */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4792AE1C303FDF93000A86A1 /* Exceptions for "broche" folder in "broche" target */,
+				4792AE27303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheTests" target */,
+				4792AE28303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheUITests" target */,
+				4792AE29303FE1F5000A86A1 /* Exceptions for "broche" folder in "brocheIntegrationTests" target */,
+			);
 			path = broche;
 			sourceTree = "<group>";
 		};
@@ -73,7 +114,11 @@
 			files = (
 				47859C6C300DBAB200C137AD /* ExyteChat in Frameworks */,
 				475E76DA30201EB5007198F0 /* Replicate in Frameworks */,
+				4792AE14303FD36F000A86A1 /* FirebaseFunctions in Frameworks */,
 				475E76DC30201EB60007198F /* OpenAI in Frameworks */,
+				4792AEE630410D2C000A86A1 /* FirebaseFirestore in Frameworks */,
+				4792AE1F303FE0F7000A86A1 /* FirebaseCore in Frameworks */,
+				4792AE12303FD36F000A86A1 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,7 +157,15 @@
 				47E36F733010F0AB00AC348D /* brocheUITests.xctest */,
 				47618D5E3011BA3B007F4623 /* brocheIntegrationTests.xctest */,
 				47618D5F3011BA3B007F4623 /* brocheIntegrationTests */,
+				4792AE1D303FE0F7000A86A1 /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		4792AE1D303FE0F7000A86A1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,6 +191,10 @@
 				47859C6B300DBAB200C137AD /* ExyteChat */,
 				475E76DB30201EB5007198F1 /* Replicate */,
 				475E76DD30201EB60007198F /* OpenAI */,
+				4792AE11303FD36F000A86A1 /* FirebaseAuth */,
+				4792AE13303FD36F000A86A1 /* FirebaseFunctions */,
+				4792AE1E303FE0F7000A86A1 /* FirebaseCore */,
+				4792AEE530410D2C000A86A1 /* FirebaseFirestore */,
 			);
 			productName = broche;
 			productReference = 47E36F713010F0AB00AC348D /* broche.app */;
@@ -252,6 +309,7 @@
 				47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */,
 				475E76D830201EB50007198F /* XCRemoteSwiftPackageReference "replicate-swift" */,
 				475E76E030201EB70007198F /* XCRemoteSwiftPackageReference "OpenAI" */,
+				4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 473062C92FD17E5200086379;
@@ -479,6 +537,7 @@
 				DEVELOPMENT_TEAM = 7K6ZTDFM48;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = broche/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -514,6 +573,7 @@
 				DEVELOPMENT_TEAM = 7K6ZTDFM48;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = broche/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -743,6 +803,14 @@
 				kind = branch;
 			};
 		};
+		4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.18.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -760,6 +828,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 47859C6A300DBAB200C137AD /* XCRemoteSwiftPackageReference "exyte-Chat" */;
 			productName = ExyteChat;
+		};
+		4792AE11303FD36F000A86A1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		4792AE13303FD36F000A86A1 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		4792AE1E303FE0F7000A86A1 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		4792AEE530410D2C000A86A1 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4792AE10303FD36F000A86A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

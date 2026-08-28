@@ -1,16 +1,17 @@
-@testable import broche
 import Foundation
 import Testing
 
+@testable import broche
+
 private let testModelID = "openai/gpt-5-nano"
+private let secrets = FirebaseSecrets.shared
 
 @Suite("OpenRouterVisualAIModel tests")
 @MainActor
 struct OpenRouterVisualAIModelTests {
-
     @Test("Generate throws modelNotLoaded when model is not loaded")
     func generateThrowsModelNotLoadedWhenNotLoaded() async {
-        let model = OpenRouterVisualAIModel()
+        let model = OpenRouterVisualAIModel(secrets: secrets)
 
         await #expect(throws: OpenRouterVisualAIError.self) {
             for try await _ in model.generate(
@@ -23,7 +24,7 @@ struct OpenRouterVisualAIModelTests {
 
     @Test("Load and Generate returns streaming response with metrics")
     func loadAndGenerateReturnsStreamingResponse() async throws {
-        let model = OpenRouterVisualAIModel(modelID: testModelID)
+        let model = OpenRouterVisualAIModel(modelID: testModelID, secrets: secrets)
         let benchmark = VisualAIBenchmark<OpenRouterVisualAIModel>()
         let result = try await benchmark.evaluate(model)
 

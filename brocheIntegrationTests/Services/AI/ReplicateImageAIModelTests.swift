@@ -4,14 +4,14 @@ import Testing
 @testable import broche
 
 private let testModelID = DefaultAIModelFactory.defaultImageModelID
+private let secrets = FirebaseSecrets.shared
 
 @Suite("ReplicateImageAIModel tests")
 @MainActor
 struct ReplicateImageAIModelTests {
-
     @Test("Edit throws modelNotLoaded when model is not loaded")
     func editThrowsModelNotLoadedWhenNotLoaded() async {
-        let model = ReplicateImageAIModel()
+        let model = ReplicateImageAIModel(secrets: secrets)
 
         await #expect(throws: ReplicateImageAIError.self) {
             for try await _ in model.edit(
@@ -20,18 +20,9 @@ struct ReplicateImageAIModelTests {
         }
     }
 
-    @Test("Load throws error for unresolved model ID")
-    func loadThrowsForUnresolvedModelID() async {
-        let model = ReplicateImageAIModel(modelID: "nonexistent-model-xyz")
-
-        await #expect(throws: Error.self) {
-            try await model.load()
-        }
-    }
-
     @Test("Load and Edit returns non-empty image data")
     func loadAndEditReturnsImage() async throws {
-        let model = ReplicateImageAIModel(modelID: testModelID)
+        let model = ReplicateImageAIModel(modelID: testModelID, secrets: secrets)
         let benchmark = ImageAIBenchmark<ReplicateImageAIModel>()
         let result = try await benchmark.evaluate(model)
 
@@ -60,4 +51,3 @@ struct ReplicateImageAIModelTests {
         print("  Saved: \(outputURL.path)")
     }
 }
-

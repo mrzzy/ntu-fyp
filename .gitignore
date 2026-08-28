@@ -53,3 +53,6 @@ buildServer.json
 # Neovim
 .nvim/
 Session.vim
+
+# Dotenv files
+.env

@@ -5,50 +5,42 @@
 //  Created by Zhu Zhanyan on 2026-08-03.
 //
 
-import UIKit
-import CloudKit
 import Foundation
 import Replicate
+import UIKit
 
 enum ReplicateImageAIError: Swift.Error, LocalizedError, Equatable {
     case modelNotLoaded
     case invalidModelID(modelID: String)
     case invalidOutput
     case downloadFailed(url: String)
-    case tokenNotFound
 
     var errorDescription: String? {
         switch self {
         case .modelNotLoaded:
             "Model has not been loaded. Call load() first."
-        case let .invalidModelID(id):
+        case .invalidModelID(let id):
             "Invalid model identifier: '\(id)'"
         case .invalidOutput:
             "Model returned invalid output."
-        case let .downloadFailed(url):
+        case .downloadFailed(let url):
             "Failed to download output image from \(url)."
-        case .tokenNotFound:
-            "Replicate API token not found in CloudKit."
         }
     }
 }
 
 final class ReplicateImageAIModel: ImageAIModel {
     let modelID: String
+    let secrets: Secrets
     private var client: Replicate.Client?
 
-    init(modelID: String = "black-forest-labs/flux-2-klein-4b") {
+    init(modelID: String = "black-forest-labs/flux-2-klein-4b", secrets: Secrets) {
         self.modelID = modelID
+        self.secrets = secrets
     }
 
     func load() async throws {
-        let recordID = CKRecord.ID(recordName: "replicateToken")
-        let record = try await CKContainer(identifier: "iCloud.inc.cloudKitTest")
-            .publicCloudDatabase.record(for: recordID)
-        guard let token = record["token"] as? String, !token.isEmpty else {
-            throw ReplicateImageAIError.tokenNotFound
-        }
-        client = Replicate.Client(token: token)
+        client = try Replicate.Client(token: await secrets.replicateToken())
     }
 
     func edit(
@@ -67,9 +59,11 @@ final class ReplicateImageAIModel: ImageAIModel {
                     }
 
                     let jpegImages = images.compactMap { image -> Value? in
-                        guard let jpegData = UIImage(data: image)?.jpegData(
-                            compressionQuality: 1
-                        ) else { return nil }
+                        guard
+                            let jpegData = UIImage(data: image)?.jpegData(
+                                compressionQuality: 1
+                            )
+                        else { return nil }
                         return .data(mimeType: "image/jpeg", jpegData)
                     }
                     var input: [String: Value] = [
@@ -89,7 +83,7 @@ final class ReplicateImageAIModel: ImageAIModel {
                         [String].self
                     )
                     guard let outputURLs, let firstURLString = outputURLs.first,
-                          let url = URL(string: firstURLString)
+                        let url = URL(string: firstURLString)
                     else {
                         throw ReplicateImageAIError.invalidOutput
                     }
@@ -97,7 +91,7 @@ final class ReplicateImageAIModel: ImageAIModel {
                     // fetch generated image from output url
                     let (data, response) = try await URLSession.shared.data(from: url)
                     guard let httpResponse = response as? HTTPURLResponse,
-                          (200 ..< 300).contains(httpResponse.statusCode)
+                        (200..<300).contains(httpResponse.statusCode)
                     else {
                         throw ReplicateImageAIError.downloadFailed(url: firstURLString)
                     }

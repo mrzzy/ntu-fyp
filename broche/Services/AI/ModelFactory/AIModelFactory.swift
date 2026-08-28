@@ -34,41 +34,23 @@ class DefaultAIModelFactory: AIModelFactory {
     /// Default model ID used for image editing.
     static let defaultImageModelID = "black-forest-labs/flux-2-klein-9b"
 
+    static let defaultSecrets = FirebaseSecrets.shared
+
     static let shared = DefaultAIModelFactory()
 
     // MARK: - Text Model
-
-    func makeTextModel(
-        modelID: String = defaultTextModelID,
-    ) -> TextAIModel {
-        OpenRouterTextAIModel(modelID: modelID)
-    }
-
     func makeTextModel() -> TextAIModel {
-        makeTextModel(modelID: Self.defaultTextModelID)
+        OpenRouterTextAIModel(modelID: Self.defaultTextModelID, secrets: Self.defaultSecrets)
     }
 
     // MARK: - Visual Model
-
-    func makeVisualModel(
-        modelID: String = defaultVisualModelID
-    ) -> VisualAIModel {
-        OpenRouterVisualAIModel(modelID: modelID)
-    }
-
     func makeVisualModel() -> VisualAIModel {
-        makeVisualModel(modelID: Self.defaultVisualModelID)
+        OpenRouterVisualAIModel(modelID: Self.defaultVisualModelID, secrets: Self.defaultSecrets)
     }
 
     // MARK: - Image Model
 
-    func makeImageModel(
-        modelID: String = defaultImageModelID
-    ) -> ImageAIModel {
-        ReplicateImageAIModel(modelID: modelID)
-    }
-
     func makeImageModel() -> ImageAIModel {
-        makeImageModel(modelID: Self.defaultImageModelID)
+        ReplicateImageAIModel(modelID: Self.defaultImageModelID, secrets: Self.defaultSecrets)
     }
 }

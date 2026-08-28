@@ -3,7 +3,6 @@
 //  broche
 //
 
-import CloudKit
 import Foundation
 import OpenAI
 import UIKit
@@ -11,15 +10,12 @@ import UIKit
 /// Errors that can occur during OpenRouter visual text generation.
 enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
     case modelNotLoaded
-    case tokenNotFound
     case imageDataInvalid
 
     var errorDescription: String? {
         switch self {
         case .modelNotLoaded:
             "Model has not been loaded. Call load() first."
-        case .tokenNotFound:
-            "OpenRouter API token not found in CloudKit."
         case .imageDataInvalid:
             "Image data is invalid and could not be decoded."
         }
@@ -30,31 +26,23 @@ enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
 ///
 /// Uses the [MacPaw/OpenAI](https://github.com/MacPaw/OpenAI) Swift SDK configured
 /// to route requests through OpenRouter. Images are base64-encoded and sent as
-/// `image_url` content parts alongside the text prompt. The API token is stored in
-/// CloudKit under the `openrouterToken` record.
+/// `image_url` content parts alongside the text prompt.
 final class OpenRouterVisualAIModel: VisualAIModel {
     /// The OpenRouter model identifier (e.g. `"openai/gpt-4o-mini"`).
     let modelID: String
+    let secrets: Secrets
     private var client: OpenAI?
 
     /// - Parameter modelID: An OpenRouter model slug that supports vision.
-    init(modelID: String = "openai/gpt-5-nano") {
+    init(modelID: String = "openai/gpt-5-nano", secrets: Secrets) {
         self.modelID = modelID
+        self.secrets = secrets
     }
 
-    /// Fetches the OpenRouter API token from CloudKit and initialises the ``OpenAI`` client.
-    ///
-    /// - Throws: ``OpenRouterVisualAIError/tokenNotFound`` when the token record is missing or empty.
     func load() async throws {
-        let recordID = CKRecord.ID(recordName: "openrouterToken")
-        let record = try await CKContainer(identifier: "iCloud.inc.cloudKitTest")
-            .publicCloudDatabase.record(for: recordID)
-        guard let token = record["token"] as? String, !token.isEmpty else {
-            throw OpenRouterVisualAIError.tokenNotFound
-        }
-        client = OpenAI(
+        client = try OpenAI(
             configuration: OpenAI.Configuration(
-                token: token,
+                token: await secrets.openRouterToken(),
                 host: "openrouter.ai",
                 basePath: "/api/v1"
             )

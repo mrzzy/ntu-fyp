@@ -4,14 +4,14 @@ import Testing
 @testable import broche
 
 private let testModelID = "qwen/qwen3-30b-a3b-instruct-2507"
+private let secrets = FirebaseSecrets.shared
 
 @Suite("OpenRouterTextAIModel tests")
 @MainActor
 struct OpenRouterTextAIModelTests {
-
     @Test("Generate throws modelNotLoaded when model is not loaded")
     func generateThrowsModelNotLoadedWhenNotLoaded() async {
-        let model = OpenRouterTextAIModel()
+        let model = OpenRouterTextAIModel(secrets: secrets)
 
         await #expect(throws: OpenRouterTextAIError.self) {
             for try await _ in model.generate(
@@ -23,7 +23,7 @@ struct OpenRouterTextAIModelTests {
 
     @Test("Load and Generate returns non-empty text")
     func loadAndGenerateReturnsText() async throws {
-        let model = OpenRouterTextAIModel(modelID: testModelID)
+        let model = OpenRouterTextAIModel(modelID: testModelID, secrets: secrets)
         let benchmark = TextAIBenchmark<OpenRouterTextAIModel>()
         let result = try await benchmark.evaluate(model)
 

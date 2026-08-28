@@ -13,3 +13,6 @@ let SketchIcon = "pencil.tip"
 
 // Builtin icon id used for AI Chat
 let ChatIcon = "sparkles"
+
+// User Default Key for storing number of times the app has started
+let AppStarts = "app_first_start"

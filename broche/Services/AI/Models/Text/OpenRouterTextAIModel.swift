@@ -3,21 +3,17 @@
 //  broche
 //
 
-import CloudKit
 import Foundation
 import OpenAI
 
 /// Errors that can occur during OpenRouter text generation.
 enum OpenRouterTextAIError: Swift.Error, LocalizedError, Equatable {
     case modelNotLoaded
-    case tokenNotFound
 
     var errorDescription: String? {
         switch self {
         case .modelNotLoaded:
             "Model has not been loaded. Call load() first."
-        case .tokenNotFound:
-            "OpenRouter API token not found in CloudKit."
         }
     }
 }
@@ -30,26 +26,19 @@ enum OpenRouterTextAIError: Swift.Error, LocalizedError, Equatable {
 final class OpenRouterTextAIModel: TextAIModel {
     /// The OpenRouter model identifier (e.g. `"openai/gpt-4o-mini"`).
     let modelID: String
+    let secrets: Secrets
     private var client: OpenAI?
 
     /// - Parameter modelID: An OpenRouter model slug.
-    init(modelID: String = "qwen/qwen3-30b-a3b-instruct-2507") {
+    init(modelID: String = "qwen/qwen3-30b-a3b-instruct-2507", secrets: Secrets) {
         self.modelID = modelID
+        self.secrets = secrets
     }
 
-    /// Fetches the OpenRouter API token from CloudKit and initialises the ``OpenAI`` client.
-    ///
-    /// - Throws: ``OpenRouterTextAIError/tokenNotFound`` when the token record is missing or empty.
     func load() async throws {
-        let recordID = CKRecord.ID(recordName: "openrouterToken")
-        let record = try await CKContainer(identifier: "iCloud.inc.cloudKitTest")
-            .publicCloudDatabase.record(for: recordID)
-        guard let token = record["token"] as? String, !token.isEmpty else {
-            throw OpenRouterTextAIError.tokenNotFound
-        }
-        client = OpenAI(
+        client = try OpenAI(
             configuration: OpenAI.Configuration(
-                token: token,
+                token: await secrets.openRouterToken(),
                 host: "openrouter.ai",
                 basePath: "/api/v1"
             )

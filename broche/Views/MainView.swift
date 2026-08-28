@@ -5,6 +5,7 @@
 //  Created by Zhu Zhanyan on 4/6/26.
 //
 
+import FirebaseAuth
 import SwiftData
 import SwiftUI
 
@@ -34,9 +35,8 @@ extension EnvironmentValues {
 }
 
 struct MainView: View {
-    /// currently selected sketch id
+    @State private var isUnauthenticated = true
     @State private var sketchId: Sketch.ID?
-    /// Currently selected tab
     @State var tab: Tab = .Draw
     @State var appState: AppState = .init()
     @Environment(\.undoManager) private var undoManager
@@ -85,20 +85,42 @@ struct MainView: View {
                 Text("Unexpected Error occurred. AI features are disabled.")
             }
         }
+        // prompt user to login if not authenticated
+        .sheet(
+            isPresented: $isUnauthenticated
+        ) {
+            LoginView(isUnauthenticated: $isUnauthenticated)
+                // dont allow interactive dismiss, user must log in to use the app
+                .presentationDragIndicator(.hidden)
+        }
         .environment(\.appState, appState)
-        // configure swiftdata for all child views
         .modelContainer(repo.modelContainer)
-        .task {
-            // track swiftdata model changes in view undoManager
-            repo.modelContext.undoManager = undoManager
+        .onAppear {
+            // reset firebase auth on first start
+            // user may remain authenticated as firebase persists auth data in keychain
+            // which is outside of the application's installation lifecycle
+            let nStarts = UserDefaults.standard.integer(forKey: AppStarts)
+            if nStarts == 0 {
+                try? Auth.auth().signOut()
+            }
+            UserDefaults.standard.set(nStarts + 1, forKey: AppStarts)
 
-            // start loading AI models in the background as soon as app starts
-            do {
-                try await AIRepository.shared.load()
-                appState.aiModels = .loaded
-            } catch {
-                print("Failed to load AI models: \(error)")
-                appState.aiModels = .error
+            // check authentication status before view renders
+            isUnauthenticated = Auth.auth().currentUser == nil
+        }
+        .onChange(of: isUnauthenticated, initial: false) {
+            // user logged in, load AI models
+            let models = AIRepository.shared
+            guard !(isUnauthenticated || models.isLoaded) else { return }
+
+            Task {
+                do {
+                    try await models.load()
+                    appState.aiModels = .loaded
+                } catch {
+                    print("Failed to load AI models: \(error)")
+                    appState.aiModels = .error
+                }
             }
         }
     }
