@@ -56,3 +56,6 @@ Session.vim
 
 # Dotenv files
 .env
+
+# Keys
+.keys
