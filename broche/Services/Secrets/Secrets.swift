@@ -16,3 +16,4 @@ protocol Secrets {
     /// - Returns: A non-empty API token string.
     func replicateToken() async throws -> String
 }
+

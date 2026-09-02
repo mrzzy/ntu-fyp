@@ -10,6 +10,8 @@ import Foundation
 /// Conform to this protocol to provide custom or mock model implementations.
 /// See ``DefaultAIModelFactory`` for the default production implementation.
 protocol AIModelFactory {
+    var secrets: Secrets { get set }
+
     /// Creates a text generation model (LLM).
     func makeTextModel() -> TextAIModel
     /// Creates a visual language model (VLM) for image understanding.
@@ -38,19 +40,28 @@ class DefaultAIModelFactory: AIModelFactory {
 
     static let shared = DefaultAIModelFactory()
 
+    /// Configurable secrets provider
+    var secrets: Secrets
+
+    init(secrets: Secrets = defaultSecrets) {
+        self.secrets = secrets
+    }
+
     // MARK: - Text Model
+
     func makeTextModel() -> TextAIModel {
-        OpenRouterTextAIModel(modelID: Self.defaultTextModelID, secrets: Self.defaultSecrets)
+        OpenRouterTextAIModel(modelID: Self.defaultTextModelID, secrets: secrets)
     }
 
     // MARK: - Visual Model
+
     func makeVisualModel() -> VisualAIModel {
-        OpenRouterVisualAIModel(modelID: Self.defaultVisualModelID, secrets: Self.defaultSecrets)
+        OpenRouterVisualAIModel(modelID: Self.defaultVisualModelID, secrets: secrets)
     }
 
     // MARK: - Image Model
 
     func makeImageModel() -> ImageAIModel {
-        ReplicateImageAIModel(modelID: Self.defaultImageModelID, secrets: Self.defaultSecrets)
+        ReplicateImageAIModel(modelID: Self.defaultImageModelID, secrets: secrets)
     }
 }

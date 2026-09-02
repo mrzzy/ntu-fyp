@@ -5,17 +5,21 @@ struct MockAIModelFactory: AIModelFactory {
     let mockTextToolCalls: [AIToolCall]
     let mockVisualCaption: String
 
+    var secrets: Secrets
+
     static let shared = MockAIModelFactory()
 
     init(
         mockTextResponse: String = "This is a mock text response.",
         mockTextToolCalls: [AIToolCall] = [],
         mockVisualCaption: String =
-            "A sketch of an apple sliced on a plate with a cup at the side."
+            "A sketch of an apple sliced on a plate with a cup at the side.",
+        secrets: Secrets = StaticSecrets(openRouter: "", replicate: "")
     ) {
         self.mockTextResponse = mockTextResponse
         self.mockTextToolCalls = mockTextToolCalls
         self.mockVisualCaption = mockVisualCaption
+        self.secrets = secrets
     }
 
     func makeTextModel() -> TextAIModel {
