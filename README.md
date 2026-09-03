@@ -27,7 +27,7 @@ Model inference is offloaded to online Inference Provider APIs (OpenRouter and R
 implementation makes it AI model provider agnostic.
 
 ### Sketch Agent
-<img src="presentation/assets/image_000003_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png" alt="Sketch Agent" height="400">
+<img src="presentation/assets/image_000003_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png" alt="Sketch Agent" height="500">
 The Sketch Agent is powered by three AI models behind a common interface: a **text LLM** (reasoning & tool calling), a **VLM** (understanding sketches), and a **Diffusion model** (image generation & editing). 
 
 ### API Key Management
