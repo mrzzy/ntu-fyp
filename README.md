@@ -1,26 +1,41 @@
-# Broche
+# Broche: Augmenting Rather Than Replacing Artists with Generative AI  
+**Name:** Zhu Zhanyan  
+**FYP ID:** CCDS25-0989 
+**Project Title:**   
+**Supervisor:** Prof. Chee Wei Tan   
 
-Broche is an AI-Assisted Drawing app for iPad that augments - rather than replaces - artists with generative AI. It pairs a familiar PencilKit sketching workflow with a **Sketch Agent**: an AI assistant that understands your drawings, iterates on them conversationally, and renders polished artwork on demand.
+## Overview
+<img src="assets/overview.png" alt="Overview" width="500">
 
-Developed as an NTU Final Year Project.
+**Broche** is an iPad AI-Assisted Drawing App that explores how AI image generation
+can be integrated to accelerate existing artist workflows. It combines a drawing
+app with a conversational AI assistant that can understand, render, and edit sketches in different styles. 
 
-## Why Broche?
 
-Existing AI image generation tools are largely single-shot: the user types a prompt, the model returns a finished image. This runs contrary to how artists actually work - gathering inspiration, sketching compositions, and refining iteratively. Broche bridges that gap by integrating state-of-the-art AI models into a drawing workflow inspired by apps like Procreate.
-
-## Key Features
-
-- **Sketch Assistant** - An agentic AI assistant, accessible via a familiar chat interface, that sees your sketch and takes actions (caption, explain edits, edit, render) through tool calls.
+## Features
+- **Sketch Agent** - An conversational AI assistant, that sees your sketch and can render it in different styles, or edit it based on your instructions.
 - **Iterative AI Editing** - Draw over an AI-generated image to indicate changes, then let the agent apply them. No inpainting masks required.
 - **Mood Board** - Collect reference images and moods to guide the style of AI generations, similar to a Pinterest pin board.
 - **Layered Sketch Architecture** - Drawings are a non-destructive stack of drawing and AI image layers; AI changes can be undone like any other edit.
 - **Familiar Drawing UX** - PencilKit drawing with free zoom/rotation, undo/redo gestures (two-finger tap to undo), and PNG export.
 
-## How It Works
+## Architecture
 
-The Sketch Agent is powered by three AI models behind a common interface: a **text LLM** (reasoning & tool calling), a **VLM** (understanding sketches), and a **diffusion model** (image generation & editing). Models are served online via OpenRouter and Replicate, while API keys are kept out of the app entirely - fetched from Firestore by authenticated users and rotated daily by a scheduled Firebase Cloud Function.
+### AI Model Inference
+<img src="presentation/assets/image_000008_8cc9f0eaa86459ed44f3808b9bd5b4ca9bbca35a67acafadf934a52a72c69fe3.png" alt="AI Model Inference" width="500">
+Model inference is offloaded to online Inference Provider APIs (OpenRouter and Replicate), although its
+implementation makes it AI model provider agnostic.
 
-## Tech Stack
+### Sketch Agent
+<img src="presentation/assets/image_000003_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png" alt="Sketch Agent" width="500">
+The Sketch Agent is powered by three AI models behind a common interface: a **text LLM** (reasoning & tool calling), a **VLM** (understanding sketches), and a **Diffusion model** (image generation & editing). 
+
+### API Key Management
+<img src="presentation/assets/image_000013_1c6e11f84f25c47585d25a053cadb2ae7985b91d11dbd9a4b0424e00aab6928a.png" alt="API Key Management" width="500">
+Inference Provider API Keys fetched from Firestore by Authenticated users only.
+Keys are rotated daily by a scheduled Firebase Cloud Function.
+
+### Tech Stack
 
 - **App**: Swift / SwiftUI, PencilKit, SwiftData, Firebase (Auth & Firestore)
 - **AI**: OpenRouter (Qwen3 LLM, GPT-5 Nano VLM), Replicate (FLUX.2 Klein diffusion model)
@@ -34,9 +49,15 @@ The Sketch Agent is powered by three AI models behind a common interface: a **te
 1. Open `broche.xcodeproj` in Xcode (requires iOS 26 SDK-era toolchain and an Apple Developer team for signing).
 2. Let Swift Package Manager resolve dependencies.
 3. Build and run on an iPad simulator or device.
+4. Authenticate:
+   - **Firebase Sign In** - Sign in with an email/password account.
+   - **BYOK (Bring Your Own Keys)** - Tap the *BYOK* tab and enter your OpenRouter and Replicate API tokens directly. No backend needed; tokens are held in memory for the session only.
 
 ### Backend
+Authenticates user via Firebase Authentication.
 
+A scheduled Firebase Cloud Function that rotates the OpenRouter API key daily. To run locally with emulators or deploy to Firebase:
+```bash
 A scheduled Firebase Cloud Functions backend rotates the OpenRouter API key daily:
 
 ```bash
@@ -53,4 +74,5 @@ npm run deploy  # deploy to Firebase
 ├── brocheTests/       # iOS Unit tests (fully mocked, no network)
 ├── brocheIntegrationTests/  # iOS Live-API integration tests
 └── backend/           # Firebase Cloud Functions (API key rotation)
+└── presentation/      # presentation
 ```
