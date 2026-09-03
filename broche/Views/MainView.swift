@@ -98,7 +98,7 @@ struct MainView: View {
         .onAppear {
             // reset firebase auth on first start
             // user may remain authenticated as firebase persists auth data in keychain
-            // which is outside of the application's installation lifecycle
+            // even if the user reinstalls the application
             let nStarts = UserDefaults.standard.integer(forKey: AppStarts)
             if nStarts == 0 {
                 try? Auth.auth().signOut()
@@ -107,6 +107,9 @@ struct MainView: View {
 
             // check authentication status before view renders
             isUnauthenticated = Auth.auth().currentUser == nil
+
+            // configure system undo manager undo swiftdata model changes
+            repo.modelContext.undoManager = undoManager
         }
         .onChange(of: isUnauthenticated, initial: false) {
             // user logged in, load AI models
