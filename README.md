@@ -5,7 +5,7 @@
 **Supervisor:** Prof. Chee Wei Tan   
 
 ## Overview
-<img src="assets/overview.png" alt="Overview" width="500">
+<img src="assets/overview.png" alt="Overview">
 
 **Broche** is an iPad AI-Assisted Drawing App that explores how AI image generation
 can be integrated to accelerate existing artist workflows. It combines a drawing
@@ -22,16 +22,16 @@ app with a conversational AI assistant that can understand, render, and edit ske
 ## Architecture
 
 ### AI Model Inference
-<img src="presentation/assets/image_000008_8cc9f0eaa86459ed44f3808b9bd5b4ca9bbca35a67acafadf934a52a72c69fe3.png" alt="AI Model Inference" width="500">
+<img src="presentation/assets/image_000008_8cc9f0eaa86459ed44f3808b9bd5b4ca9bbca35a67acafadf934a52a72c69fe3.png" alt="AI Model Inference">
 Model inference is offloaded to online Inference Provider APIs (OpenRouter and Replicate), although its
 implementation makes it AI model provider agnostic.
 
 ### Sketch Agent
-<img src="presentation/assets/image_000003_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png" alt="Sketch Agent" width="500">
+<img src="presentation/assets/image_000003_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png" alt="Sketch Agent" height="400">
 The Sketch Agent is powered by three AI models behind a common interface: a **text LLM** (reasoning & tool calling), a **VLM** (understanding sketches), and a **Diffusion model** (image generation & editing). 
 
 ### API Key Management
-<img src="presentation/assets/image_000013_1c6e11f84f25c47585d25a053cadb2ae7985b91d11dbd9a4b0424e00aab6928a.png" alt="API Key Management" width="500">
+<img src="presentation/assets/image_000013_1c6e11f84f25c47585d25a053cadb2ae7985b91d11dbd9a4b0424e00aab6928a.png" alt="API Key Management">
 Inference Provider API Keys fetched from Firestore by Authenticated users only.
 Keys are rotated daily by a scheduled Firebase Cloud Function.
 
