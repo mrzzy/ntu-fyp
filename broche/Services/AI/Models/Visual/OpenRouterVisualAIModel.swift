@@ -28,6 +28,9 @@ enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
 /// to route requests through OpenRouter. Images are base64-encoded and sent as
 /// `image_url` content parts alongside the text prompt.
 final class OpenRouterVisualAIModel: VisualAIModel {
+    /// Maximum dimension (width or height) of an image sent to the API.
+    private static let maxImageDimension: CGFloat = 1024
+
     /// The OpenRouter model identifier (e.g. `"openai/gpt-4o-mini"`).
     let modelID: String
     let secrets: Secrets
@@ -84,7 +87,7 @@ final class OpenRouterVisualAIModel: VisualAIModel {
                         guard let uiImage = UIImage(data: imageData) else {
                             throw OpenRouterVisualAIError.imageDataInvalid
                         }
-                        let base64 = padSqaure(uiImage).pngData()!.base64EncodedString()
+                        let base64 = padSquare(uiImage).pngData()!.base64EncodedString()
                         contentParts.append(
                             .image(
                                 .init(
@@ -181,26 +184,35 @@ final class OpenRouterVisualAIModel: VisualAIModel {
         }
     }
 
-    private func padSqaure(
+    /// Scales `image` down so its longest side fits `maxSize` (preserving aspect
+    /// ratio), then pads it into a square of white `backgroundColor` so it isn't
+    /// cropped by model-side preprocessing.
+    private func padSquare(
         _ image: UIImage,
+        maxSize: CGFloat = OpenRouterVisualAIModel.maxImageDimension,
         backgroundColor: UIColor = .white
     ) -> UIImage {
-        let side = max(image.size.width, image.size.height)
+        let maxDimension = max(image.size.width, image.size.height)
+        let scale = maxDimension > 0 ? min(1, maxSize / maxDimension) : 1
+        let scaledSize = CGSize(
+            width: (image.size.width * scale).rounded(.down),
+            height: (image.size.height * scale).rounded(.down)
+        )
+        let side = max(scaledSize.width, scaledSize.height)
         let size = CGSize(width: side, height: side)
 
         let origin = CGPoint(
-            x: (side - image.size.width) / 2,
-            y: (side - image.size.height) / 2
+            x: (side - scaledSize.width) / 2,
+            y: (side - scaledSize.height) / 2
         )
 
-        UIGraphicsBeginImageContextWithOptions(size, true, 0)
-        defer { UIGraphicsEndImageContext() }
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            backgroundColor.setFill()
+            UIRectFill(CGRect(origin: .zero, size: size))
 
-        backgroundColor.setFill()
-        UIRectFill(CGRect(origin: .zero, size: size))
-
-        image.draw(at: origin)
-
-        return UIGraphicsGetImageFromCurrentImageContext()!
+            image.draw(in: CGRect(origin: origin, size: scaledSize))
+        }
     }
 }
