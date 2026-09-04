@@ -29,7 +29,7 @@ enum OpenRouterVisualAIError: Swift.Error, LocalizedError, Equatable {
 /// `image_url` content parts alongside the text prompt.
 final class OpenRouterVisualAIModel: VisualAIModel {
     /// Maximum dimension (width or height) of an image sent to the API.
-    private static let maxImageDimension: CGFloat = 1024
+    private static let maxImageDimension: CGFloat = 512
 
     /// The OpenRouter model identifier (e.g. `"openai/gpt-4o-mini"`).
     let modelID: String
