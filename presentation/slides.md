@@ -330,25 +330,28 @@ How to securely distribute API keys to users?
 
 **Performance Issue** seconds-long lag when drawing strokes / panning & zooming
 
+**Profiling** Instruments Profiler to identify bottlenecks:
+
+- **Drawing Stroke**: sidebar previews **rendering** on every SwiftUI refresh.
+- **Panning &amp; Zooming**: **re-rendering** every layer on pan/zoom.
+
 ---
 
 <!-- ~1 min -->
 
 ## Solution: Performance Optimisation
 
-![bg right:42% fit](assets/image_000024_76924c9bdffc205d9cc44117575139aa8515df8fbd4b110d3679e28ac2c2b77b.png)
-
-**Profiling** Instruments Profiler to identify bottlenecks:
-
-- sidebar previews **rendering** on every SwiftUI refresh
-- **re-rendering** every layer on pan/zoom
-
 > Observation: Majority of time spent in Rendering.
 
 **Optimisation: Caching** of rendered artifacts:
 
 - Cache rendered preview image; render only on change.
-- Cache all but the top layer; live-render only the active layer.
+- Cache render all but the top layer; live-render only the top layer.
+
+| Optimisation          | Benchmark                                             | Baseline                  | Optimised               | Speedup |
+| :-------------------- | :---------------------------------------------------- | :------------------------ | :---------------------- | :------ |
+| **Drawing Stroke**    | 1000 `Sketch.image.getter` calls                      | 21.21 s (21.21 ms/get)    | 41.74 ms (41.74 µs/get) | 508.18× |
+| **Panning & Zooming** | 1000 3-layer (Drawing, Image, Drawing) Sketch Renders | 26.88 s (26.88 ms/render) | 5.86 s (5.86 ms/render) | 4.58×   |
 
 ---
 
@@ -432,8 +435,6 @@ Crafted **Broche** iPad AI-Assisted Drawing app:
 - **UI Design** aligned with existing user workflows.
 - **Limitations** Fine-grained control, hallucination, text rendering, edge truncation, real user evaluation.
 - **Future Work** Clarification dialogues, fine-grained AI editing, real user evaluation.
-
-
 
 ---
 
