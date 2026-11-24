@@ -55,6 +55,8 @@ jobs:
         with:
           # Upload built slides and assets
           path: presentation/out
+          # overwrite any existing artifact matching name for workflpw to prevent duplicates on fetch
+          overwrite: true
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
