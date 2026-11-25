@@ -26,11 +26,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Deploy presentation slides to pages
-  deploy-slides-pages:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Build presentation slides for Pages
+  build-slides:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,6 +50,14 @@ jobs:
         with:
           # Upload built slides and assets
           path: presentation/out
+
+  deploy-slides-pages:
+    needs: build-slides
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
