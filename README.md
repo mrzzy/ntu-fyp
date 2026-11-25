@@ -4,7 +4,7 @@
 **Project Title:**   
 **Supervisor:** Prof. Chee Wei Tan   
 
-[Report](./assets/report.pdf)
+[Report](./assets/report.pdf) [Presentation](https://mrzzy.github.io/ntu-fyp/slides.html)
 
 ## Overview
 <img src="assets/overview.png" alt="Overview">
