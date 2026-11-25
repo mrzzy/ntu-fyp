@@ -61,7 +61,7 @@ Supervisor: Prof. Chee Wei Tan
 | ----------------- | ---------------------------------------------------------------------------- |
 | Background        | Problem, Literature Review, Key Contributions                                |
 | Design & Analysis | UI Design, Sketch Agent Design                                               |
-| Implementation    | Model Selection, Model Deployment, Performance Optimization, Agent Workflows |
+| Implementation    | Model Selection, Model Deployment, Performance Optimisation, Agent Workflows |
 | Results           | Broche Demo                                                                  |
 | Discussion        | Limitations                                                                  |
 | Conclusion        | Discussion & future work                                                     |
@@ -79,8 +79,8 @@ Supervisor: Prof. Chee Wei Tan
 ![bg right:38% fit](assets/image_000001_93a8d6c59bee474ea6000fbaf12095f6b5d40bb04cc37504c3c78e442e800a67.png)
 
 - AI image generation for art is now of **decent quality**.
-  > “Théâtre D’opéra Spatial” (Midjourney) **won a US regional art award**.
-- A human takes **weeks/months per piece**; an image model takes **seconds end-to-end**
+  > “Théâtre d’Opéra Spatial” (Midjourney) **won a US regional art award**.
+- A human takes **weeks/months per piece**; an image model takes **seconds end-to-end**.
   > Can we harness this speed without losing the human’s creative control?
 
 ---
@@ -115,17 +115,17 @@ Supervisor: Prof. Chee Wei Tan
 Existing UI designs are thin wrappers around AI:
 
 - **Hard to Use** Expose model controls directly.
-- **Unfamiliar** to Artist's using traditional workflows.
+- **Unfamiliar** to Artists using traditional workflows.
 
-> eg. ComfyUI exposes AI model hyperparameters to the user.
+> e.g. ComfyUI exposes AI model hyperparameters to the user.
 
 ---
 
 <!-- ~1 min -->
 
-## Problem: Prompt Enginering
+## Problem: Prompt Engineering
 
-Mismatch in AI model needs and user willingness to provide:
+Mismatch between AI model needs and user willingness to provide:
 
 - Users are lazy: Concise prompts.
 - Models need context: Descriptive prompts.
@@ -147,16 +147,16 @@ Existing AI features have limited context awareness:
 
 <!-- ~1 min -->
 
-## Problem: Limited Artist Intevention
+## Problem: Limited Artist Intervention
 
 ![bg right:40% fit](assets/draw_anything_oneshot_ui.png)
 
 Limited capabilities for artists to refine AI-generated content:
 
 - **Single-shot Generation** text-to-image, no iterative refinement of AI output.
-- **Inpainting Masks** regional edits require user provided painting masks.
+- **Inpainting Masks** regional edits require user-provided painting masks.
 
-> eg. Single-shot text-to-image generation in Draw Anything lacks ability to edit and refine.
+> e.g. Single-shot text-to-image generation in Draw Anything lacks the ability to edit and refine.
 
 ---
 
@@ -166,9 +166,9 @@ Limited capabilities for artists to refine AI-generated content:
 
 ![bg right:40% fit](assets/contributions.png)
 
-1. **Agentic Sketch Agent** : Sketch agent with user drawing and conversational context awarness.
-2. **AI deployment study**: offline vs online deployment model.
-3. **Iterative AI-assisted creation**: Users can iterative improve on AI output.
+1. **Agentic Sketch Agent**: Sketch agent with user drawing and conversational context awareness.
+2. **AI deployment study**: offline vs online deployment models.
+3. **Iterative AI-assisted creation**: Users can iteratively improve on AI output.
 4. **Workflow-aligned UI**: mood board, Procreate-like drawing, text messaging interface.
 
 ---
@@ -195,8 +195,8 @@ Designed to be familiar to artists:
 ![bg right:40% fit](assets/image_000022_cb5c6de6ca7e69a69c063a2840f89ff53c7864b8cdd1c2dfdbf0c808a1c80837.png)
 
 **Context-Aware** user drawing and conversational context awareness:
-- **User Intention Awareness** user intentions captured via **message history** with Agent 
-- **Iterative Refinement** user can iteratively refine AI output by drawing over it and sending to Agent for further edits.
+- **User Intention Awareness** user intentions captured via **message history** with the Agent.
+- **Iterative Refinement** user can iteratively refine AI output by drawing over it and sending it to the Agent for further edits.
 
 ---
 <!-- ~1.5 min -->
@@ -206,7 +206,7 @@ Designed to be familiar to artists:
 ![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
 
 
-**Perception Tools** allows agent to perceive the user's sketch:
+**Perception Tools** allow the agent to perceive the user's sketch:
   - `caption_sketch`: VLM describes what the user drew.
   - `explain_edit`: VLM that interprets _drawn_ edit markings.
 
@@ -218,19 +218,19 @@ Designed to be familiar to artists:
 
 ![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
 
-**Action Tools** allows agent generate images:
+**Action Tools** allow the agent to generate images:
 
-- `render_image`: Generates polished images using **Flux.2 Klein 9B**.
-- `edit_image`: Applies incremental edits using **Flux.2 Klein 9B**.
+- `render_image`: Generates polished images using **FLUX.2 Klein 9B**.
+- `edit_image`: Applies incremental edits using **FLUX.2 Klein 9B**.
 
 ---
 
 ## Iterative Editing
 
 Allow users to iteratively improve AI output:
-- **Mask Free Editing** Direct image editing with Modern Models (eg. Flux.2 Klein 9B).
+- **Mask Free Editing** Direct image editing with modern models (e.g. FLUX.2 Klein 9B).
 - **Drawing Over AI Output** User can keep drawing over AI output to point out desired edits.
-- **Layered Architecture** Every AI result lands as a new **layer** → non-destructive undo/redo of AI changes
+- **Layered Architecture** Every AI result lands as a new **layer** → non-destructive undo/redo of AI changes.
 
 <!-- Now, we will focus on implementation challenges -->
 
@@ -242,9 +242,9 @@ Allow users to iteratively improve AI output:
 
 ## Problem: Model Selection
 
-Many AI Model Variants: Which to chose?
+Many AI Model Variants: Which to choose?
 
-- **High fragmentation:** many AI models families are available.
+- **High fragmentation:** many AI model families are available.
 - **Parameter Size:** Families offer variants with different **parameter sizes**.
 - **Quantisation:** Weights support multiple **quantisation methods**.
 
@@ -288,7 +288,7 @@ Where do AI models run?
 **Online Deployment**: forward model requests to third-party inference providers:
 
 - **OpenRouter** routes LLM/VLM calls to Inference Providers
-- **Replicate** serves Image Generation model.
+- **Replicate** serves the image generation model.
 
 ---
 
@@ -332,12 +332,12 @@ How to securely distribute API keys to users?
 
 ## Solution: Performance Optimisation
 
-> Observation: Majority of time spent in Rendering.
+> Observation: Majority of time spent in rendering.
 
 **Optimisation: Caching** of rendered artifacts:
 
 - Cache rendered preview image; render only on change.
-- Cache render all but the top layer; live-render only the top layer.
+- Cache renders of all but the top layer; live-render only the top layer.
 
 | Optimisation          | Benchmark                                             | Baseline                  | Optimised               | Speedup |
 | :-------------------- | :---------------------------------------------------- | :------------------------ | :---------------------- | :------ |
@@ -410,7 +410,7 @@ Crafted **Broche** iPad AI-Assisted Drawing app:
 
 ## Thank you
 
-**Q/A**
+**Q&A**
 
 Zhu Zhanyan · U2320498K · AY 2026/2027
 
