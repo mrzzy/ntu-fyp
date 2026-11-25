@@ -74,7 +74,7 @@ Supervisor: Prof. Chee Wei Tan
 
 <!-- ~1 min -->
 
-## Problem: Role of the Artist in the Age of AI?
+## Motivation: Role of the Artist in the Age of AI?
 
 ![bg right:38% fit](assets/image_000001_93a8d6c59bee474ea6000fbaf12095f6b5d40bb04cc37504c3c78e442e800a67.png)
 
@@ -99,29 +99,12 @@ Supervisor: Prof. Chee Wei Tan
 
 <!-- ~1 min: Explored existing tools for AI-Artist Co-creation to analyze what has been done, areas for improvement. -->
 
-## Literature Review: Existing Solutions
+## Analysis of Existing Solutions
 
 ![ComfyUI](assets/comfyui.svg) ![Draw Things](assets/draw_things.avif) ![Wand](assets/wand.png)
 
 <h1 class="logo-title">SageBrush</h1>
 <h1 class="logo-title">Draw Anything</h1>
-
----
-
-<!-- ~1 min: High level overview of key contributions. -->
-
-## Key Contributions
-
-![bg right:40% fit](assets/contributions.png)
-
-1. **Agentic Sketch Agent** : Sketch agent with user drawing and conversational context awarness.
-2. **AI deployment study**: offline vs online deployment model.
-3. **Iterative AI-assisted creation**: persistent conversation + _mask-free_ image editing.
-4. **Workflow-aligned UI**: mood board, Procreate-like drawing, text messaging interface.
-
----
-
-# Design & Analysis
 
 ---
 
@@ -140,20 +123,6 @@ Existing UI designs are thin wrappers around AI:
 
 <!-- ~1 min -->
 
-## Soluion: Familiar UI Design
-
-![bg right:40% fit](assets/ui_design_influences.png)
-
-Designed to be familiar to artists:
-
-- **Mood board**: inspired by Pinterest's Pin boards.
-- **Sketch View**: familiar drawing canvas from Procreate.
-- **Sketch Agent**: familiar text messaging interface to access AI features.
-
----
-
-<!-- ~1 min -->
-
 ## Problem: Prompt Enginering
 
 Mismatch in AI model needs and user willingness to provide:
@@ -167,50 +136,12 @@ Mismatch in AI model needs and user willingness to provide:
 
 <!-- ~1 min -->
 
-## Solution: AI-Assisted Prompt Engineering
-
-Delegate descriptive prompt writing to Language Models (LMs)'s:
-
-- **Generate Prompts** LM's are great at dense textual descriptions.
-  > DALL-E 3 Captioner Model performed better then Humans in captioning.
-- **In-built Prompt Engineering** Tap in LLM's innate knowledge of AI image prompt engineering.
-
----
-
-<!-- ~1 min -->
-
 ## Problem: No Context Awareness
 
 Existing AI features have limited context awareness:
 
 - **Generation-Intention Misalignment** No subject awareness: AI image different from user intentions.
-- **Tiring to use** Users must repeatedly explain their intent.
-
----
-
-<!-- ~1.5 min -->
-
-## Solution: Context-Aware Sketch Agent
-
-![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
-
-Sketch AI Agent is aware of user intentions:
-
-- **Message History** AI Agent can refer to past userconversation for context.
-- **Perception Tools** the agent perceives the user's sketch and intentions via tools:
-  - `caption_sketch`: invokes a VLM describes what the user drew.
-  - `explain_edit`: invokes a VLM that interprets _drawn_ edit markings.
-
----
-
-## Solution: Context-Aware Sketch Agent
-
-![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
-
-**Action Tools** the agent can act perceived the user's intentions via tools:
-
-- `render_image`: Generates polished images from user drawings using **Flux.2 Klein 9B**.
-- `edit_image`: Applies incremental edits using **Flux.2 Klein 9B**.
+- **Laborious to use** Users must repeatedly explain their intent.
 
 ---
 
@@ -229,21 +160,81 @@ Limited capabilities for artists to refine AI-generated content:
 
 ---
 
+<!-- ~1 min: High level overview of key contributions. -->
+
+## Key Contributions
+
+![bg right:40% fit](assets/contributions.png)
+
+1. **Agentic Sketch Agent** : Sketch agent with user drawing and conversational context awarness.
+2. **AI deployment study**: offline vs online deployment model.
+3. **Iterative AI-assisted creation**: Users can iterative improve on AI output.
+4. **Workflow-aligned UI**: mood board, Procreate-like drawing, text messaging interface.
+
+---
+
+# Design & Analysis
+
+---
 <!-- ~1 min -->
 
-## Solution: Iterative Artist Refinements to AI
+## Familiar UI Design
+
+![bg right:40% fit](assets/ui_design_influences.png)
+
+Designed to be familiar to artists:
+
+- **Mood board**: inspired by Pinterest's Pin boards.
+- **Sketch View**: familiar drawing canvas from Procreate.
+- **Sketch Agent**: familiar text messaging interface to access AI features.
+
+---
+
+## Context-Aware Sketch Agent
 
 ![bg right:40% fit](assets/image_000022_cb5c6de6ca7e69a69c063a2840f89ff53c7864b8cdd1c2dfdbf0c808a1c80837.png)
 
-Continued User-AI Agent interaction allows for iterative refinement of piece:
+**Context-Aware** user drawing and conversational context awareness:
+- **User Intention Awareness** user intentions captured via **message history** with Agent 
+- **Iterative Refinement** user can iteratively refine AI output by drawing over it and sending to Agent for further edits.
 
+---
+<!-- ~1.5 min -->
+
+## Context-Aware Sketch Agent: Perception Tools
+
+![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
+
+
+**Perception Tools** allows agent to perceive the user's sketch:
+  - `caption_sketch`: VLM describes what the user drew.
+  - `explain_edit`: VLM that interprets _drawn_ edit markings.
+
+
+---
+<!-- ~1 min -->
+
+## Context-Aware Sketch Agent: Action Tools
+
+![bg right:42% fit](assets/image_000014_783f47abc32826af9a0a4966114b858dcc30a3ca6bc9ce7a29da53439109991d.png)
+
+**Action Tools** allows agent generate images:
+
+- `render_image`: Generates polished images using **Flux.2 Klein 9B**.
+- `edit_image`: Applies incremental edits using **Flux.2 Klein 9B**.
+
+---
+
+## Iterative Editing
+
+Allow users to iteratively improve AI output:
 - **Mask Free Editing** Direct image editing with Modern Models (eg. Flux.2 Klein 9B).
 - **Drawing Over AI Output** User can keep drawing over AI output to point out desired edits.
 - **Layered Architecture** Every AI result lands as a new **layer** → non-destructive undo/redo of AI changes
 
----
-
 <!-- Now, we will focus on implementation challenges -->
+
+---
 
 # Implementation
 
@@ -263,7 +254,7 @@ Many AI Model Variants: Which to chose?
 
 ## Solution: Model Selection
 
-Selection Criteria: Optise for **cost**, subject to **minimum quality** requirements.
+Selection Criteria: Optimise for **cost**, subject to **minimum quality** requirements.
 
 | Role      | Model                  | Why                                  |
 | --------- | ---------------------- | ------------------------------------ |
@@ -355,27 +346,6 @@ How to securely distribute API keys to users?
 
 ---
 
-## Problem: Unreliable Agent Tool Calls
-
-Sketch Agent LLM only issues tools correctly **sometimes**.
-
-- Talks the user without calling tool.
-- Does not know which tool to use first.
-
----
-
-## Solution: Guardrails in System Prompt
-
-![bg right:25% fit](assets/edit_workflow.png)
-![bg right:25% fit](assets/render_workflow.png)
-
-Instruct Agent on tool call workflows in **System Prompt**:
-
-- **Editing Workflow:** to make a **small, targeted change or refinement** to an existing sketch.
-- **Rendering Workflow:** to **transform** a rough sketch into a **polished, finished image**.
-
----
-
 <!-- Work created with Broche App over 3 workloads: Illustration, Graphic Design, UI Design -->
 
 # Results
@@ -418,7 +388,7 @@ Demo: _Illustration of Apple and Banana in Soviet Propaganda Style_
 
 ## Future Work
 
-- **Clarification dialogues** Agent asks before assuming when ambiguous.
+- **AI Clarification** Agent asks before assuming when ambiguous.
 - **Fine-grained AI editing** improved AI models.
 - **Real User Evaluation** user study on AI-assisted vs. traditional workflow.
 
@@ -430,9 +400,9 @@ Demo: _Illustration of Apple and Banana in Soviet Propaganda Style_
 
 Crafted **Broche** iPad AI-Assisted Drawing app:
 
-- **Demonstrates AI-Artist co-creation**: Generative AI can be integrated into artistic workflows.
+- **AI-Artist co-creation**: Introduced an agentic model for AI-artist co-creation.
+- **UI Design** aligned and familiar with existing artist user workflows.
 - **Deployment Models** on-device AI still immature for real-world use.
-- **UI Design** aligned with existing user workflows.
 - **Limitations** Fine-grained control, hallucination, text rendering, edge truncation, real user evaluation.
 - **Future Work** Clarification dialogues, fine-grained AI editing, real user evaluation.
 
