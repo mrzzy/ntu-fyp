@@ -48,15 +48,11 @@ jobs:
         run: npx @marp-team/marp-cli slides.md -o out/slides.html
       - name: Copy slide assets
         run: cp -r assets out/assets
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           # Upload built slides and assets
           path: presentation/out
-          # overwrite any existing artifact matching name for workflpw to prevent duplicates on fetch
-          overwrite: true
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
